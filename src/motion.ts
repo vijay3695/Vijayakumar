@@ -67,7 +67,12 @@ export function profileEntrance(root: HTMLElement, reduced: boolean) {
 /* ------------------------------------------------------------- tile reveal --*/
 
 /** Grid tiles pop in as they scroll into view, Instagram-timeline style. */
-export function tileReveal(root: HTMLElement, reduced: boolean) {
+export function tileReveal(
+  root: HTMLElement,
+  reduced: boolean,
+  /** on desktop the device frame scrolls internally, so ScrollTrigger needs it */
+  scroller?: HTMLElement | null
+) {
   if (reduced) return () => {};
 
   const tiles = Array.from(root.querySelectorAll<HTMLElement>(".ig-tile"));
@@ -81,6 +86,7 @@ export function tileReveal(root: HTMLElement, reduced: boolean) {
     batchMax: 3,
     interval: 0.08,
     once: true,
+    scroller: scroller ?? undefined,
     onEnter: (batch) =>
       gsap.to(batch, {
         opacity: 1,

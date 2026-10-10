@@ -11,6 +11,9 @@ export default function App() {
   const ids = useMemo(() => sections.map((s) => s.id), []);
   const { activeIndex, activeId, open, close, reduced } = useFlipReel(ids);
   const [tab, setTab] = useState<Tab>("work");
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 760px)").matches
+  );
   const appRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -19,17 +22,26 @@ export default function App() {
     []
   );
 
+  /* the desktop frame is a real device that scrolls internally */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 760px)");
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   /* staggered first paint, then hand the grid to ScrollTrigger */
   useEffect(() => {
     const root = appRef.current;
     if (!root) return;
+    const scroller = isDesktop ? root : null;
     const stopEntrance = profileEntrance(root, reduced);
-    const stopTiles = tileReveal(root, reduced);
+    const stopTiles = tileReveal(root, reduced, scroller);
     return () => {
       stopEntrance();
       stopTiles();
     };
-  }, [reduced]);
+  }, [reduced, isDesktop]);
 
   /* animate whichever tab panel just mounted */
   useEffect(() => {

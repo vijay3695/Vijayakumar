@@ -62,18 +62,26 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto;
   min-height: 100dvh;
   background: var(--bg);
-  padding-bottom: calc(var(--bottomnav-h) + var(--safe-b) + 8px);
+  padding-bottom: 0;
 }
 
+/* Desktop: the frame becomes a real device - exactly viewport height, scrolling
+   internally. That is what lets the bottom bar sit at the frame's bottom instead
+   of floating mid-column. */
 @media (min-width: 760px) {
   .app {
-    margin-top: 22px;
+    margin: 22px auto;
+    min-height: 0;
+    height: calc(100dvh - 44px);
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid var(--line-2);
     border-radius: var(--r-lg);
     box-shadow: var(--shadow-device);
-    overflow: hidden;
-    min-height: 0;
+    scrollbar-width: none;
+    overscroll-behavior: contain;
   }
+  .app::-webkit-scrollbar { display: none; }
 }
 
 /* ------------------------------------------------------------------ top bar */
@@ -169,29 +177,32 @@ a { color: inherit; text-decoration: none; }
 
 /* --------------------------------------------------------------- bottom nav */
 
+/* Sticky, not fixed: it must sit at the bottom of the DEVICE, not the browser
+   window. On desktop the frame is viewport-height and scrolls internally, so
+   those two are the same thing; on a tall page a fixed bar would float in the
+   middle of the phone. */
 .ig-bottomnav {
-  position: fixed;
-  left: 50%;
+  position: sticky;
   bottom: 0;
-  transform: translateX(-50%);
   z-index: var(--z-bottom);
-  width: 100%;
-  max-width: var(--col);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  align-items: center;
   height: calc(var(--bottomnav-h) + var(--safe-b));
   padding-bottom: var(--safe-b);
-  background: rgba(8, 8, 10, 0.95);
+  background: rgba(8, 8, 10, 0.97);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid var(--line);
 }
 
+/* flex, not grid: a 2-child grid made two rows (33px + 16px) and pushed the
+   icons off centre */
 .ig-bottomnav__item {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
+  padding: 0;
   border: 0;
   background: none;
   color: var(--text-3);
@@ -220,22 +231,11 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--text);
 }
 
-/* the active item gets a small indicator dot */
-.ig-bottomnav__dot {
-  width: 4px;
-  height: 4px;
-  margin-top: 3px;
-  border-radius: 50%;
-  background: var(--text);
-  opacity: 0;
-  transform: scale(0.4);
-  transition: opacity var(--t-mid), transform var(--t-mid) var(--ease-back);
-}
-.ig-bottomnav__item.is-active .ig-bottomnav__dot { opacity: 1; transform: scale(1); }
+/* The active state is carried by fill weight and colour, which is what the
+   real app does - an extra indicator dot just fights the icon for space. */
+.ig-bottomnav__dot { display: none; }
 
-@media (min-width: 760px) {
-  .ig-bottomnav { bottom: 22px; border-radius: 0 0 var(--r-lg) var(--r-lg); }
-}
+.ig-bottomnav { border-radius: 0 0 var(--r-lg) var(--r-lg); }
 
 /* ------------------------------------------------------- a11y helper ------ */
 
