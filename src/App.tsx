@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import ProfileScreen from "./components/ProfileScreen";
 import ReelView from "./components/ReelView";
-import { profile, sections } from "./data/resume";
+import { profile, sections, site } from "./data/resume";
 import { useFlipReel } from "./hooks/useFlipReel";
 
 export default function App() {
@@ -10,6 +10,12 @@ export default function App() {
 
   return (
     <div className="app">
+      {site.sampleData && (
+        <p className="sample-banner" role="note">
+          Sample content - edit <code>src/data/resume.ts</code>, then set{" "}
+          <code>site.sampleData = false</code> to hide this.
+        </p>
+      )}
       <ProfileScreen
         profile={profile}
         sections={sections}
