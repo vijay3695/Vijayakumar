@@ -109,6 +109,41 @@ Recommended flow:
 If a sensitive file is ever committed by accident, tell me and I will purge it
 from history - but never rely on that; forks and third-party caches may persist.
 
+### How the email is protected
+
+There is no public resume PDF, and the contact address never appears in plain
+text - not in the repo, not in the bundle, not in the served HTML.
+
+- `contactEmailB64` in `src/data/resume.ts` holds the address **base64-encoded**.
+  That is intentional; do not "fix" it into a readable string. The repo is public
+  and so is the bundle, so a plain address here is harvested by scrapers that
+  read GitHub or parse the JavaScript.
+- `src/components/EmailButton.tsx` decodes it in the browser, and only when a
+  real visitor interacts (hover, focus, touch, click). Until then the href is a
+  harmless in-page anchor.
+
+| Stage | Contains the address? |
+| --- | --- |
+| Served HTML | no |
+| JavaScript bundle | no - encoded only |
+| Live DOM after load | no |
+| DOM after a human engages | yes, in that browser only |
+
+That defeats the automated harvesters, which is the overwhelming majority of the
+problem. It is not a guarantee against a determined human with a browser, and it
+is why a dedicated address is still worth having.
+
+To change the address:
+
+```bash
+printf '%s' 'you@example.com' | base64
+# then paste the output into contactEmailB64
+```
+
+`npm test` covers this: the suite asserts the decoded address is valid, that it
+never appears in the rendered DOM, and that the `mailto:` is only assembled
+after interaction.
+
 ## Deploying (live on GitHub Pages)
 
 The built site is published to the **`gh-pages` branch**, which needs no workflow

@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
-import { profile, sections } from "./data/resume";
+import { contactEmailB64, profile, sections } from "./data/resume";
+import { decodeEmail } from "./components/EmailButton";
 
 beforeEach(() => cleanup());
 afterEach(() => cleanup());
@@ -191,5 +192,39 @@ describe("regressions", () => {
       (t) => t.getAttribute("data-motif")
     );
     expect(new Set(motifs).size).toBeGreaterThan(1);
+  });
+});
+
+describe("email protection", () => {
+  const EMAIL = decodeEmail(contactEmailB64);
+
+  it("the decoded address is a valid address (guards a broken payload)", () => {
+    expect(EMAIL).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  });
+
+  it("never puts the plain address in the rendered DOM", () => {
+    const { container } = render(<App />);
+    expect(container.innerHTML).not.toContain(EMAIL);
+    expect(container.innerHTML).not.toMatch(/mailto:[^"]*@/);
+  });
+
+  it("still hides it inside the reel contact view", () => {
+    const { container } = render(<App />);
+    const contact = sections.findIndex((s) => s.kind === "contact");
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[contact].title}` }));
+    expect(container.innerHTML).not.toContain(EMAIL);
+  });
+
+  it("assembles the mailto only once a human engages", () => {
+    render(<App />);
+    const btn = screen.getByRole("link", { name: /^email$/i });
+    expect(btn.getAttribute("href")).toBe("#contact");
+    fireEvent.pointerEnter(btn);
+    expect(btn.getAttribute("href")).toBe("mailto:" + EMAIL);
+  });
+
+  it("no Resume download button remains", () => {
+    render(<App />);
+    expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();
   });
 });

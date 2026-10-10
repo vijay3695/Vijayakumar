@@ -1,5 +1,7 @@
 import { forwardRef } from "react";
+import { contactEmailB64 } from "../data/resume";
 import type { Profile, Section } from "../data/resume";
+import EmailButton from "./EmailButton";
 import { GridIcon, ProofIcon, TagIcon, VerifiedIcon } from "./Icons";
 
 export type Tab = "work" | "skills" | "proof";
@@ -70,15 +72,18 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
       </section>
 
       <section className="ig-actions">
-        <a className="ig-btn ig-btn--primary" href={"mailto:" + profile.email}>
-          Email
-        </a>
-        <a className="ig-btn" href="./resume.pdf" download>
-          Resume
-        </a>
-        <a className="ig-btn ig-btn--ghost" href="https://github.com/vijay3695" target="_blank" rel="noopener noreferrer">
-          GitHub
-        </a>
+        <EmailButton b64={contactEmailB64} className="ig-btn ig-btn--primary" />
+        {profile.links.map((l, i) => (
+          <a
+            key={l.label}
+            className={"ig-btn" + (i === 0 ? "" : " ig-btn--ghost")}
+            href={l.href}
+            target={l.href.startsWith("http") ? "_blank" : undefined}
+            rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
+          >
+            {l.label}
+          </a>
+        ))}
       </section>
 
       <nav className="ig-highlights" aria-label="Jump to a section">
