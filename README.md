@@ -75,6 +75,40 @@ still give you a working reel.
 - Background scroll is locked while a reel is open, and restored on close
 - `prefers-reduced-motion` disables the flip and all transitions
 
+## Sharing a resume safely
+
+This repo is **public** and the site is **public**, so treat anything committed
+here as world-readable and permanent.
+
+- A file at `public/resume.pdf` is downloadable by anyone at
+  `https://vijay3695.github.io/Vijayakumar/resume.pdf`. There is no "hidden" URL.
+- Deleting a committed file later does **not** remove it: it stays in git history,
+  and in any clone, fork or cache already taken.
+- PDF text is fully machine-readable, and search engines plus scrapers harvest
+  email addresses and phone numbers from indexed pages and PDFs.
+- Nothing client-side can hide data. View-source, DevTools and the network tab
+  will always show what the browser received. Any in-page "gate" is bypassable.
+
+**The only real control is what you choose to publish.** The site renders exactly
+what is in `src/data/resume.ts` - if a phone number is not there, it is not on the
+site.
+
+Recommended flow:
+
+1. Put the raw resume in `private/` (already gitignored - verified with
+   `git check-ignore`). It is never committed.
+2. Only the fields you approve are copied into `src/data/resume.ts`.
+3. A phone number is never needed on a portfolio. Email is enough.
+4. If you want a downloadable resume, keep the raw one out of the repo and commit
+   a **redacted** copy to `public/resume.pdf` instead - with the phone, home
+   address and any ID numbers actually removed (drawing a black box over text
+   leaves it extractable).
+5. Consider a dedicated address for the public email: scrapers will find and spam
+   whatever appears on the page.
+
+If a sensitive file is ever committed by accident, tell me and I will purge it
+from history - but never rely on that; forks and third-party caches may persist.
+
 ## Deploying (live on GitHub Pages)
 
 The built site is published to the **`gh-pages` branch**, which needs no workflow

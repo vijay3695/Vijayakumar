@@ -3,3 +3,11 @@ dist/
 .DS_Store
 *.log
 .screenshots/
+
+# Never commit raw personal documents. See README: "Sharing a resume safely".
+# Anything committed to a public repo is world-readable and permanent - it stays
+# in git history even after deletion.
+private/
+*.private.pdf
+resume-source.pdf
+*.private.docx
