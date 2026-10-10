@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
+import { releaseTiles } from "../motion";
 import { useReducedMotion } from "./useReducedMotion";
 
 gsap.registerPlugin(Flip);
@@ -28,6 +29,9 @@ export function useFlipReel(ids: string[]) {
     (index: number) => {
       const id = ids[index];
       if (!id) return;
+      // the entrance animation may still hold inline transforms on the tiles;
+      // clear them or Flip measures a mid-animation rectangle
+      releaseTiles();
       activeId.current = id;
       const tile = document.querySelector(`[data-flip-id="tile-${id}"]`);
       fromState.current = tile ? Flip.getState(tile) : null;

@@ -8,12 +8,15 @@ afterEach(() => cleanup());
 
 describe("profile screen", () => {
   it("renders identity, stats and bio", () => {
-    render(<App />);
+    const { container } = render(<App />);
     expect(screen.getByRole("heading", { name: profile.name })).toBeTruthy();
-    for (const s of profile.stats) {
-      expect(screen.getByText(s.label)).toBeTruthy();
-      expect(screen.getByText(s.value)).toBeTruthy();
-    }
+    // scoped to the stats row: a bare "3" also appears in the notification badge
+    const stats = container.querySelectorAll(".ig-stats li");
+    expect(stats.length).toBe(profile.stats.length);
+    stats.forEach((li, i) => {
+      expect(li.querySelector("strong")?.textContent).toBe(profile.stats[i].value);
+      expect(li.querySelector("span")?.textContent).toBe(profile.stats[i].label);
+    });
     expect(screen.getByText(profile.bio[0])).toBeTruthy();
     expect(screen.getByText(profile.available)).toBeTruthy();
   });
@@ -137,5 +140,56 @@ describe("robustness", () => {
     fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
     expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+});
+
+describe("app chrome", () => {
+  it("renders a top bar and a 5-item bottom nav", () => {
+    const { container } = render(<App />);
+    expect(container.querySelector(".ig-topbar__wordmark")).toBeTruthy();
+    expect(container.querySelectorAll(".ig-bottomnav__item").length).toBe(5);
+  });
+
+  it("bottom nav opens the reels feed", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /^reels$/i }));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+  });
+
+  it("bottom nav jumps to the proof reel", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /proof of work/i }));
+    const dialog = screen.getByRole("dialog");
+    const proof = sections.find((s) => s.kind === "proof");
+    expect(dialog.getAttribute("aria-label")).toBe(proof?.title);
+  });
+});
+
+describe("regressions", () => {
+  it("every entrance-animation target exists in the animated root", () => {
+    // Guards a real bug: the timeline was scoped to `.profile`, which excludes
+    // the top bar and bottom nav, so those steps silently did nothing.
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(<App />);
+    const gsapWarnings = warn.mock.calls.filter((c) => String(c[0]).includes("GSAP"));
+    expect(gsapWarnings).toEqual([]);
+    warn.mockRestore();
+  });
+
+  it("double-tap likes a reel", () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    const reel = container.querySelector(".reel") as HTMLElement;
+    fireEvent.click(reel);
+    fireEvent.click(reel);
+    expect(screen.getAllByRole("button", { name: /unlike/i }).length).toBeGreaterThan(0);
+  });
+
+  it("tiles carry a distinct motif so no two look alike", () => {
+    const { container } = render(<App />);
+    const motifs = Array.from(container.querySelectorAll(".ig-tile")).map(
+      (t) => t.getAttribute("data-motif")
+    );
+    expect(new Set(motifs).size).toBeGreaterThan(1);
   });
 });

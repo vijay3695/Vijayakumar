@@ -1,42 +1,39 @@
-import { useState } from "react";
+import { forwardRef } from "react";
 import type { Profile, Section } from "../data/resume";
+import { ProofIcon, ReelsIcon, VerifiedIcon } from "./Icons";
 
-type Tab = "work" | "skills" | "proof";
+export type Tab = "work" | "skills" | "proof";
 
 type Props = {
   profile: Profile;
   sections: Section[];
-  /** when a reel is open, its source tile is removed so Flip can swap them */
+  tab: Tab;
+  onTab: (t: Tab) => void;
+  /** while a reel is open, its source tile is removed so Flip can swap them */
   activeId: string | null;
   onOpen: (index: number) => void;
 };
 
-export default function ProfileScreen({ profile, sections, activeId, onOpen }: Props) {
-  const [tab, setTab] = useState<Tab>("work");
+const TABS: { id: Tab; label: string }[] = [
+  { id: "work", label: "work" },
+  { id: "skills", label: "skills" },
+  { id: "proof", label: "proof" }
+];
 
-  const allChips = Array.from(
-    new Set(sections.flatMap((s) => s.chips ?? []))
-  );
-  const proofItems = sections.flatMap((s) =>
-    (s.proof ?? []).map((p) => ({ ...p, from: s.title }))
-  );
+/** Each tile gets its own procedural "photo" motif, derived from its index. */
+export const motifFor = (i: number) => i % 4;
+
+const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
+  { profile, sections, tab, onTab, activeId, onOpen },
+  ref
+) {
+  const allChips = Array.from(new Set(sections.flatMap((s) => s.chips ?? [])));
+  const proofItems = sections.flatMap((s) => s.proof ?? []);
 
   return (
-    <div className="profile">
-      <header className="ig-topbar">
-        <span className="ig-topbar__handle">{profile.handle}</span>
-        <span className="ig-topbar__icons" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M3 6h18M3 12h18M3 18h18" />
-          </svg>
-        </span>
-      </header>
-
+    <div className="profile" ref={ref}>
       <section className="ig-head">
-        <div className="ig-avatar" aria-hidden="true">
+        <div className="ig-avatar">
           <span className="ig-avatar__ring" />
           <span className="ig-avatar__initial">
             {profile.name.trim().charAt(0).toUpperCase()}
@@ -54,7 +51,9 @@ export default function ProfileScreen({ profile, sections, activeId, onOpen }: P
       </section>
 
       <section className="ig-bio">
-        <h1 className="ig-bio__name">{profile.name}</h1>
+        <h1 className="ig-bio__name">
+          {profile.name} <VerifiedIcon />
+        </h1>
         <p className="ig-bio__role">
           {profile.role}
           {profile.location ? " \u00b7 " + profile.location : ""}
@@ -77,17 +76,9 @@ export default function ProfileScreen({ profile, sections, activeId, onOpen }: P
         <a className="ig-btn" href="./resume.pdf" download>
           Resume
         </a>
-        {profile.links.map((l) => (
-          <a
-            className="ig-btn ig-btn--ghost"
-            key={l.label}
-            href={l.href}
-            target={l.href.startsWith("http") ? "_blank" : undefined}
-            rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
-          >
-            {l.label}
-          </a>
-        ))}
+        <a className="ig-btn ig-btn--ghost" href="https://github.com/vijay3695" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
       </section>
 
       <nav className="ig-highlights" aria-label="Jump to a section">
@@ -97,8 +88,13 @@ export default function ProfileScreen({ profile, sections, activeId, onOpen }: P
             className="ig-highlight"
             key={s.id}
             onClick={() => onOpen(i)}
+            aria-label={"Open " + s.highlight + " reel"}
           >
-            <span className="ig-highlight__bubble" style={{ backgroundImage: s.art }}>
+            <span
+              className="ig-highlight__bubble"
+              data-motif={motifFor(i)}
+              style={{ backgroundImage: s.art }}
+            >
               <span className="ig-highlight__glyph">{s.glyph}</span>
             </span>
             <span className="ig-highlight__label">{s.highlight}</span>
@@ -107,75 +103,97 @@ export default function ProfileScreen({ profile, sections, activeId, onOpen }: P
       </nav>
 
       <nav className="ig-tabs" aria-label="Profile sections">
-        {(["work", "skills", "proof"] as Tab[]).map((t) => (
+        {TABS.map((t) => (
           <button
             type="button"
-            key={t}
-            className={"ig-tab" + (tab === t ? " is-active" : "")}
-            aria-selected={tab === t}
-            onClick={() => setTab(t)}
+            key={t.id}
+            className={"ig-tab" + (tab === t.id ? " is-active" : "")}
+            aria-selected={tab === t.id}
+            onClick={() => onTab(t.id)}
           >
-            {t}
+            <span className="ig-tab__bar" />
+            {t.id === "work" && <ProofIcon size={22} />}
+            {t.id === "skills" && <ReelsIcon size={22} />}
+            {t.id === "proof" && <ProofIcon size={22} />}
+            <span className="sr-only">{t.label}</span>
           </button>
         ))}
       </nav>
 
-      {tab === "work" && (
-        <div className="ig-grid">
-          {sections.map((s, i) => (
-            <button
-              type="button"
-              className="ig-tile"
-              key={s.id}
-              style={{
-                backgroundImage: s.art,
-                display: activeId === s.id ? "none" : undefined
-              }}
-              data-flip-id={"tile-" + s.id}
-              onClick={() => onOpen(i)}
-              aria-label={"Open " + s.title}
-            >
-              <span className="ig-tile__glyph">{s.glyph}</span>
-              <span className="ig-tile__caption">{s.highlight}</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {tab === "skills" && (
-        <div className="ig-chips">
-          {allChips.map((c) => (
-            <span className="ig-chip" key={c}>
-              {c}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {tab === "proof" && (
-        <ul className="ig-proof">
-          {proofItems.map((p, i) => (
-            <li className="ig-proof__item" key={p.claim + i}>
-              <p className="ig-proof__claim">{p.claim}</p>
-              <p className="ig-proof__artefact">{p.artefact}</p>
-              {p.href && (
-                <a
-                  className="ig-proof__link"
-                  href={p.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+      <div key={tab} className="ig-panel">
+        {tab === "work" && (
+          <div className="ig-grid">
+            {sections.map((s, i) => {
+              const stat = s.metrics?.[0];
+              return (
+                <button
+                  type="button"
+                  className="ig-tile"
+                  key={s.id}
+                  data-motif={motifFor(i)}
+                  style={{
+                    display: activeId === s.id ? "none" : undefined,
+                    ["--art" as string]: s.art
+                  }}
+                  data-flip-id={"tile-" + s.id}
+                  onClick={() => onOpen(i)}
+                  aria-label={"Open " + s.title}
                 >
-                  Open artefact
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+                  <span className="ig-tile__art" />
+                  <span className="ig-tile__glyph">{s.glyph}</span>
+                  <span className="ig-tile__caption">{s.highlight}</span>
+                  <span className="ig-tile__overlay">
+                    {stat ? (
+                      <span className="ig-tile__stat">
+                        {stat.value} {stat.label}
+                      </span>
+                    ) : (
+                      <span className="ig-tile__stat">View reel</span>
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {tab === "skills" && (
+          <div className="ig-chips">
+            {allChips.map((c) => (
+              <span className="ig-chip" key={c}>
+                {c}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {tab === "proof" && (
+          <ul className="ig-proof">
+            {proofItems.map((p, i) => (
+              <li className="ig-proof__item" key={p.claim + i}>
+                <p className="ig-proof__claim">{p.claim}</p>
+                <p className="ig-proof__artefact">{p.artefact}</p>
+                {p.href && (
+                  <a
+                    className="ig-proof__link"
+                    href={p.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open artefact
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <footer className="ig-foot">
-        {profile.name} \u00b7 built by hand with React, GSAP and CSS scroll-snap
+        {profile.name} \u00b7 React, GSAP Flip and CSS scroll-snap \u00b7 no UI framework
       </footer>
     </div>
   );
-}
+});
+
+export default ProfileScreen;
