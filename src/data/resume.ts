@@ -194,11 +194,6 @@ export const sections: Section[] = [
         claim: "GPS ingest at 40k events/min with graceful backpressure instead of dropped trips.",
         artefact: "Public repo with the pipeline and a reproducible load test.",
         href: "https://github.com/vijay3695"
-      },
-      {
-        claim: "This portfolio: React, GSAP Flip and CSS scroll-snap, no UI framework, 87 kB gzipped.",
-        artefact: "Source, tests and deploy workflow in this repository.",
-        href: "https://github.com/vijay3695/Vijayakumar"
       }
     ],
     art: "linear-gradient(150deg,#2a2a0d 0%,#4a4412 50%,#07080f 100%)",
