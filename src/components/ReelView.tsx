@@ -17,6 +17,7 @@ import {
   HeartIcon,
   ShareIcon
 } from "./Icons";
+import { GitHubIcon, LinkedInIcon, PinIcon } from "./Icons";
 import { motifFor } from "./ProfileScreen";
 
 type Props = {
@@ -390,19 +391,32 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                     </ul>
                   )}
 
-                  {s.kind === "contact" && (
-                    <div className="reel__cta">
-                      {profile.links.map((l, i) => (
-                        <a
-                          className={"ig-btn" + (i === 0 ? " ig-btn--primary" : " ig-btn--ghost")}
-                          key={l.label}
-                          href={l.href}
-                          target={l.href.startsWith("http") ? "_blank" : undefined}
-                          rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        >
-                          {l.label}
-                        </a>
-                      ))}
+                  {s.kind === "about" && (
+                    <div className="reel__identity">
+                      <h3 className="reel__identity-name">{profile.name}</h3>
+                      <p className="reel__identity-role">{profile.role}</p>
+                      <p className="reel__identity-loc">
+                        <PinIcon /> <span>{profile.location}</span>
+                      </p>
+                      <div className="reel__identity-links">
+                        {profile.links.map((l, k) => (
+                          <a
+                            key={l.label}
+                            className="reel__idlink"
+                            style={{ animationDelay: k * 0.45 + "s" }}
+                            href={l.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {/linkedin/i.test(l.label) ? (
+                              <LinkedInIcon size={22} />
+                            ) : (
+                              <GitHubIcon size={22} />
+                            )}
+                            <span>{l.label}</span>
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

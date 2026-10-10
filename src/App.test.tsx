@@ -43,15 +43,13 @@ describe("profile screen", () => {
     expect(chips.length).toBe(expected.size);
   });
 
-  it("switches to the proof tab and links out safely", () => {
+  it("switches to the summary tab and shows the professional summary", () => {
     const { container } = render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: /^proof$/i }));
-    const items = container.querySelectorAll(".ig-proof__item");
-    const expected = sections.flatMap((s) => s.proof ?? []).length;
-    expect(items.length).toBe(expected);
+    fireEvent.click(screen.getByRole("button", { name: /^summary$/i }));
+    const paras = container.querySelectorAll(".ig-summary p");
+    const summary = sections.find((s) => s.kind === "summary");
+    expect(paras.length).toBe((summary?.body ?? []).length);
 
-    const ext = container.querySelector(".ig-proof__link[target='_blank']");
-    if (ext) expect(ext.getAttribute("rel")).toBe("noopener noreferrer");
   });
 });
 
@@ -156,12 +154,13 @@ describe("app chrome", () => {
     expect(screen.getByRole("dialog")).toBeTruthy();
   });
 
-  it("bottom nav jumps to the proof reel", () => {
+  it("bottom nav jumps to the core competencies reel", () => {
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: /proof of work/i }));
+    // exact match: "Open Core Competencies" (the grid tile) also matches the regex
+    fireEvent.click(screen.getByRole("button", { name: "Core competencies" }));
     const dialog = screen.getByRole("dialog");
-    const proof = sections.find((s) => s.kind === "proof");
-    expect(dialog.getAttribute("aria-label")).toBe(proof?.title);
+    const comps = sections.find((s) => s.kind === "skills");
+    expect(dialog.getAttribute("aria-label")).toBe(comps?.title);
   });
 });
 
@@ -203,9 +202,9 @@ describe("no contact address is published", () => {
     expect(container.innerHTML).not.toMatch(/mailto:/i);
   });
 
-  it("nothing appears inside the reel contact view either", () => {
+  it("nothing appears inside the reels either", () => {
     const { container } = render(<App />);
-    const i = sections.findIndex((s) => s.kind === "contact");
+    const i = sections.findIndex((s) => s.kind === "about");
     fireEvent.click(screen.getByRole("button", { name: `Open ${sections[i].title}` }));
     expect(container.innerHTML).not.toMatch(EMAIL_RE);
     expect(container.innerHTML).not.toMatch(/mailto:/i);
@@ -233,5 +232,46 @@ describe("no contact address is published", () => {
   it("no Resume download button remains", () => {
     render(<App />);
     expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();
+  });
+});
+
+describe("structure matches the resume", () => {
+  it("About is a personal card: name, location, LinkedIn and GitHub", () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    const card = container.querySelector(".reel__identity");
+    expect(card).toBeTruthy();
+    expect(card?.textContent).toContain(profile.name);
+    expect(card?.textContent).toContain(profile.location);
+    expect(card?.querySelectorAll(".reel__idlink").length).toBe(profile.links.length);
+  });
+
+  it("the professional summary lives in its own section, not in About", () => {
+    const about = sections.find((s) => s.kind === "about");
+    const summary = sections.find((s) => s.kind === "summary");
+    expect(about?.body.length).toBe(0);
+    expect(summary?.body.length).toBeGreaterThan(0);
+    expect(summary?.body[0]).toMatch(/Results-driven/);
+  });
+
+  it("core competencies carry all 11 competencies", () => {
+    const comps = sections.find((s) => s.kind === "skills");
+    expect(comps?.chips?.length).toBe(11);
+    expect(comps?.chips).toContain("Service Delivery & Operations");
+  });
+
+  it("all four Sutherland roles are present, newest first", () => {
+    const roles = sections.filter((s) => s.kind === "experience");
+    expect(roles.length).toBe(4);
+    expect(roles.every((r) => r.subtitle === "Sutherland Global Services")).toBe(true);
+    expect(roles[0].title).toBe("Team Manager");
+    expect(roles[3].title).toBe("Customer Support Associate");
+  });
+
+  it("no fabricated content from the sample data survives", () => {
+    const blob = JSON.stringify(sections);
+    for (const fake of ["Razorline", "Cargofleet", "p95", "Kafka", "PostgreSQL", "B.E. Computer Science"]) {
+      expect(blob.includes(fake), fake + " is still in the content").toBe(false);
+    }
   });
 });

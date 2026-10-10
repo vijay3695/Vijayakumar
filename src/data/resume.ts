@@ -11,7 +11,7 @@ export type Metric = { value: string; label: string };
 export type ProofItem = { claim: string; artefact: string; href?: string };
 
 export type SectionKind =
-  | "about" | "experience" | "skills" | "education" | "proof" | "contact";
+  | "about" | "summary" | "experience" | "skills";
 
 export type Section = {
   id: string;
@@ -67,150 +67,123 @@ export const sections: Section[] = [
     kind: "about",
     highlight: "About",
     eyebrow: "Reel 01 - About",
-    title: "Who I am",
-    subtitle: "Operations & Customer Success leader, 7 years in.",
+    title: "About me",
+    body: [],
+    art: "linear-gradient(160deg,#101a3a 0%,#1b2a5e 45%,#07080f 100%)",
+    glyph: "01"
+  },
+  {
+    id: "summary",
+    kind: "summary",
+    highlight: "Summary",
+    eyebrow: "Reel 02 - Professional Summary",
+    title: "Professional Summary",
     body: [
       "Results-driven Operations & Customer Success Leader with 7 years of progressive experience in customer service management, process optimization, and people leadership.",
       "Proven ability to build, mentor, and scale high-performing teams, resolve complex client escalations, and implement data-driven strategies that improve efficiency, reduce attrition, and elevate customer satisfaction.",
       "Adept at stakeholder management, workforce planning, and quality assurance. Recognized for driving operational excellence, client retention, and sustainable business growth."
     ],
-    chips: [
-      "Customer Service Management", "Process Optimization", "People Leadership",
-      "Stakeholder Management", "Workforce Planning", "Quality Assurance",
-      "Escalation Management", "Client Retention"
-    ],
-    art: "linear-gradient(160deg,#101a3a 0%,#1b2a5e 45%,#07080f 100%)",
-    glyph: "01"
+    art: "linear-gradient(160deg,#1a1030 0%,#2b1245 45%,#07080f 100%)",
+    glyph: "02"
   },
   {
-    id: "exp-razorline",
-    kind: "experience",
-    highlight: "Razorline",
-    eyebrow: "Reel 02 - Experience",
-    title: "Senior Software Engineer",
-    subtitle: "Razorline Payments",
-    meta: "2022 - 2025",
-    body: [
-      "Owned the ledger and settlement services behind card payments - the path that decides whether a merchant gets paid correctly, once, on time.",
-      "The hard part was never the happy path. It was double-charges, partial failures, and reconciliations that had to agree to the paisa."
-    ],
-    bullets: [
-      "Rebuilt settlement as an idempotent, replayable pipeline - cut reconciliation breaks by 94% over two quarters.",
-      "Cut p95 ledger write latency from 480ms to 150ms by replacing per-request balance reads with an append-only event log plus a materialised view.",
-      "Introduced contract tests between the payment API and three downstream consumers, which removed an entire class of release-day breakage.",
-      "Ran the on-call rotation and rewrote the runbooks; median incident acknowledgement dropped from 11 to 3 minutes."
-    ],
-    metrics: [
-      { value: "-69%", label: "p95 latency" },
-      { value: "94%", label: "fewer breaks" },
-      { value: "99.98%", label: "settlement uptime" }
-    ],
-    art: "linear-gradient(150deg,#0d2a3a 0%,#12405c 50%,#07080f 100%)",
-    glyph: "RL"
-  },
-  {
-    id: "exp-cargofleet",
-    kind: "experience",
-    highlight: "Cargofleet",
-    eyebrow: "Reel 03 - Experience",
-    title: "Software Engineer",
-    subtitle: "Cargofleet Logistics",
-    meta: "2020 - 2022",
-    body: [
-      "Second engineer on a fleet-tracking product: driver app, ingest pipeline, and the dispatch dashboard operations actually lived in.",
-      "Learned here that the cheapest performance win is usually deleting a query, not adding a cache."
-    ],
-    bullets: [
-      "Built the GPS ingest pipeline handling 40k events/minute at peak, with backpressure that degraded gracefully instead of dropping trips.",
-      "Replaced a nightly full-table sync with change-data-capture, taking dispatch data staleness from 24 hours to under 5 seconds.",
-      "Added route-level tracing, which turned 'dispatch feels slow' into a specific 800ms query in about a week."
-    ],
-    metrics: [
-      { value: "40k", label: "events / min" },
-      { value: "<5s", label: "data staleness" },
-      { value: "-71%", label: "infra cost" }
-    ],
-    art: "linear-gradient(150deg,#3a2410 0%,#5c3812 50%,#07080f 100%)",
-    glyph: "CF"
-  },
-  {
-    id: "skills",
+    id: "competencies",
     kind: "skills",
-    highlight: "Skills",
-    eyebrow: "Reel 04 - Toolkit",
-    title: "What I work with",
-    subtitle: "Depth where it counts, honesty about the rest.",
-    body: [
-      "Strongest in Go and PostgreSQL for backend work, TypeScript when a service needs a face. Comfortable owning a service end to end: schema, API, deploy, dashboard, on-call."
-    ],
+    highlight: "Competencies",
+    eyebrow: "Reel 03 - Core Competencies",
+    title: "Core Competencies",
+    body: [],
     chips: [
-      "Go", "TypeScript", "Python", "PostgreSQL", "Redis", "Kafka",
-      "gRPC", "REST", "Docker", "Kubernetes", "Terraform", "AWS",
-      "OpenTelemetry", "Grafana", "GitHub Actions"
+      "Customer Experience Management",
+      "Service Delivery & Operations",
+      "Client Engagement",
+      "Process Improvement & Root Cause Analysis",
+      "Team Leadership",
+      "Coaching & Mentoring",
+      "Workforce Planning & Scheduling",
+      "Escalation & Conflict Resolution",
+      "Performance Analytics & Reporting",
+      "Quality Assurance & Compliance",
+      "Attrition & Retention Strategies"
     ],
     art: "linear-gradient(150deg,#0f2f1e 0%,#154a2c 50%,#07080f 100%)",
-    glyph: "04"
+    glyph: "03"
   },
   {
-    id: "education",
-    kind: "education",
-    highlight: "Education",
-    eyebrow: "Reel 05 - Education",
-    title: "B.E. Computer Science",
-    subtitle: "Visvesvaraya Technological University",
-    meta: "2016 - 2020",
-    body: [
-      "Graduated with a focus on distributed systems and databases. Final-year project was a sharded key-value store, which is where I first hit the fun problems around consistency and failure."
-    ],
+    id: "exp-team-manager",
+    kind: "experience",
+    highlight: "Team Manager",
+    eyebrow: "Reel 04 - Professional Experience",
+    title: "Team Manager",
+    subtitle: "Sutherland Global Services",
+    meta: "2023 - Dec 2025",
+    body: [],
     bullets: [
-      "Final-year project: sharded key-value store with a Raft-based replication layer.",
-      "Two-time department-level winner, national hackathon finalist 2019."
+      "Led a 25-member customer support team, ensuring SLA, AHT and CSAT targets are consistently met.",
+      "Implemented retention strategies that reduced team attrition.",
+      "Conducted weekly RCA and performance reviews, driving improvements in customer satisfaction.",
+      "Handled escalated client issues with a high resolution rate within SLA.",
+      "Designed and delivered refresher training programs, improving agent accuracy and compliance.",
+      "Prepared and presented monthly operational dashboards to leadership with insights on attrition, quality and customer feedback.",
+      "Directed daily remote operations and virtual team engagement, using collaboration tools to sustain high productivity and team cohesion."
+    ],
+    metrics: [{ value: "25", label: "Team members" }],
+    art: "linear-gradient(150deg,#0d2a3a 0%,#12405c 50%,#07080f 100%)",
+    glyph: "TM"
+  },
+  {
+    id: "exp-team-leader",
+    kind: "experience",
+    highlight: "Team Leader",
+    eyebrow: "Reel 05 - Professional Experience",
+    title: "Team Leader",
+    subtitle: "Sutherland Global Services",
+    meta: "2021 - 2023",
+    body: [],
+    bullets: [
+      "Supervised a 30-member support team, driving adherence to SLA and KPI benchmarks.",
+      "Conducted root cause analysis and implemented corrective measures, reducing process errors.",
+      "Mentored and coached team members, improving employee engagement and performance.",
+      "Partnered with cross-functional teams to align service delivery with client requirements.",
+      "Supported a remote team through continuous virtual engagement, fostering a collaborative work environment that drove daily productivity."
+    ],
+    metrics: [{ value: "30", label: "Team members" }],
+    art: "linear-gradient(150deg,#3a2410 0%,#5c3812 50%,#07080f 100%)",
+    glyph: "TL"
+  },
+  {
+    id: "exp-senior-csa",
+    kind: "experience",
+    highlight: "Senior CSA",
+    eyebrow: "Reel 06 - Professional Experience",
+    title: "Senior Customer Support Associate",
+    subtitle: "Sutherland Global Services",
+    meta: "2019 - 2021",
+    body: [],
+    bullets: [
+      "Managed client escalations, ensuring satisfaction and retention of key accounts.",
+      "Trained and onboarded new hires, accelerating ramp-up time.",
+      "Provided daily performance insights to supervisors for better decision-making."
     ],
     art: "linear-gradient(150deg,#2b1030 0%,#43164a 50%,#07080f 100%)",
-    glyph: "ED"
+    glyph: "SC"
   },
   {
-    id: "proof",
-    kind: "proof",
-    highlight: "Proof",
-    eyebrow: "Reel 06 - Proof of work",
-    title: "Receipts",
-    subtitle: "Claims are cheap. This is the evidence layer.",
-    body: [
-      "Every line pairs a claim with the artefact that backs it. Open them and check - that is the point."
-    ],
-    proof: [
-      {
-        claim: "Idempotent settlement pipeline that survived a 40-minute downstream outage with zero double-payments.",
-        artefact: "Post-incident write-up with the replay timeline and reconciliation output.",
-        href: "https://github.com/vijay3695"
-      },
-      {
-        claim: "Ledger write path: p95 from 480ms to 150ms, holding at 3x the previous peak throughput.",
-        artefact: "Before/after load-test report and the commit that replaced the balance read.",
-        href: "https://github.com/vijay3695"
-      },
-      {
-        claim: "GPS ingest at 40k events/min with graceful backpressure instead of dropped trips.",
-        artefact: "Public repo with the pipeline and a reproducible load test.",
-        href: "https://github.com/vijay3695"
-      }
+    id: "exp-csa",
+    kind: "experience",
+    highlight: "CSA",
+    eyebrow: "Reel 07 - Professional Experience",
+    title: "Customer Support Associate",
+    subtitle: "Sutherland Global Services",
+    meta: "2018 - 2019",
+    body: [],
+    bullets: [
+      "Delivered frontline customer support via email for technical and business issues.",
+      "Collaborated with technical teams to resolve bugs and errors, ensuring first-contact resolution.",
+      "Handled multiple front-end and back-end systems to support client operations."
     ],
     art: "linear-gradient(150deg,#2a2a0d 0%,#4a4412 50%,#07080f 100%)",
-    glyph: "06"
-  },
-  {
-    id: "contact",
-    kind: "contact",
-    highlight: "Contact",
-    eyebrow: "Reel 07 - Contact",
-    title: "Let's talk",
-    subtitle: "Open to senior backend and platform roles.",
-    body: [
-      "Email is best - I usually reply within a day. Happy to talk through any of the work above, including the parts that did not go well."
-    ],
-    art: "linear-gradient(150deg,#0d2338 0%,#123a5a 50%,#07080f 100%)",
-    glyph: "07"
+    glyph: "CS"
   }
 ];
 

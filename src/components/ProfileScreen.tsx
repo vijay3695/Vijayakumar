@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
 import type { Profile, Section } from "../data/resume";
-import { GridIcon, ProofIcon, TagIcon, VerifiedIcon } from "./Icons";
+import { DocIcon, GridIcon, TagIcon, VerifiedIcon } from "./Icons";
 
-export type Tab = "work" | "skills" | "proof";
+export type Tab = "work" | "skills" | "summary";
 
 type Props = {
   profile: Profile;
@@ -17,7 +17,7 @@ type Props = {
 const TABS: { id: Tab; label: string }[] = [
   { id: "work", label: "work" },
   { id: "skills", label: "skills" },
-  { id: "proof", label: "proof" }
+  { id: "summary", label: "summary" }
 ];
 
 /** Each tile gets its own procedural "photo" motif, derived from its index. */
@@ -28,7 +28,7 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
   ref
 ) {
   const allChips = Array.from(new Set(sections.flatMap((s) => s.chips ?? [])));
-  const proofItems = sections.flatMap((s) => s.proof ?? []);
+  const summarySection = sections.find((s) => s.kind === "summary");
 
   return (
     <div className="profile" ref={ref}>
@@ -116,7 +116,7 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
             <span className="ig-tab__bar" />
             {t.id === "work" && <GridIcon size={22} />}
             {t.id === "skills" && <TagIcon size={22} />}
-            {t.id === "proof" && <ProofIcon size={22} />}
+            {t.id === "summary" && <DocIcon size={22} />}
             <span className="sr-only">{t.label}</span>
           </button>
         ))}
@@ -169,25 +169,12 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
           </div>
         )}
 
-        {tab === "proof" && (
-          <ul className="ig-proof">
-            {proofItems.map((p, i) => (
-              <li className="ig-proof__item" key={p.claim + i}>
-                <p className="ig-proof__claim">{p.claim}</p>
-                <p className="ig-proof__artefact">{p.artefact}</p>
-                {p.href && (
-                  <a
-                    className="ig-proof__link"
-                    href={p.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open artefact
-                  </a>
-                )}
-              </li>
+        {tab === "summary" && (
+          <div className="ig-summary">
+            {(summarySection?.body ?? []).map((para) => (
+              <p key={para}>{para}</p>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 

@@ -1,11 +1,11 @@
-import { HomeIcon, ProofIcon, ReelsIcon, SearchIcon } from "./Icons";
+import { HomeIcon, ReelsIcon, SearchIcon, TagIcon } from "./Icons";
 
 type Props = {
   initial: string;
-  active: "home" | "reels" | "proof";
+  active: "home" | "reels" | "skills";
   onHome: () => void;
   onReels: () => void;
-  onProof: () => void;
+  onCompetencies: () => void;
   onSkills: () => void;
 };
 
@@ -14,7 +14,7 @@ export default function BottomNav({
   active,
   onHome,
   onReels,
-  onProof,
+  onCompetencies,
   onSkills
 }: Props) {
   return (
@@ -46,11 +46,11 @@ export default function BottomNav({
 
       <button
         type="button"
-        className={"ig-bottomnav__item" + (active === "proof" ? " is-active" : "")}
-        onClick={onProof}
-        aria-label="Proof of work"
+        className={"ig-bottomnav__item" + (active === "skills" ? " is-active" : "")}
+        onClick={onCompetencies}
+        aria-label="Core competencies"
       >
-        <ProofIcon />
+        <TagIcon />
         <span className="ig-bottomnav__dot" />
       </button>
 

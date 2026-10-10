@@ -17,8 +17,8 @@ export default function App() {
   const appRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const proofIndex = useMemo(
-    () => Math.max(0, sections.findIndex((s) => s.kind === "proof")),
+  const competenciesIndex = useMemo(
+    () => Math.max(0, sections.findIndex((s) => s.kind === "skills")),
     []
   );
 
@@ -63,7 +63,11 @@ export default function App() {
   }, [reduced]);
 
   const navActive =
-    activeIndex === null ? "home" : sections[activeIndex]?.kind === "proof" ? "proof" : "reels";
+    activeIndex === null
+      ? "home"
+      : sections[activeIndex]?.kind === "skills"
+        ? "skills"
+        : "reels";
 
   return (
     <div className="app" ref={appRef}>
@@ -98,7 +102,7 @@ export default function App() {
         onHome={scrollTop}
         onSkills={goSkills}
         onReels={() => open(0)}
-        onProof={() => open(proofIndex)}
+        onCompetencies={() => open(competenciesIndex)}
       />
 
       {activeIndex !== null && (
