@@ -122,40 +122,27 @@ Recommended flow:
 If a sensitive file is ever committed by accident, tell me and I will purge it
 from history - but never rely on that; forks and third-party caches may persist.
 
-### How the email is protected
+### Contact policy: no email address is published
 
-There is no public resume PDF, and the contact address never appears in plain
-text - not in the repo, not in the bundle, not in the served HTML.
+The decision was to publish **no email address at all**. LinkedIn is the contact
+channel, with GitHub alongside it.
 
-- `contactEmailB64` in `src/data/resume.ts` holds the address **base64-encoded**.
-  That is intentional; do not "fix" it into a readable string. The repo is public
-  and so is the bundle, so a plain address here is harvested by scrapers that
-  read GitHub or parse the JavaScript.
-- `src/components/EmailButton.tsx` decodes it in the browser, and only when a
-  real visitor interacts (hover, focus, touch, click). Until then the href is a
-  harmless in-page anchor.
+- The content model (`src/data/resume.ts`) holds no address.
+- There is no `mailto:` anywhere in the app.
+- There is no public resume PDF and no download button.
 
-| Stage | Contains the address? |
-| --- | --- |
-| Served HTML | no |
-| JavaScript bundle | no - encoded only |
-| Live DOM after load | no |
-| DOM after a human engages | yes, in that browser only |
+`npm test` enforces this: it asserts the rendered DOM contains no email-shaped
+string and no `mailto:` - in the profile view *and* inside the reel contact view -
+and that `profile` itself holds no address.
 
-That defeats the automated harvesters, which is the overwhelming majority of the
-problem. It is not a guarantee against a determined human with a browser, and it
-is why a dedicated address is still worth having.
+Why not simply obfuscate it? An encoded address is a speed bump, not a lock. A
+harvester that regexes the HTML for `@` is defeated, but anyone who notices the
+encoded blob can decode it in one command - and it would then sit in a public
+repository forever. A personal address is the one detail you cannot rotate
+without disrupting everything else, so the safe move is not to publish it.
 
-To change the address:
-
-```bash
-printf '%s' 'you@example.com' | base64
-# then paste the output into contactEmailB64
-```
-
-`npm test` covers this: the suite asserts the decoded address is valid, that it
-never appears in the rendered DOM, and that the `mailto:` is only assembled
-after interaction.
+If you later want one-click contact without exposing an address, a **contact
+form** routes through a third party and keeps the address off the page entirely.
 
 ## Deploying (live on GitHub Pages)
 

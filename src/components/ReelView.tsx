@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { contactEmailB64 } from "../data/resume";
 import type { Profile, Section } from "../data/resume";
 import {
   animateReelIn,
@@ -18,7 +17,6 @@ import {
   HeartIcon,
   ShareIcon
 } from "./Icons";
-import EmailButton from "./EmailButton";
 import { motifFor } from "./ProfileScreen";
 
 type Props = {
@@ -394,14 +392,9 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
 
                   {s.kind === "contact" && (
                     <div className="reel__cta">
-                      <EmailButton
-                        b64={contactEmailB64}
-                        label="Email me"
-                        className="ig-btn ig-btn--primary"
-                      />
-                      {profile.links.map((l) => (
+                      {profile.links.map((l, i) => (
                         <a
-                          className="ig-btn ig-btn--ghost"
+                          className={"ig-btn" + (i === 0 ? " ig-btn--primary" : " ig-btn--ghost")}
                           key={l.label}
                           href={l.href}
                           target={l.href.startsWith("http") ? "_blank" : undefined}

@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
-import { contactEmailB64, profile, sections } from "./data/resume";
-import { decodeEmail } from "./components/EmailButton";
+import { profile, sections } from "./data/resume";
 
 beforeEach(() => cleanup());
 afterEach(() => cleanup());
@@ -195,32 +194,31 @@ describe("regressions", () => {
   });
 });
 
-describe("email protection", () => {
-  const EMAIL = decodeEmail(contactEmailB64);
+describe("no contact address is published", () => {
+  const EMAIL_RE = /[^\s@"'<>]+@[^\s@"'<>]+\.[a-z]{2,}/i;
 
-  it("the decoded address is a valid address (guards a broken payload)", () => {
-    expect(EMAIL).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-  });
-
-  it("never puts the plain address in the rendered DOM", () => {
+  it("the rendered DOM contains no email address and no mailto", () => {
     const { container } = render(<App />);
-    expect(container.innerHTML).not.toContain(EMAIL);
-    expect(container.innerHTML).not.toMatch(/mailto:[^"]*@/);
+    expect(container.innerHTML).not.toMatch(EMAIL_RE);
+    expect(container.innerHTML).not.toMatch(/mailto:/i);
   });
 
-  it("still hides it inside the reel contact view", () => {
+  it("nothing appears inside the reel contact view either", () => {
     const { container } = render(<App />);
-    const contact = sections.findIndex((s) => s.kind === "contact");
-    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[contact].title}` }));
-    expect(container.innerHTML).not.toContain(EMAIL);
+    const i = sections.findIndex((s) => s.kind === "contact");
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[i].title}` }));
+    expect(container.innerHTML).not.toMatch(EMAIL_RE);
+    expect(container.innerHTML).not.toMatch(/mailto:/i);
   });
 
-  it("assembles the mailto only once a human engages", () => {
+  it("the content model holds no address", () => {
+    expect(JSON.stringify(profile)).not.toMatch(EMAIL_RE);
+  });
+
+  it("LinkedIn and GitHub are offered instead", () => {
     render(<App />);
-    const btn = screen.getByRole("link", { name: /^email$/i });
-    expect(btn.getAttribute("href")).toBe("#contact");
-    fireEvent.pointerEnter(btn);
-    expect(btn.getAttribute("href")).toBe("mailto:" + EMAIL);
+    expect(screen.getByRole("link", { name: /linkedin/i }).getAttribute("href")).toMatch(/^https:/);
+    expect(screen.getByRole("link", { name: /github/i }).getAttribute("href")).toMatch(/^https:/);
   });
 
   it("no Resume download button remains", () => {

@@ -39,25 +39,11 @@ export const site = {
   sampleData: true
 };
 
-/**
- * The contact address is stored base64-encoded ON PURPOSE. Do not "fix" it into
- * a readable string.
- *
- * This repository is public and so is the built bundle, so a plain address here
- * would be harvested by scrapers that read GitHub or parse the JavaScript. It is
- * decoded in the browser only when a visitor actually interacts with the Email
- * control, and it never appears in the served HTML.
- *
- * To change it:  printf '%s' 'you@example.com' | base64
- */
-export const contactEmailB64 =
-  "aGVsbG9AdmlqYXlha3VtYXIuZGV2";
-
 export const profile = {
-  name: "Vijayakumar",
+  name: "Vijayakumar Chandiran",
   handle: "vijayakumar.dev",
-  role: "Software Engineer",
-  location: "Bengaluru, India",
+  role: "Lead – Service Delivery Operations",
+  location: "Chennai, India",
   available: "Open to senior backend roles",
   bio: [
     "I build backend systems that stay boring under load.",
@@ -70,8 +56,8 @@ export const profile = {
     { value: "12", label: "Projects" }
   ],
   links: [
-    { label: "GitHub", href: "https://github.com/vijay3695" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/" }
+    { label: "LinkedIn", href: "https://www.linkedin.com/" },
+    { label: "GitHub", href: "https://github.com/vijay3695" }
   ]
 };
 
