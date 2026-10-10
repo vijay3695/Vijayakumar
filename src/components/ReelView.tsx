@@ -235,6 +235,9 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
           ))}
         </div>
 
+        <span className="reel-scrim reel-scrim--top" aria-hidden="true" />
+        <span className="reel-scrim reel-scrim--bottom" aria-hidden="true" />
+
         <span className="reel__counter" aria-hidden="true">
           {pos.index + 1} / {sections.length}
         </span>
@@ -307,7 +310,6 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
 
                   <button type="button" className="reel__rail-btn" aria-label="Share" onClick={(e) => e.stopPropagation()}>
                     <ShareIcon size={26} />
-                    Share
                   </button>
 
                   <button
@@ -414,7 +416,7 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
 
         {showHint && (
           <div className="reel__hint" ref={hintRef} aria-hidden="true">
-            <ChevronUpIcon size={16} />
+            <ChevronDownIcon size={16} />
             Swipe for the next section
           </div>
         )}

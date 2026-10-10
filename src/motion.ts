@@ -30,25 +30,33 @@ export function profileEntrance(root: HTMLElement, reduced: boolean) {
   const ctx = gsap.context(() => {
     const tl = gsap.timeline({ defaults: { ease: OUT } });
 
-    tl.from(".ig-topbar__wordmark", { y: -16, opacity: 0, duration: 0.5 })
-      .from(".ig-topbar__icons > *", { y: -12, opacity: 0, duration: 0.4, stagger: 0.07 }, "<0.05")
+    /**
+     * Every step clears its inline styles on completion, so no element can be
+     * left frozen mid-tween holding an inline opacity/transform.
+     */
+    tl.from(".ig-topbar__wordmark", { y: -16, opacity: 0, duration: 0.5, clearProps: "all" })
+      .from(
+        ".ig-topbar__icons > *",
+        { y: -12, opacity: 0, duration: 0.4, stagger: 0.07, clearProps: "all" },
+        "<0.05"
+      )
       .from(
         ".ig-avatar__initial, .ig-avatar__ring",
-        { scale: 0.5, opacity: 0, duration: 0.75, ease: BACK, stagger: 0.06 },
+        { scale: 0.5, opacity: 0, duration: 0.75, ease: BACK, stagger: 0.06, clearProps: "all" },
         "-=0.3"
       )
-      .from(".ig-stats li", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08 }, "-=0.5")
-      .from(".ig-bio > *", { y: 15, opacity: 0, duration: 0.5, stagger: 0.055 }, "-=0.42")
-      .from(".ig-actions .ig-btn", { y: 13, opacity: 0, duration: 0.45, stagger: 0.06 }, "-=0.38")
+      .from(".ig-stats li", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08, clearProps: "all" }, "-=0.5")
+      .from(".ig-bio > *", { y: 15, opacity: 0, duration: 0.5, stagger: 0.055, clearProps: "all" }, "-=0.42")
+      .from(".ig-actions .ig-btn", { y: 13, opacity: 0, duration: 0.45, stagger: 0.06, clearProps: "all" }, "-=0.38")
       .from(
         ".ig-highlight",
-        { y: 20, opacity: 0, scale: 0.8, duration: 0.55, stagger: 0.05, ease: BACK },
+        { y: 20, opacity: 0, scale: 0.8, duration: 0.55, stagger: 0.05, ease: BACK, clearProps: "all" },
         "-=0.34"
       )
-      .from(".ig-tab", { opacity: 0, y: 8, duration: 0.3, stagger: 0.05 }, "-=0.42")
+      .from(".ig-tab", { opacity: 0, y: 8, duration: 0.3, stagger: 0.05, clearProps: "all" }, "-=0.42")
       .from(
         ".ig-bottomnav__item",
-        { y: 34, opacity: 0, duration: 0.5, stagger: 0.05 },
+        { y: 34, opacity: 0, duration: 0.5, stagger: 0.05, clearProps: "all" },
         "-=0.42"
       );
   }, root);

@@ -75,5 +75,12 @@
 
   /* ---- chrome heights (referenced by sticky offsets) ---- */
   --topbar-h: 48px;
+  --statusbar-h: 0px;
   --bottomnav-h: 52px;
+  --chrome-h: calc(var(--topbar-h) + var(--statusbar-h) + var(--safe-t));
+}
+
+/* the fake status bar only exists on desktop, where it sells the device frame */
+@media (min-width: 760px) {
+  :root { --statusbar-h: 28px; }
 }

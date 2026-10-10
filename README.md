@@ -103,6 +103,32 @@ works on the project path above or on a custom domain with no changes.
 An equivalent GitHub Actions workflow is kept at `deploy/github-pages.yml` if you
 prefer CI-based deploys - move it to `.github/workflows/deploy.yml` to use it.
 
+## Visual checks (how this was actually verified)
+
+`scripts/shoot.mjs` renders the **built** site in headless Chrome, writes nine
+screenshots to `.screenshots/`, and prints a DOM audit - font actually loaded,
+tiles visible, chrome counts, console errors, failed requests:
+
+```bash
+npm run build
+npm i -D puppeteer
+node scripts/shoot.mjs
+```
+
+It serves `dist/` over a local HTTP port because ES modules cannot load from
+`file://` (CORS). On a normal machine `npx puppeteer browsers install chrome`
+is the only setup needed.
+
+This is not decoration - it caught three bugs that no unit test could see:
+
+- `\u00b7` written inside JSX *text* nodes rendered as the literal characters
+  `·` instead of a middot (JSX text does not process escapes)
+- the top bar's notification icon froze at `opacity: 0.053` - GSAP left inline
+  `opacity`/`transform` behind on completion, pinning the element at its start
+  values. Every entrance step now sets `clearProps: "all"`
+- on reels taller than the viewport the fixed controls sat directly on body text,
+  so the chrome now gets its own gradient scrim, like a video player UI
+
 ## Repo layout
 
 ```

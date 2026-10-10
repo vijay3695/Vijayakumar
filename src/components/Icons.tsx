@@ -122,3 +122,52 @@ export function PlusSquareIcon({ size = 24 }: IconProps) {
     </svg>
   );
 }
+
+export function GridIcon({ size = 24 }: IconProps) {
+  return (
+    <svg {...svgProps(size)} fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
+    </svg>
+  );
+}
+
+export function TagIcon({ size = 24 }: IconProps) {
+  return (
+    <svg {...svgProps(size)} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.5 11.4V4.5a1 1 0 0 1 1-1h6.9a1 1 0 0 1 .7.3l8.1 8.1a1 1 0 0 1 0 1.4l-6.9 6.9a1 1 0 0 1-1.4 0L3.8 12.1a1 1 0 0 1-.3-.7z" />
+      <circle cx="7.6" cy="7.6" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function SignalIcon({ size = 16 }: IconProps) {
+  return (
+    <svg viewBox="0 0 18 12" width={size} height={size * 0.67} aria-hidden="true" fill="currentColor">
+      <rect x="0" y="8" width="3" height="4" rx="1" />
+      <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+      <rect x="10" y="3" width="3" height="9" rx="1" />
+      <rect x="15" y="0" width="3" height="12" rx="1" />
+    </svg>
+  );
+}
+
+export function WifiIcon({ size = 16 }: IconProps) {
+  return (
+    <svg viewBox="0 0 16 12" width={size} height={size * 0.75} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round">
+      <path d="M1 4.2a10 10 0 0 1 14 0" />
+      <path d="M3.6 6.9a6.4 6.4 0 0 1 8.8 0" />
+      <circle cx="8" cy="10" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function BatteryIcon({ size = 24 }: IconProps) {
+  return (
+    <svg viewBox="0 0 26 12" width={size} height={size * 0.46} aria-hidden="true" fill="none">
+      <rect x="0.5" y="0.5" width="22" height="11" rx="3.2" stroke="currentColor" opacity="0.5" />
+      <rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor" />
+      <path d="M24.5 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity="0.5" />
+    </svg>
+  );
+}

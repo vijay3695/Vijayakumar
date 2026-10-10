@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { Profile, Section } from "../data/resume";
-import { ProofIcon, ReelsIcon, VerifiedIcon } from "./Icons";
+import { GridIcon, ProofIcon, TagIcon, VerifiedIcon } from "./Icons";
 
 export type Tab = "work" | "skills" | "proof";
 
@@ -112,8 +112,8 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
             onClick={() => onTab(t.id)}
           >
             <span className="ig-tab__bar" />
-            {t.id === "work" && <ProofIcon size={22} />}
-            {t.id === "skills" && <ReelsIcon size={22} />}
+            {t.id === "work" && <GridIcon size={22} />}
+            {t.id === "skills" && <TagIcon size={22} />}
             {t.id === "proof" && <ProofIcon size={22} />}
             <span className="sr-only">{t.label}</span>
           </button>
@@ -190,7 +190,7 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
       </div>
 
       <footer className="ig-foot">
-        {profile.name} \u00b7 React, GSAP Flip and CSS scroll-snap \u00b7 no UI framework
+        {profile.name} · React, GSAP Flip and CSS scroll-snap · no UI framework
       </footer>
     </div>
   );

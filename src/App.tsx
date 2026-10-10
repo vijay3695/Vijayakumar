@@ -57,7 +57,7 @@ export default function App() {
     <div className="app" ref={appRef}>
       {site.sampleData && (
         <p className="sample-banner" role="note">
-          Design preview \u00b7 placeholder content \u00b7 edit <code>src/data/resume.ts</code>
+          Design preview · placeholder content · edit <code>src/data/resume.ts</code>
         </p>
       )}
 
