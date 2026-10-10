@@ -46,13 +46,13 @@ export const profile = {
   location: "Chennai, India",
   available: "Open to senior backend roles",
   bio: [
-    "I build backend systems that stay boring under load.",
-    "Go, TypeScript and Postgres. Lately: observability and cloud cost.",
-    "Previously fintech and logistics."
+    "Operations & Customer Success Leader · 7 years.",
+    "I build, mentor and scale high-performing service teams.",
+    "Process, people, and the numbers behind both."
   ],
   stats: [
     { value: "3", label: "Roles" },
-    { value: "6", label: "Years" },
+    { value: "7", label: "Years" },
     { value: "12", label: "Projects" }
   ],
   links: [
@@ -68,12 +68,17 @@ export const sections: Section[] = [
     highlight: "About",
     eyebrow: "Reel 01 - About",
     title: "Who I am",
-    subtitle: "Backend engineer, six years in.",
+    subtitle: "Operations & Customer Success leader, 7 years in.",
     body: [
-      "I like the unglamorous parts of software: idempotency, retries, migrations that do not page anyone at 3am. Most of my work has been making systems that were fine at 10 requests a second survive 10,000.",
-      "I care about systems that can be understood by the person on call, not just the person who wrote them. That usually means fewer moving parts, better logs, and saying no to a clever solution."
+      "Results-driven Operations & Customer Success Leader with 7 years of progressive experience in customer service management, process optimization, and people leadership.",
+      "Proven ability to build, mentor, and scale high-performing teams, resolve complex client escalations, and implement data-driven strategies that improve efficiency, reduce attrition, and elevate customer satisfaction.",
+      "Adept at stakeholder management, workforce planning, and quality assurance. Recognized for driving operational excellence, client retention, and sustainable business growth."
     ],
-    chips: ["Go", "TypeScript", "Python", "PostgreSQL", "Redis", "Kafka", "Docker", "AWS"],
+    chips: [
+      "Customer Service Management", "Process Optimization", "People Leadership",
+      "Stakeholder Management", "Workforce Planning", "Quality Assurance",
+      "Escalation Management", "Client Retention"
+    ],
     art: "linear-gradient(160deg,#101a3a 0%,#1b2a5e 45%,#07080f 100%)",
     glyph: "01"
   },
