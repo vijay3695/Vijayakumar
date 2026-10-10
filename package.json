@@ -1,14 +1,32 @@
 {
   "name": "vijayakumar-portfolio",
-  "version": "1.0.0",
   "private": true,
-  "description": "Cinematic single-page portfolio with a first-class proof-of-work section.",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Instagram-style mobile-first portfolio: profile grid, scroll-snap reels per resume section.",
   "scripts": {
-    "test": "node tests/render.test.mjs",
-    "serve": "node scripts/serve.mjs",
-    "extract": "python3 scripts/extract_resume.py"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "extract": "python3 scripts/extract_resume.py",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "jsdom": "^24.0.0"
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^30.1.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^5.0.3"
   }
 }

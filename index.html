@@ -1,129 +1,17 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="cinematic">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Vijayakumar — Engineer &amp; Builder</title>
-<meta name="description" content="Portfolio of Vijayakumar — selected work, engineering decisions, and verifiable proof of work." />
-<meta name="color-scheme" content="dark" />
-
-<!-- Social -->
-<meta property="og:title" content="Vijayakumar — Engineer &amp; Builder" />
-<meta property="og:description" content="Selected work, engineering decisions, and verifiable proof of work." />
-<meta property="og:type" content="website" />
-
-<!-- Fonts: progressive enhancement. Offline, the fallback stacks below still carry the design. -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
-
-<link rel="stylesheet" href="styles/main.css" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2307070A'/><text y='72' x='50' text-anchor='middle' font-size='62' fill='%23FF6B35' font-family='Helvetica'>V</text></svg>" />
-</head>
-<body>
-
-<!-- Ambient light: WebGL shader, falls back to canvas 2D, disabled on reduced-motion -->
-<canvas id="glow" aria-hidden="true"></canvas>
-<div class="grain" aria-hidden="true"></div>
-<div class="vignette" aria-hidden="true"></div>
-
-<a class="skip-link" href="#main">Skip to content</a>
-
-<!-- Reading progress + chapter readout -->
-<div class="hud" aria-hidden="true">
-  <div class="hud__bar"><span id="progress"></span></div>
-  <div class="hud__count"><span id="chapter-now">00</span> / <span id="chapter-total">00</span></div>
-</div>
-
-<header class="nav">
-  <a class="nav__mark" href="#top">V<span>K</span></a>
-  <nav class="nav__links" aria-label="Sections">
-    <a href="#work">Work</a>
-    <a href="#proof">Proof</a>
-    <a href="#about">About</a>
-    <a class="nav__cta" href="#contact">Contact</a>
-  </nav>
-  <button class="nav__toggle" aria-expanded="false" aria-controls="navmenu" aria-label="Menu">Menu</button>
-</header>
-
-<main id="main">
-
-  <!-- ============ HERO ============ -->
-  <section class="chapter hero" id="top" data-chapter="00" data-title="Intro">
-    <div class="hero__inner">
-      <p class="eyebrow reveal">Portfolio <span class="dot"></span> <span id="hero-year">2026</span></p>
-      <h1 class="display hero__title">
-        <span class="line"><span class="line__in">I build things</span></span>
-        <span class="line"><span class="line__in">that have to</span></span>
-        <span class="line accent"><span class="line__in">actually work.</span></span>
-      </h1>
-      <p class="hero__lede reveal" data-delay="1">
-        <strong id="hero-name">Vijayakumar</strong> — software engineer. Below is selected work,
-        the decisions behind it, and the receipts that prove it shipped.
-      </p>
-      <div class="hero__meta reveal" data-delay="2">
-        <span id="hero-location">Location</span>
-        <span class="dot"></span>
-        <a id="hero-email" href="mailto:hello@example.com">hello@example.com</a>
-      </div>
-    </div>
-    <a class="scroll-cue" href="#work" aria-label="Scroll to work"><span></span>Scroll</a>
-  </section>
-
-  <!-- ============ WORK: chapters injected from content.js ============ -->
-  <div id="work-mount"></div>
-
-  <!-- ============ PROOF OF WORK ============ -->
-  <section class="chapter proof" id="proof" data-chapter="P" data-title="Proof of work">
-    <div class="section-head">
-      <p class="eyebrow reveal">Receipts</p>
-      <h2 class="display h2 reveal" data-delay="1">Proof of work</h2>
-      <p class="lede reveal" data-delay="2">
-        Claims are cheap. This is the evidence layer: what the problem was, what I
-        specifically changed, and what measurably moved — each with an artefact you
-        can open yourself.
-      </p>
-    </div>
-    <div class="proof__list" id="proof-mount"></div>
-  </section>
-
-  <!-- ============ ABOUT ============ -->
-  <section class="chapter about" id="about" data-chapter="A" data-title="About">
-    <div class="about__grid">
-      <div class="section-head">
-        <p class="eyebrow reveal">About</p>
-        <h2 class="display h2 reveal" data-delay="1">The short version</h2>
-      </div>
-      <div class="about__body reveal" data-delay="2" id="about-body"></div>
-    </div>
-    <div class="stack" id="stack-mount"></div>
-  </section>
-
-  <!-- ============ CONTACT ============ -->
-  <section class="chapter contact" id="contact" data-chapter="C" data-title="Contact">
-    <p class="eyebrow reveal">Next</p>
-    <h2 class="display contact__title reveal" data-delay="1">
-      Let's build<br />something<br /><span class="accent">worth shipping.</span>
-    </h2>
-    <div class="contact__links reveal" data-delay="2" id="contact-mount"></div>
-  </section>
-
-</main>
-
-<footer class="footer">
-  <span id="footer-note">© <span id="footer-year">2026</span> Vijayakumar</span>
-  <span class="footer__note">Built by hand — no framework, no page builder.</span>
-</footer>
-
-<noscript>
-  <div class="noscript">
-    This portfolio's work chapters load with JavaScript. Reach me directly at
-    <a href="mailto:hello@example.com">hello@example.com</a>.
-  </div>
-</noscript>
-
-<script src="content.js"></script>
-<script src="js/glow.js"></script>
-<script src="js/main.js"></script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" />
+    <meta name="theme-color" content="#000000" />
+    <title>Vijayakumar — Software Engineer</title>
+    <meta name="description" content="Portfolio of Vijayakumar, presented as a feed. Scroll the reels for experience, skills and proof of work." />
+    <meta property="og:title" content="Vijayakumar — Software Engineer" />
+    <meta property="og:description" content="Scroll the reels: experience, skills and proof of work." />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

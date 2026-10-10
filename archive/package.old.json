@@ -1,0 +1,18 @@
+{
+  "name": "vijayakumar-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cinematic single-page portfolio with a first-class proof-of-work section.",
+  "scripts": {
+    "test": "node tests/render.test.mjs",
+    "serve": "node scripts/serve.mjs",
+    "extract": "python3 scripts/extract_resume.py"
+  },
+  "devDependencies": {
+    "css-tree": "^3.2.1",
+    "jsdom": "^24.0.0"
+  },
+  "dependencies": {
+    "puppeteer": "^25.13.0"
+  }
+}
