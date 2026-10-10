@@ -221,6 +221,15 @@ describe("no contact address is published", () => {
     expect(screen.getByRole("link", { name: /github/i }).getAttribute("href")).toMatch(/^https:/);
   });
 
+  it("every link points at a real page, not a bare domain", () => {
+    // Guards a shipped bug: the LinkedIn href was "https://www.linkedin.com/",
+    // so the button dumped visitors on the homepage instead of the profile.
+    for (const l of profile.links) {
+      const path = new URL(l.href).pathname.replace(/\/+$/, "");
+      expect(path.length, l.label + " points at a bare domain").toBeGreaterThan(0);
+    }
+  });
+
   it("no Resume download button remains", () => {
     render(<App />);
     expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();

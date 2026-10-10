@@ -56,7 +56,7 @@ export const profile = {
     { value: "12", label: "Projects" }
   ],
   links: [
-    { label: "LinkedIn", href: "https://www.linkedin.com/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/vijayakumar-chandiran" },
     { label: "GitHub", href: "https://github.com/vijay3695" }
   ]
 };

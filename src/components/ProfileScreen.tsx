@@ -191,9 +191,7 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
         )}
       </div>
 
-      <footer className="ig-foot">
-        {profile.name} · React, GSAP Flip and CSS scroll-snap · no UI framework
-      </footer>
+      <footer className="ig-foot">{profile.name}</footer>
     </div>
   );
 });
