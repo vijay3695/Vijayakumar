@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "extract": "python3 scripts/extract_resume.py",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {
     "gsap": "^3.12.5",

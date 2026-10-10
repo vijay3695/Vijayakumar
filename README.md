@@ -75,20 +75,33 @@ still give you a working reel.
 - Background scroll is locked while a reel is open, and restored on close
 - `prefers-reduced-motion` disables the flip and all transitions
 
-## Deploying
+## Deploying (live on GitHub Pages)
 
-The workflow is committed at **`deploy/github-pages.yml`** (not in
-`.github/workflows/`, because the automation that authored this repo is not
-allowed to write workflow files). To turn it on, either:
+The built site is published to the **`gh-pages` branch**, which needs no workflow
+file and no extra permissions:
 
-1. **Locally:** `mkdir -p .github/workflows && git mv deploy/github-pages.yml .github/workflows/deploy.yml`
-2. **On GitHub:** Actions -> New workflow -> paste the file's contents.
+```bash
+npm run deploy      # builds, then force-pushes dist/ to gh-pages
+```
 
-It runs typecheck, tests and build, then publishes `dist/` on every push to
-`main`. Enable **Settings -> Pages -> Source: GitHub Actions** once.
+**One-time step (manual):** GitHub does not let the automation that wrote this
+repo enable Pages, so do it once by hand:
+
+> Repo -> **Settings** -> **Pages** -> *Build and deployment* ->
+> **Source: Deploy from a branch** -> **Branch: `gh-pages`** -> **/ (root)** -> Save
+
+Your site then lives at:
+
+**https://vijay3695.github.io/Vijayakumar/**
+
+It takes about a minute to go live the first time. Every later `npm run deploy`
+updates it within a minute or so (hard-refresh if you see a cached version).
 
 `base: "./"` in `vite.config.ts` keeps asset URLs relative, so the same build
-works on a project path or a custom domain with no changes.
+works on the project path above or on a custom domain with no changes.
+
+An equivalent GitHub Actions workflow is kept at `deploy/github-pages.yml` if you
+prefer CI-based deploys - move it to `.github/workflows/deploy.yml` to use it.
 
 ## Repo layout
 
