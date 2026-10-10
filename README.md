@@ -95,15 +95,28 @@ site.
 
 Recommended flow:
 
-1. Put the raw resume in `private/` (already gitignored - verified with
-   `git check-ignore`). It is never committed.
-2. Only the fields you approve are copied into `src/data/resume.ts`.
-3. A phone number is never needed on a portfolio. Email is enough.
-4. If you want a downloadable resume, keep the raw one out of the repo and commit
+1. Share the resume **through the chat** (paste the text, or attach the file).
+   There is no upload directory in the sandbox and no filesystem access to it.
+2. `private/` is a **safety net, not an upload box**. It is gitignored, so any
+   document that ever lands in the working directory cannot be committed or
+   deployed - not even by a careless `git add -A`. Verified:
+
+   ```bash
+   $ printf 'secret' > private/resume.pdf && git add -A && git status --porcelain
+   # (empty - nothing staged)
+   $ git check-ignore -v private/resume.pdf
+   .gitignore:10:private/    private/resume.pdf
+   ```
+
+3. Only the fields you approve are copied into `src/data/resume.ts`. Everything
+   else stays out of the repo. Strongest option: skip the document entirely and
+   just dictate the facts you want published.
+4. A phone number is never needed on a portfolio. Email is enough.
+5. If you want a downloadable resume, keep the raw one out of the repo and commit
    a **redacted** copy to `public/resume.pdf` instead - with the phone, home
    address and any ID numbers actually removed (drawing a black box over text
    leaves it extractable).
-5. Consider a dedicated address for the public email: scrapers will find and spam
+6. Consider a dedicated address for the public email: scrapers will find and spam
    whatever appears on the page.
 
 If a sensitive file is ever committed by accident, tell me and I will purge it
