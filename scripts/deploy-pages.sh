@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Build the site and publish dist/ to the gh-pages branch.
-#   npm run deploy
+# Build the site and publish it to main:/docs
 #
-# Why a branch instead of a GitHub Actions workflow: the automation that
-# authored this repo is not permitted to create files under .github/workflows/.
-# A gh-pages branch needs no workflow and no extra permissions.
+# That is the folder GitHub Pages serves when the source is set to
+# "Deploy from a branch -> main -> /docs".
+#
+# Deliberately NO force-push. An earlier version of this script force-pushed a
+# gh-pages branch, which silently destroyed a deployment made by another agent
+# (and the display picture with it). Committing into docs/ cannot do that.
 # ============================================================================
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
-REMOTE_URL="$(git config --get remote.origin.url)"
-
-if [ -z "$REMOTE_URL" ]; then
-  echo "error: no git remote 'origin' configured" >&2
-  exit 1
-fi
+BRANCH="${DEPLOY_BRANCH:-main}"
 
 echo "==> building"
 npm run build
@@ -25,39 +22,27 @@ if [ ! -f dist/index.html ]; then
   exit 1
 fi
 
-# The display picture is inlined as a data URI on purpose. If an image file ever
-# appears in dist/, it is plainly downloadable - fail loudly rather than ship it.
+# The display picture is inlined on purpose. An image file here would be plainly
+# downloadable, so fail loudly rather than ship it.
 STRAY=$(find dist -type f \( -iname 'avatar*' -o -iname 'dp.*' -o -iname 'profile-photo*' \) 2>/dev/null | head -5)
 if [ -n "$STRAY" ]; then
   echo "error: the display picture is shipping as a file, not inlined:" >&2
   echo "$STRAY" >&2
   exit 1
 fi
-echo "    display picture: inlined (no image file in dist/)"
 
-# who should the deploy commit be attributed to?
-AUTHOR_NAME="$(git config user.name || echo 'unknown')"
-AUTHOR_EMAIL="$(git config user.email || echo 'unknown')"
+echo "==> syncing dist/ -> docs/"
+rm -rf docs
+cp -r dist docs
+touch docs/.nojekyll
 
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
-cp -r dist/. "$TMP/"
+git add -A docs
+if git diff --cached --quiet; then
+  echo "==> nothing changed, nothing to publish"
+  exit 0
+fi
 
-cd "$TMP"
-git init -q -b gh-pages
-# inherit the repo's configured identity so deploy commits are attributed the same
-# way as source commits, instead of a synthetic "portfolio deploy" account
-git config user.email "$AUTHOR_EMAIL"
-git config user.name "$AUTHOR_NAME"
-git add -A
 git commit -q -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-git remote add origin "$REMOTE_URL"
-
-# gh-pages is a generated artifact branch, so replacing its history is expected
-# and safe. The source of truth is the default branch.
-echo "==> pushing to gh-pages"
-git push --force origin gh-pages
-
-echo "==> done"
-echo "    live at: https://<your-username>.github.io/<repo-name>/"
-echo "    (enable once: Settings -> Pages -> Source: Deploy from a branch -> gh-pages / root)"
+git push origin "$BRANCH"
+echo "==> published to $BRANCH:/docs"
+echo "    (Pages must be set to: Deploy from a branch -> $BRANCH -> /docs)"
