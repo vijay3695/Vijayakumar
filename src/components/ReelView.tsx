@@ -370,12 +370,25 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                   )}
 
                   {s.certs && (
-                    <ul className="reel__certs">
+                    <ul className="reel__list">
                       {s.certs.map((c) => (
                         <li key={c.name}>
-                          <span className="reel__cert-name">{c.name}</span>
-                          <span className="reel__cert-meta">
+                          <span className="reel__list-name">{c.name}</span>
+                          <span className="reel__list-meta">
                             {c.issuer} · {c.year}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {s.education && (
+                    <ul className="reel__list">
+                      {s.education.map((e) => (
+                        <li key={e.qualification}>
+                          <span className="reel__list-name">{e.qualification}</span>
+                          <span className="reel__list-meta">
+                            {e.institution} · {e.years}
                           </span>
                         </li>
                       ))}

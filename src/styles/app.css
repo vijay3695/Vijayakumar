@@ -1301,15 +1301,15 @@ a { color: inherit; text-decoration: none; }
   .reel__idlink { animation: none; }
 }
 
-/* --------------------------------------------------------- certifications */
+/* ------------------------------- certifications + education (shared rows) */
 
-.reel__certs {
+.reel__list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.reel__certs li {
+.reel__list li {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1317,13 +1317,13 @@ a { color: inherit; text-decoration: none; }
   border-top: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-.reel__cert-name {
+.reel__list-name {
   font-size: 14.5px;
   font-weight: 600;
   line-height: 1.35;
 }
 
-.reel__cert-meta {
+.reel__list-meta {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.62);
 }

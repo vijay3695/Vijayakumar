@@ -10,9 +10,10 @@
 export type Metric = { value: string; label: string };
 export type ProofItem = { claim: string; artefact: string; href?: string };
 export type Certification = { name: string; issuer: string; year: string };
+export type Education = { qualification: string; institution: string; years: string };
 
 export type SectionKind =
-  | "about" | "summary" | "experience" | "skills" | "certifications";
+  | "about" | "summary" | "experience" | "skills" | "certifications" | "education";
 
 export type Section = {
   id: string;
@@ -29,6 +30,7 @@ export type Section = {
   metrics?: Metric[];
   proof?: ProofItem[];
   certs?: Certification[];
+  education?: Education[];
   /** reel backdrop gradient */
   art: string;
   /** short mark shown on the grid tile */
@@ -212,6 +214,28 @@ export const sections: Section[] = [
     ],
     art: "linear-gradient(150deg,#0d2338 0%,#123a5a 50%,#07080f 100%)",
     glyph: "08"
+  },
+  {
+    id: "education",
+    kind: "education",
+    highlight: "Education",
+    eyebrow: "Reel 09 - Education",
+    title: "Education",
+    body: [],
+    education: [
+      {
+        qualification: "B.E. Computer Science and Engineering",
+        institution: "Madha Engineering College",
+        years: "2014 - 2018"
+      },
+      {
+        qualification: "HSC, Biology",
+        institution: "St. Vincent's MHSS",
+        years: "2012 - 2014"
+      }
+    ],
+    art: "linear-gradient(150deg,#0c2b2b 0%,#12504a 50%,#07080f 100%)",
+    glyph: "ED"
   }
 ];
 

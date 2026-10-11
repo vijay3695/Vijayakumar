@@ -295,9 +295,21 @@ describe("structure matches the resume", () => {
     expect(certs?.certs?.some((c) => c.issuer === "Sutherland Learning")).toBe(true);
   });
 
+  it("includes the education section merged from the other branch", () => {
+    const edu = sections.find((s) => s.kind === "education");
+    expect(edu?.education?.length).toBe(2);
+    expect(edu?.education?.[0]).toEqual({
+      qualification: "B.E. Computer Science and Engineering",
+      institution: "Madha Engineering College",
+      years: "2014 - 2018"
+    });
+    expect(edu?.education?.[1].institution).toBe("St. Vincent's MHSS");
+  });
+
   it("no fabricated content from the sample data survives", () => {
     const blob = JSON.stringify(sections);
-    for (const fake of ["Razorline", "Cargofleet", "p95", "Kafka", "PostgreSQL", "B.E. Computer Science"]) {
+    // note: "B.E. Computer Science" is NOT here - it is now real, merged from the other branch
+    for (const fake of ["Razorline", "Cargofleet", "p95", "Kafka", "PostgreSQL", "Visvesvaraya"]) {
       expect(blob.includes(fake), fake + " is still in the content").toBe(false);
     }
   });
