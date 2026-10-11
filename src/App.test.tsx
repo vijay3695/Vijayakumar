@@ -268,6 +268,17 @@ describe("structure matches the resume", () => {
     expect(roles[3].title).toBe("Customer Support Associate");
   });
 
+  it("lists all 10 certifications with issuer and year", () => {
+    const certs = sections.find((s) => s.kind === "certifications");
+    expect(certs?.certs?.length).toBe(10);
+    expect(certs?.certs?.[0]).toEqual({
+      name: "Six Sigma Black Belt",
+      issuer: "LinkedIn",
+      year: "2025"
+    });
+    expect(certs?.certs?.some((c) => c.issuer === "Sutherland Learning")).toBe(true);
+  });
+
   it("no fabricated content from the sample data survives", () => {
     const blob = JSON.stringify(sections);
     for (const fake of ["Razorline", "Cargofleet", "p95", "Kafka", "PostgreSQL", "B.E. Computer Science"]) {

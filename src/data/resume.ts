@@ -9,9 +9,10 @@
 
 export type Metric = { value: string; label: string };
 export type ProofItem = { claim: string; artefact: string; href?: string };
+export type Certification = { name: string; issuer: string; year: string };
 
 export type SectionKind =
-  | "about" | "summary" | "experience" | "skills";
+  | "about" | "summary" | "experience" | "skills" | "certifications";
 
 export type Section = {
   id: string;
@@ -27,6 +28,7 @@ export type Section = {
   chips?: string[];
   metrics?: Metric[];
   proof?: ProofItem[];
+  certs?: Certification[];
   /** reel backdrop gradient */
   art: string;
   /** short mark shown on the grid tile */
@@ -184,6 +186,28 @@ export const sections: Section[] = [
     ],
     art: "linear-gradient(150deg,#2a2a0d 0%,#4a4412 50%,#07080f 100%)",
     glyph: "CS"
+  },
+  {
+    id: "certifications",
+    kind: "certifications",
+    highlight: "Certifications",
+    eyebrow: "Reel 08 - Certifications",
+    title: "Certifications",
+    body: [],
+    certs: [
+      { name: "Six Sigma Black Belt", issuer: "LinkedIn", year: "2025" },
+      { name: "Key Account Management", issuer: "LinkedIn", year: "2025" },
+      { name: "Root Cause Analysis", issuer: "Skillsoft", year: "2024" },
+      { name: "Talent Acquisition Journey", issuer: "Skillsoft", year: "2024" },
+      { name: "Problem Solving & Decision Making", issuer: "Skillsoft", year: "2024" },
+      { name: "Machine Learning & Data Analytics", issuer: "Skillsoft", year: "2024" },
+      { name: "Data Analytics for Managers", issuer: "Skillsoft", year: "2024" },
+      { name: "Quality Management", issuer: "Sutherland Learning", year: "2025" },
+      { name: "Diversity & Inclusion", issuer: "Skillsoft", year: "2024" },
+      { name: "Microsoft Excel", issuer: "Skillsoft", year: "2025" }
+    ],
+    art: "linear-gradient(150deg,#0d2338 0%,#123a5a 50%,#07080f 100%)",
+    glyph: "08"
   }
 ];
 

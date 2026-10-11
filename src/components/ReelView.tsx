@@ -369,6 +369,19 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                     </div>
                   )}
 
+                  {s.certs && (
+                    <ul className="reel__certs">
+                      {s.certs.map((c) => (
+                        <li key={c.name}>
+                          <span className="reel__cert-name">{c.name}</span>
+                          <span className="reel__cert-meta">
+                            {c.issuer} · {c.year}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
                   {s.proof && (
                     <ul className="reel__proof">
                       {s.proof.map((p, k) => (
