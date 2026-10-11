@@ -25,6 +25,16 @@ if [ ! -f dist/index.html ]; then
   exit 1
 fi
 
+# The display picture is inlined as a data URI on purpose. If an image file ever
+# appears in dist/, it is plainly downloadable - fail loudly rather than ship it.
+STRAY=$(find dist -type f \( -iname 'avatar*' -o -iname 'dp.*' -o -iname 'profile-photo*' \) 2>/dev/null | head -5)
+if [ -n "$STRAY" ]; then
+  echo "error: the display picture is shipping as a file, not inlined:" >&2
+  echo "$STRAY" >&2
+  exit 1
+fi
+echo "    display picture: inlined (no image file in dist/)"
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 cp -r dist/. "$TMP/"

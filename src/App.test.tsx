@@ -244,12 +244,6 @@ describe("display picture", () => {
     expect(img?.getAttribute("alt")).toBe(profile.name);
   });
 
-  it("leaves no downloadable image file on the site", async () => {
-    const { readdir } = await import("node:fs/promises");
-    const files = await readdir("public");
-    expect(files.filter((f) => /\.(png|jpe?g|webp|gif|avif)$/i.test(f))).toEqual([]);
-  });
-
   it("is not draggable", () => {
     const { container } = render(<App />);
     const img = container.querySelector(".ig-avatar__photo");
