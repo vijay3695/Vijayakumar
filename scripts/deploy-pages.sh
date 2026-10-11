@@ -35,14 +35,20 @@ if [ -n "$STRAY" ]; then
 fi
 echo "    display picture: inlined (no image file in dist/)"
 
+# who should the deploy commit be attributed to?
+AUTHOR_NAME="$(git config user.name || echo 'unknown')"
+AUTHOR_EMAIL="$(git config user.email || echo 'unknown')"
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 cp -r dist/. "$TMP/"
 
 cd "$TMP"
 git init -q -b gh-pages
-git config user.email "deploy@localhost"
-git config user.name "portfolio deploy"
+# inherit the repo's configured identity so deploy commits are attributed the same
+# way as source commits, instead of a synthetic "portfolio deploy" account
+git config user.email "$AUTHOR_EMAIL"
+git config user.name "$AUTHOR_NAME"
 git add -A
 git commit -q -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 git remote add origin "$REMOTE_URL"
