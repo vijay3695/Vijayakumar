@@ -35,9 +35,19 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
       <section className="ig-head">
         <div className="ig-avatar">
           <span className="ig-avatar__ring" />
-          <span className="ig-avatar__initial">
-            {profile.name.trim().charAt(0).toUpperCase()}
-          </span>
+          {profile.avatar ? (
+            <img
+              className="ig-avatar__photo"
+              src={profile.avatar}
+              alt={profile.name}
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          ) : (
+            <span className="ig-avatar__initial">
+              {profile.name.trim().charAt(0).toUpperCase()}
+            </span>
+          )}
         </div>
 
         <ul className="ig-stats">

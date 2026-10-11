@@ -235,6 +235,28 @@ describe("no contact address is published", () => {
   });
 });
 
+describe("display picture", () => {
+  it("renders the avatar from an inlined data URI", () => {
+    const { container } = render(<App />);
+    const img = container.querySelector(".ig-avatar__photo") as HTMLImageElement | null;
+    expect(img).toBeTruthy();
+    expect(img?.getAttribute("src")?.startsWith("data:image/")).toBe(true);
+    expect(img?.getAttribute("alt")).toBe(profile.name);
+  });
+
+  it("leaves no downloadable image file on the site", async () => {
+    const { readdir } = await import("node:fs/promises");
+    const files = await readdir("public");
+    expect(files.filter((f) => /\.(png|jpe?g|webp|gif|avif)$/i.test(f))).toEqual([]);
+  });
+
+  it("is not draggable", () => {
+    const { container } = render(<App />);
+    const img = container.querySelector(".ig-avatar__photo");
+    expect(img?.getAttribute("draggable")).toBe("false");
+  });
+});
+
 describe("structure matches the resume", () => {
   it("About is a personal card: name, location, LinkedIn and GitHub", () => {
     const { container } = render(<App />);

@@ -41,8 +41,12 @@ export const site = {
   sampleData: true
 };
 
+import { avatarImage } from "./avatar";
+
 export const profile = {
   name: "Vijayakumar Chandiran",
+  /** display picture - an inlined data URI, so no image file sits on the site */
+  avatar: avatarImage,
   handle: "vijayakumar.dev",
   role: "Lead – Service Delivery Operations",
   location: "Chennai, India",

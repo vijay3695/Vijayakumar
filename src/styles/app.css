@@ -1327,3 +1327,18 @@ a { color: inherit; text-decoration: none; }
   font-size: 12px;
   color: rgba(255, 255, 255, 0.62);
 }
+
+/* ------------------------------------------------------- display picture */
+
+.ig-avatar__photo {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 22%;
+  display: block;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), var(--shadow-1);
+  /* speed bumps, not protection - anything rendered can still be captured */
+  -webkit-user-drag: none;
+  user-select: none;
+}
