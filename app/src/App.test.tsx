@@ -193,19 +193,33 @@ describe("regressions", () => {
     expect(new Set(arts).size).toBe(arts.length);
   });
 
-  it("renders no 'Reel NN' eyebrow anywhere", () => {
+  it("every reel shows its own title, with no 'Reel NN' prefix", () => {
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    const active = container.querySelector(".reel-scroller")?.children[0] as HTMLElement;
+    expect(active.querySelector(".reel__title")?.textContent).toBe(sections[0].title);
     expect(container.querySelector(".reel__eyebrow")).toBeNull();
     expect(container.innerHTML).not.toMatch(/Reel \d+/);
   });
 
-  it("the About reel leads with the name, not a section heading", () => {
+  it("the About reel shows the name card beneath its title", () => {
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
-    const reel = container.querySelector(".reel") as HTMLElement;
-    expect(reel.querySelector(".reel__title")).toBeNull();
-    expect(reel.querySelector(".reel__identity-name")?.textContent).toBe(profile.name);
+    const active = container.querySelector(".reel-scroller")?.children[0] as HTMLElement;
+    expect(active.querySelector(".reel__identity-name")?.textContent).toBe(profile.name);
+    expect(active.querySelector(".reel__identity-role")?.textContent).toBe(profile.role);
+  });
+
+  it("every reel carries three animated backdrop layers", () => {
+    const { container } = render(<App />);
+    // the reel feed only exists once a reel is open
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    expect(container.querySelectorAll(".reel__blob").length).toBe(sections.length * 3);
+  });
+
+  it("each reel's backdrop is tinted by its own accent", () => {
+    const accents = sections.map((s) => s.accent);
+    expect(new Set(accents).size).toBe(accents.length);
   });
 
   it("the verified badge is rendered next to the name", () => {

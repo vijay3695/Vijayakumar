@@ -279,7 +279,14 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                 style={{ ["--art" as string]: s.art }}
                 onClick={(e) => onReelClick(e, s.id)}
               >
-                <span className="reel__bg" />
+                <span
+                  className="reel__bg"
+                  style={{ ["--accent" as string]: s.accent }}
+                >
+                  <i className="reel__blob reel__blob--1" />
+                  <i className="reel__blob reel__blob--2" />
+                  <i className="reel__blob reel__blob--3" />
+                </span>
                 <span className="reel__veil" />
 
                 <span className="reel__burst" aria-hidden="true">
@@ -327,7 +334,7 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                 </div>
 
                 <div className="reel__body">
-                  {s.kind !== "about" && <h2 className="reel__title">{s.title}</h2>}
+                  <h2 className="reel__title">{s.title}</h2>
                   {s.subtitle && <p className="reel__subtitle">{s.subtitle}</p>}
                   {s.meta && <p className="reel__meta">{s.meta}</p>}
 

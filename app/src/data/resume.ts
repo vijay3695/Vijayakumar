@@ -32,6 +32,8 @@ export type Section = {
   education?: Education[];
   /** reel backdrop gradient */
   art: string;
+  /** rgb triple, drives the animated backdrop tint */
+  accent: string;
   /** short mark shown on the grid tile */
   glyph: string;
 };
@@ -76,7 +78,8 @@ export const sections: Section[] = [
     title: "About me",
     body: [],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(96,124,232,0.32), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(120,80,190,0.18), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "01"
+    glyph: "01",
+    accent: "96,124,232"
   },
   {
     id: "summary",
@@ -89,7 +92,8 @@ export const sections: Section[] = [
       "Adept at stakeholder management, workforce planning, and quality assurance. Recognized for driving operational excellence, client retention, and sustainable business growth."
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(110,96,220,0.30), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(70,110,200,0.16), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "02"
+    glyph: "02",
+    accent: "120,104,224"
   },
   {
     id: "competencies",
@@ -111,7 +115,8 @@ export const sections: Section[] = [
       "Attrition & Retention Strategies"
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(58,168,150,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(70,120,190,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "03"
+    glyph: "03",
+    accent: "58,168,150"
   },
   {
     id: "exp-team-manager",
@@ -132,7 +137,8 @@ export const sections: Section[] = [
     ],
     metrics: [{ value: "25", label: "Team members" }],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(72,132,220,0.30), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(60,90,180,0.16), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "TM"
+    glyph: "TM",
+    accent: "72,132,220"
   },
   {
     id: "exp-team-leader",
@@ -151,7 +157,8 @@ export const sections: Section[] = [
     ],
     metrics: [{ value: "30", label: "Team members" }],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(206,142,72,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(150,90,60,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "TL"
+    glyph: "TL",
+    accent: "206,142,72"
   },
   {
     id: "exp-senior-csa",
@@ -167,7 +174,8 @@ export const sections: Section[] = [
       "Provided daily performance insights to supervisors for better decision-making."
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(150,96,210,0.28), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(100,70,170,0.15), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "SC"
+    glyph: "SC",
+    accent: "150,96,210"
   },
   {
     id: "exp-csa",
@@ -183,7 +191,8 @@ export const sections: Section[] = [
       "Handled multiple front-end and back-end systems to support client operations."
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(180,150,90,0.22), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(120,110,70,0.13), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "CS"
+    glyph: "CS",
+    accent: "180,150,90"
   },
   {
     id: "certifications",
@@ -204,7 +213,8 @@ export const sections: Section[] = [
       { name: "Microsoft Excel", issuer: "Skillsoft", year: "2025" }
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(70,140,190,0.28), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(60,110,170,0.15), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "08"
+    glyph: "08",
+    accent: "70,140,190"
   },
   {
     id: "education",
@@ -225,7 +235,8 @@ export const sections: Section[] = [
       }
     ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(60,150,160,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(50,110,150,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
-    glyph: "ED"
+    glyph: "ED",
+    accent: "60,150,160"
   }
 ];
 

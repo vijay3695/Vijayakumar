@@ -731,27 +731,58 @@ a { color: inherit; text-decoration: none; }
   scroll-snap-stop: always;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: calc(var(--safe-t) + 74px) 18px calc(var(--safe-b) + 104px);
+  justify-content: center;
+  padding: calc(var(--safe-t) + 92px) 20px calc(var(--safe-b) + 108px);
   overflow: hidden;
 }
 
 /* parallax backdrop, driven from JS */
+/* Animated backdrop: three drifting, heavily blurred light fields tinted by the
+   section accent. A flat gradient read as static and cheap; this moves, and it
+   costs nothing at build time (no image assets to load). */
 .reel__bg {
   position: absolute;
-  inset: -8%;
-  background-image: var(--art);
-  background-size: cover;
+  inset: 0;
+  overflow: hidden;
+  background: #07070A;
   will-change: transform;
 }
 
-.reel__bg::after {
-  content: "";
+.reel__blob {
   position: absolute;
-  inset: 0;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+  width: 82%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(34px);
+  will-change: transform;
+  background: radial-gradient(circle, rgba(var(--accent), 0.62), rgba(var(--accent), 0) 68%);
+}
+
+.reel__blob--1 { top: -20%; left: -24%; animation: blobDrift1 26s ease-in-out infinite; }
+.reel__blob--3 { top: 30%; left: 26%; opacity: 0.62; animation: blobDrift3 38s ease-in-out infinite; }
+.reel__blob--2 {
+  bottom: -26%;
+  right: -28%;
+  opacity: 0.5;
+  animation: blobDrift2 32s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(255,255,255,0.16), rgba(255,255,255,0) 68%);
+}
+
+@keyframes blobDrift1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(11%, 9%, 0) scale(1.2); }
+}
+@keyframes blobDrift2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.12); }
+  50%      { transform: translate3d(-13%, -10%, 0) scale(0.92); }
+}
+@keyframes blobDrift3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.9); }
+  50%      { transform: translate3d(-9%, 13%, 0) scale(1.22); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel__blob { animation: none; }
 }
 
 .reel__veil {
@@ -769,8 +800,10 @@ a { color: inherit; text-decoration: none; }
 .reel__body {
   position: relative;
   z-index: 2;
-  max-width: 100%;
-  padding-right: 62px;
+  width: 100%;
+  max-width: none;
+  /* right gutter keeps the action rail off the copy */
+  padding-right: 58px;
 }
 
 .reel__eyebrow { /* no longer rendered */
@@ -788,8 +821,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .reel__title {
-  margin: 0 0 5px;
-  font-size: clamp(27px, 8.6vw, 41px);
+  margin: 0 0 6px;
+  font-size: clamp(30px, 9.8vw, 47px);
   line-height: 1.03;
   font-weight: 800;
   letter-spacing: -0.035em;
@@ -798,8 +831,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .reel__subtitle {
-  margin: 0 0 11px;
-  font-size: 15px;
+  margin: 0 0 12px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.015em;
   color: rgba(255,255,255,0.94);
@@ -815,8 +848,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .reel__text {
-  margin: 0 0 11px;
-  font-size: 14.5px;
+  margin: 0 0 12px;
+  font-size: 15.5px;
   line-height: 1.55;
   color: rgba(255,255,255,0.9);
 }
@@ -825,9 +858,9 @@ a { color: inherit; text-decoration: none; }
 
 .reel__bullets li {
   position: relative;
-  padding-left: 21px;
-  margin-bottom: 9px;
-  font-size: 14.5px;
+  padding-left: 22px;
+  margin-bottom: 10px;
+  font-size: 15.5px;
   line-height: 1.5;
   color: rgba(255,255,255,0.92);
 }
@@ -921,8 +954,9 @@ a { color: inherit; text-decoration: none; }
 
 .reel__rail {
   position: absolute;
-  right: 8px;
-  bottom: calc(var(--safe-b) + 84px);
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 6;
   display: flex;
   flex-direction: column;
@@ -1185,7 +1219,7 @@ a { color: inherit; text-decoration: none; }
 
 .reel__identity-name {
   margin: 0;
-  font-size: clamp(30px, 9.4vw, 46px);
+  font-size: clamp(35px, 11.4vw, 54px);
   line-height: 1.02;
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -1283,7 +1317,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .reel__list-name {
-  font-size: 14.5px;
+  font-size: 15.5px;
   font-weight: 600;
   line-height: 1.35;
 }
