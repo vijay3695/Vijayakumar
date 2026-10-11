@@ -18,7 +18,6 @@ import {
   ShareIcon
 } from "./Icons";
 import { GitHubIcon, LinkedInIcon, PinIcon } from "./Icons";
-import { motifFor } from "./ProfileScreen";
 
 type Props = {
   sections: Section[];
@@ -269,7 +268,7 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
         </div>
 
         <div className="reel-scroller" ref={scroller}>
-          {sections.map((s, i) => {
+          {sections.map((s) => {
             const isLiked = !!liked[s.id];
             const isSaved = !!saved[s.id];
             const likes = weightOf(s) + (isLiked ? 1 : 0);
@@ -277,7 +276,6 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
               <article
                 className="reel"
                 key={s.id}
-                data-motif={motifFor(i)}
                 style={{ ["--art" as string]: s.art }}
                 onClick={(e) => onReelClick(e, s.id)}
               >
@@ -329,8 +327,7 @@ export default function ReelView({ sections, startIndex, profile, reduced, onClo
                 </div>
 
                 <div className="reel__body">
-                  <p className="reel__eyebrow">{s.eyebrow}</p>
-                  <h2 className="reel__title">{s.title}</h2>
+                  {s.kind !== "about" && <h2 className="reel__title">{s.title}</h2>}
                   {s.subtitle && <p className="reel__subtitle">{s.subtitle}</p>}
                   {s.meta && <p className="reel__meta">{s.meta}</p>}
 

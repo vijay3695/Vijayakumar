@@ -184,12 +184,34 @@ describe("regressions", () => {
     expect(screen.getAllByRole("button", { name: /unlike/i }).length).toBeGreaterThan(0);
   });
 
-  it("tiles carry a distinct motif so no two look alike", () => {
+  it("each tile has its own backdrop, so no two look alike", () => {
     const { container } = render(<App />);
-    const motifs = Array.from(container.querySelectorAll(".ig-tile")).map(
-      (t) => t.getAttribute("data-motif")
+    const arts = Array.from(container.querySelectorAll(".ig-tile")).map((t) =>
+      (t as HTMLElement).style.getPropertyValue("--art")
     );
-    expect(new Set(motifs).size).toBeGreaterThan(1);
+    expect(arts.length).toBe(sections.length);
+    expect(new Set(arts).size).toBe(arts.length);
+  });
+
+  it("renders no 'Reel NN' eyebrow anywhere", () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    expect(container.querySelector(".reel__eyebrow")).toBeNull();
+    expect(container.innerHTML).not.toMatch(/Reel \d+/);
+  });
+
+  it("the About reel leads with the name, not a section heading", () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: `Open ${sections[0].title}` }));
+    const reel = container.querySelector(".reel") as HTMLElement;
+    expect(reel.querySelector(".reel__title")).toBeNull();
+    expect(reel.querySelector(".reel__identity-name")?.textContent).toBe(profile.name);
+  });
+
+  it("the verified badge is rendered next to the name", () => {
+    const { container } = render(<App />);
+    const name = container.querySelector(".ig-bio__name");
+    expect(name?.querySelector("svg")).toBeTruthy();
   });
 });
 

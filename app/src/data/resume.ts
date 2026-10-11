@@ -20,7 +20,6 @@ export type Section = {
   kind: SectionKind;
   /** label under the story-highlight bubble */
   highlight: string;
-  eyebrow: string;
   title: string;
   subtitle?: string;
   meta?: string;
@@ -74,31 +73,28 @@ export const sections: Section[] = [
     id: "about",
     kind: "about",
     highlight: "About",
-    eyebrow: "Reel 01 - About",
     title: "About me",
     body: [],
-    art: "linear-gradient(160deg,#101a3a 0%,#1b2a5e 45%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(96,124,232,0.32), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(120,80,190,0.18), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "01"
   },
   {
     id: "summary",
     kind: "summary",
     highlight: "Summary",
-    eyebrow: "Reel 02 - Professional Summary",
     title: "Professional Summary",
     body: [
       "Results-driven Operations & Customer Success Leader with 7 years of progressive experience in customer service management, process optimization, and people leadership.",
       "Proven ability to build, mentor, and scale high-performing teams, resolve complex client escalations, and implement data-driven strategies that improve efficiency, reduce attrition, and elevate customer satisfaction.",
       "Adept at stakeholder management, workforce planning, and quality assurance. Recognized for driving operational excellence, client retention, and sustainable business growth."
     ],
-    art: "linear-gradient(160deg,#1a1030 0%,#2b1245 45%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(110,96,220,0.30), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(70,110,200,0.16), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "02"
   },
   {
     id: "competencies",
     kind: "skills",
     highlight: "Competencies",
-    eyebrow: "Reel 03 - Core Competencies",
     title: "Core Competencies",
     body: [],
     chips: [
@@ -114,14 +110,13 @@ export const sections: Section[] = [
       "Quality Assurance & Compliance",
       "Attrition & Retention Strategies"
     ],
-    art: "linear-gradient(150deg,#0f2f1e 0%,#154a2c 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(58,168,150,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(70,120,190,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "03"
   },
   {
     id: "exp-team-manager",
     kind: "experience",
     highlight: "Team Manager",
-    eyebrow: "Reel 04 - Professional Experience",
     title: "Team Manager",
     subtitle: "Sutherland Global Services",
     meta: "2023 - Dec 2025",
@@ -136,14 +131,13 @@ export const sections: Section[] = [
       "Directed daily remote operations and virtual team engagement, using collaboration tools to sustain high productivity and team cohesion."
     ],
     metrics: [{ value: "25", label: "Team members" }],
-    art: "linear-gradient(150deg,#0d2a3a 0%,#12405c 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(72,132,220,0.30), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(60,90,180,0.16), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "TM"
   },
   {
     id: "exp-team-leader",
     kind: "experience",
     highlight: "Team Leader",
-    eyebrow: "Reel 05 - Professional Experience",
     title: "Team Leader",
     subtitle: "Sutherland Global Services",
     meta: "2021 - 2023",
@@ -156,14 +150,13 @@ export const sections: Section[] = [
       "Supported a remote team through continuous virtual engagement, fostering a collaborative work environment that drove daily productivity."
     ],
     metrics: [{ value: "30", label: "Team members" }],
-    art: "linear-gradient(150deg,#3a2410 0%,#5c3812 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(206,142,72,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(150,90,60,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "TL"
   },
   {
     id: "exp-senior-csa",
     kind: "experience",
     highlight: "Senior CSA",
-    eyebrow: "Reel 06 - Professional Experience",
     title: "Senior Customer Support Associate",
     subtitle: "Sutherland Global Services",
     meta: "2019 - 2021",
@@ -173,14 +166,13 @@ export const sections: Section[] = [
       "Trained and onboarded new hires, accelerating ramp-up time.",
       "Provided daily performance insights to supervisors for better decision-making."
     ],
-    art: "linear-gradient(150deg,#2b1030 0%,#43164a 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(150,96,210,0.28), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(100,70,170,0.15), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "SC"
   },
   {
     id: "exp-csa",
     kind: "experience",
     highlight: "CSA",
-    eyebrow: "Reel 07 - Professional Experience",
     title: "Customer Support Associate",
     subtitle: "Sutherland Global Services",
     meta: "2018 - 2019",
@@ -190,14 +182,13 @@ export const sections: Section[] = [
       "Collaborated with technical teams to resolve bugs and errors, ensuring first-contact resolution.",
       "Handled multiple front-end and back-end systems to support client operations."
     ],
-    art: "linear-gradient(150deg,#2a2a0d 0%,#4a4412 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(180,150,90,0.22), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(120,110,70,0.13), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "CS"
   },
   {
     id: "certifications",
     kind: "certifications",
     highlight: "Certifications",
-    eyebrow: "Reel 08 - Certifications",
     title: "Certifications",
     body: [],
     certs: [
@@ -212,14 +203,13 @@ export const sections: Section[] = [
       { name: "Diversity & Inclusion", issuer: "Skillsoft", year: "2024" },
       { name: "Microsoft Excel", issuer: "Skillsoft", year: "2025" }
     ],
-    art: "linear-gradient(150deg,#0d2338 0%,#123a5a 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(70,140,190,0.28), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(60,110,170,0.15), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "08"
   },
   {
     id: "education",
     kind: "education",
     highlight: "Education",
-    eyebrow: "Reel 09 - Education",
     title: "Education",
     body: [],
     education: [
@@ -234,7 +224,7 @@ export const sections: Section[] = [
         years: "2012 - 2014"
       }
     ],
-    art: "linear-gradient(150deg,#0c2b2b 0%,#12504a 50%,#07080f 100%)",
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(60,150,160,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(50,110,150,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "ED"
   }
 ];

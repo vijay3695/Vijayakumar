@@ -1,120 +1,35 @@
 /* ============================================================================
-   motion.ts - every animation in the app lives here, so the components stay
-   readable. All of it is opt-out via prefers-reduced-motion.
+   motion.ts - the animations, in one place.
+
+   Deliberately NO page-load animation. Instagram appears instantly; a staggered
+   entrance makes a portfolio feel slow and cheap. Movement only happens in
+   response to something the user does: opening a reel, tapping a like, switching
+   a tab. All of it defers to prefers-reduced-motion.
    ==========================================================================*/
 
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
 
-gsap.registerPlugin(ScrollTrigger, Flip);
+gsap.registerPlugin(Flip);
 
 const OUT = "power3.out";
 const BACK = "back.out(1.6)";
 
-/** Kill any inline transform left on the tiles, so Flip measures cleanly. */
+/** Clear any inline transform left on the tiles, so Flip measures cleanly. */
 export function releaseTiles() {
   gsap.set(".ig-tile", { clearProps: "transform,opacity,scale" });
-}
-
-/* ------------------------------------------------------- profile entrance --*/
-
-/**
- * The staggered reveal you see on first paint. Runs top-down: chrome, then
- * identity, then the story bubbles, and finally hands the grid over to
- * ScrollTrigger (which is why tiles are deliberately not in this timeline).
- */
-export function profileEntrance(root: HTMLElement, reduced: boolean) {
-  if (reduced) return () => {};
-
-  const ctx = gsap.context(() => {
-    const tl = gsap.timeline({ defaults: { ease: OUT } });
-
-    /**
-     * Every step clears its inline styles on completion, so no element can be
-     * left frozen mid-tween holding an inline opacity/transform.
-     */
-    tl.from(".ig-topbar__wordmark", { y: -16, opacity: 0, duration: 0.5, clearProps: "all" })
-      .from(
-        ".ig-topbar__icons > *",
-        { y: -12, opacity: 0, duration: 0.4, stagger: 0.07, clearProps: "all" },
-        "<0.05"
-      )
-      .from(
-        ".ig-avatar__initial, .ig-avatar__ring",
-        { scale: 0.5, opacity: 0, duration: 0.75, ease: BACK, stagger: 0.06, clearProps: "all" },
-        "-=0.3"
-      )
-      .from(".ig-stats li", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08, clearProps: "all" }, "-=0.5")
-      .from(".ig-bio > *", { y: 15, opacity: 0, duration: 0.5, stagger: 0.055, clearProps: "all" }, "-=0.42")
-      .from(".ig-actions .ig-btn", { y: 13, opacity: 0, duration: 0.45, stagger: 0.06, clearProps: "all" }, "-=0.38")
-      .from(
-        ".ig-highlight",
-        { y: 20, opacity: 0, scale: 0.8, duration: 0.55, stagger: 0.05, ease: BACK, clearProps: "all" },
-        "-=0.34"
-      )
-      .from(".ig-tab", { opacity: 0, y: 8, duration: 0.3, stagger: 0.05, clearProps: "all" }, "-=0.42")
-      .from(
-        ".ig-bottomnav__item",
-        { y: 34, opacity: 0, duration: 0.5, stagger: 0.05, clearProps: "all" },
-        "-=0.42"
-      );
-  }, root);
-
-  return () => ctx.revert();
-}
-
-/* ------------------------------------------------------------- tile reveal --*/
-
-/** Grid tiles pop in as they scroll into view, Instagram-timeline style. */
-export function tileReveal(
-  root: HTMLElement,
-  reduced: boolean,
-  /** on desktop the device frame scrolls internally, so ScrollTrigger needs it */
-  scroller?: HTMLElement | null
-) {
-  if (reduced) return () => {};
-
-  const tiles = Array.from(root.querySelectorAll<HTMLElement>(".ig-tile"));
-  if (!tiles.length) return () => {};
-
-  // Hidden by JS only - if the bundle never runs, the tiles stay visible.
-  gsap.set(tiles, { opacity: 0, scale: 0.9, transformOrigin: "50% 50%" });
-
-  const triggers = ScrollTrigger.batch(tiles, {
-    start: "top 96%",
-    batchMax: 3,
-    interval: 0.08,
-    once: true,
-    scroller: scroller ?? undefined,
-    onEnter: (batch) =>
-      gsap.to(batch, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.07,
-        ease: BACK,
-        overwrite: true,
-        onComplete: () => gsap.set(batch, { clearProps: "transform,opacity" })
-      })
-  });
-
-  return () => {
-    triggers.forEach((t) => t.kill());
-    gsap.set(tiles, { clearProps: "transform,opacity" });
-  };
 }
 
 /* -------------------------------------------------------- tab panel swap --*/
 
 export function animatePanelIn(panel: HTMLElement | null, reduced: boolean) {
   if (!panel || reduced) return;
-  const items = panel.querySelectorAll(".ig-chip, .ig-proof__item");
+  const items = panel.querySelectorAll(".ig-chip, .ig-summary p");
   if (!items.length) return;
   gsap.fromTo(
     items,
-    { opacity: 0, y: 14 },
-    { opacity: 1, y: 0, duration: 0.45, stagger: 0.035, ease: OUT, clearProps: "transform,opacity" }
+    { opacity: 0, y: 10 },
+    { opacity: 1, y: 0, duration: 0.34, stagger: 0.03, ease: OUT, clearProps: "transform,opacity" }
   );
 }
 
@@ -133,27 +48,20 @@ export function animateReelIn(reelEl: HTMLElement | null, reduced: boolean) {
     if (list.length) tl.from(list, vars, position);
   };
 
-  step(".reel__eyebrow", { y: 16, opacity: 0, duration: 0.4 });
-  step(".reel__title", { y: 34, opacity: 0, duration: 0.6 }, "-=0.28");
-  step(".reel__subtitle", { y: 14, opacity: 0, duration: 0.42 }, "-=0.4");
-  step(".reel__meta", { y: 14, opacity: 0, duration: 0.42 }, "-=0.38");
-  step(".reel__text", { y: 13, opacity: 0, duration: 0.4, stagger: 0.06 }, "-=0.34");
-  step(".reel__bullets li", { x: -16, opacity: 0, duration: 0.4, stagger: 0.055 }, "-=0.3");
-  step(
-    ".reel__metric",
-    { y: 18, scale: 0.93, opacity: 0, duration: 0.45, stagger: 0.07, ease: BACK },
-    "-=0.3"
-  );
-  step(
-    ".reel__chip",
-    { scale: 0.78, opacity: 0, duration: 0.35, stagger: 0.022, ease: BACK },
-    "-=0.32"
-  );
-  step(".reel__proof li", { y: 16, opacity: 0, duration: 0.4, stagger: 0.06 }, "-=0.3");
-  step(".reel__rail-btn", { x: 20, opacity: 0, duration: 0.4, stagger: 0.05 }, "-=0.55");
+  step(".reel__identity-name, .reel__title", { y: 26, opacity: 0, duration: 0.5 });
+  step(".reel__identity-role, .reel__identity-loc, .reel__subtitle, .reel__meta", {
+    y: 12, opacity: 0, duration: 0.36, stagger: 0.045
+  }, "-=0.34");
+  step(".reel__identity-links > *", { y: 18, opacity: 0, scale: 0.9, duration: 0.42, stagger: 0.07, ease: BACK }, "-=0.28");
+  step(".reel__text", { y: 11, opacity: 0, duration: 0.34, stagger: 0.05 }, "-=0.32");
+  step(".reel__bullets li", { x: -14, opacity: 0, duration: 0.34, stagger: 0.045 }, "-=0.3");
+  step(".reel__metric", { y: 15, scale: 0.94, opacity: 0, duration: 0.38, stagger: 0.06, ease: BACK }, "-=0.3");
+  step(".reel__chip", { scale: 0.82, opacity: 0, duration: 0.3, stagger: 0.018, ease: BACK }, "-=0.3");
+  step(".reel__list li", { y: 13, opacity: 0, duration: 0.34, stagger: 0.05 }, "-=0.3");
+  step(".reel__rail-btn", { x: 16, opacity: 0, duration: 0.34, stagger: 0.045 }, "-=0.5");
 
   tl.add(() => {
-    Array.from(q(".reel__rail-btn")).forEach((n) =>
+    Array.from(q(".reel__rail-btn, .reel__identity-links > *")).forEach((n) =>
       gsap.set(n, { clearProps: "transform,opacity" })
     );
   });
@@ -181,7 +89,7 @@ export function countUp(el: HTMLElement, reduced: boolean) {
 
   gsap.to(box, {
     v: target,
-    duration: 0.95,
+    duration: 0.8,
     ease: "power2.out",
     onUpdate: () => {
       el.textContent = pre + box.v.toFixed(decimals) + post;
@@ -197,7 +105,7 @@ export function countUp(el: HTMLElement, reduced: boolean) {
 /** Cheap parallax: shifts the backdrop as you scroll through a reel. */
 export function setBackdropParallax(el: HTMLElement | null, progress: number, reduced: boolean) {
   if (!el || reduced) return;
-  el.style.transform = `translate3d(0, ${(progress - 0.5) * 7}%, 0) scale(1.06)`;
+  el.style.transform = `translate3d(0, ${(progress - 0.5) * 6}%, 0) scale(1.05)`;
 }
 
 /* ----------------------------------------------------------- double-tap like */
@@ -223,7 +131,7 @@ export function heartBurst(el: HTMLElement | null, reduced: boolean) {
 /** Small squash used when the like button itself is tapped. */
 export function popIcon(el: HTMLElement | null, reduced: boolean) {
   if (!el || reduced) return;
-  gsap.fromTo(el, { scale: 0.7 }, { scale: 1, duration: 0.42, ease: BACK, clearProps: "scale" });
+  gsap.fromTo(el, { scale: 0.7 }, { scale: 1, duration: 0.4, ease: BACK, clearProps: "scale" });
 }
 
 /* --------------------------------------------------------------- swipe hint */
@@ -236,12 +144,12 @@ export function dismissHint(el: HTMLElement | null, reduced: boolean) {
   }
   gsap.to(el, {
     opacity: 0,
-    y: 10,
-    duration: 0.3,
+    y: 8,
+    duration: 0.28,
     onComplete: () => {
       el.style.display = "none";
     }
   });
 }
 
-export { gsap, ScrollTrigger, Flip };
+export { gsap, Flip };

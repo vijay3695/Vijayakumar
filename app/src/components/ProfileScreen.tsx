@@ -20,9 +20,6 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "summary", label: "summary" }
 ];
 
-/** Each tile gets its own procedural "photo" motif, derived from its index. */
-export const motifFor = (i: number) => i % 4;
-
 const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
   { profile, sections, tab, onTab, activeId, onOpen },
   ref
@@ -62,7 +59,8 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
 
       <section className="ig-bio">
         <h1 className="ig-bio__name">
-          {profile.name} <VerifiedIcon />
+          <span>{profile.name}</span>
+          <VerifiedIcon size={17} />
         </h1>
         <p className="ig-bio__role">
           {profile.role}
@@ -104,7 +102,6 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
           >
             <span
               className="ig-highlight__bubble"
-              data-motif={motifFor(i)}
               style={{ backgroundImage: s.art }}
             >
               <span className="ig-highlight__glyph">{s.glyph}</span>
@@ -142,7 +139,6 @@ const ProfileScreen = forwardRef<HTMLDivElement, Props>(function ProfileScreen(
                   type="button"
                   className="ig-tile"
                   key={s.id}
-                  data-motif={motifFor(i)}
                   style={{
                     display: activeId === s.id ? "none" : undefined,
                     ["--art" as string]: s.art
