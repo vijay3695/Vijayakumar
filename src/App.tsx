@@ -98,6 +98,7 @@ export default function App() {
 
       <BottomNav
         initial={profile.name.trim().charAt(0).toUpperCase()}
+        avatar={profile.avatar}
         active={navActive}
         onHome={scrollTop}
         onSkills={goSkills}

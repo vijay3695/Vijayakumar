@@ -5,7 +5,8 @@
 import puppeteer from "puppeteer";
 import { readFile, writeFile } from "node:fs/promises";
 
-const [, , srcPath = "private/avatar-source.png", outPath = "src/data/avatar.ts"] = process.argv;
+const [, , srcPath = "private/avatar-source.png", outPath = "src/data/avatar.ts", sizeArg = "512"] = process.argv;
+const size = Number(sizeArg);
 
 const src = await readFile(srcPath);
 const dataUri = "data:image/png;base64," + src.toString("base64");
@@ -23,8 +24,10 @@ const result = await page.evaluate(
     img.src = uri;
     await img.decode();
 
-    // The subject sits left-of-centre; this crop frames head + shoulders and
-    // deliberately excludes the generator watermark in the bottom-right corner.
+    // NO crop. An earlier version of this script cropped to a guessed region and
+    // the framing was never verified against a render. The subject is centred
+    // enough that object-fit: cover frames it correctly, so keep the whole frame
+    // and let CSS do the positioning.
     const sx = Math.round(img.naturalWidth * crop.x);
     const sy = Math.round(img.naturalHeight * crop.y);
     const sw = Math.round(img.naturalWidth * crop.w);
@@ -59,8 +62,8 @@ const result = await page.evaluate(
     };
   },
   dataUri,
-  { x: 0.12, y: 0.17, w: 0.5, h: 0.5 },
-  320
+  { x: 0, y: 0, w: 1, h: 1 },
+  size
 );
 
 await browser.close();
@@ -88,7 +91,7 @@ await writeFile(
 );
 
 console.log("source        :", result.natural.join("x"));
-console.log("crop          :", result.crop.join(", "), "-> 320x320");
+console.log("crop          :", result.crop.join(", "), "->", size + "x" + size);
 console.log("webp payload  :", webpBytes, "bytes");
 console.log("png payload   :", pngBytes, "bytes");
 console.log("chosen        :", useWebp ? "webp" : "png");

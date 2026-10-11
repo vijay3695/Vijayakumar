@@ -2,6 +2,8 @@ import { HomeIcon, ReelsIcon, SearchIcon, TagIcon } from "./Icons";
 
 type Props = {
   initial: string;
+  /** optional display picture - replaces the initial when present */
+  avatar?: string;
   active: "home" | "reels" | "skills";
   onHome: () => void;
   onReels: () => void;
@@ -11,6 +13,7 @@ type Props = {
 
 export default function BottomNav({
   initial,
+  avatar,
   active,
   onHome,
   onReels,
@@ -55,7 +58,19 @@ export default function BottomNav({
       </button>
 
       <button type="button" className="ig-bottomnav__item" onClick={onHome} aria-label="Profile">
-        <span className="ig-bottomnav__avatar">{initial}</span>
+        <span className="ig-bottomnav__avatar">
+          {avatar ? (
+            <img
+              className="ig-bottomnav__photo"
+              src={avatar}
+              alt=""
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          ) : (
+            initial
+          )}
+        </span>
         <span className="ig-bottomnav__dot" />
       </button>
     </nav>

@@ -244,6 +244,13 @@ describe("display picture", () => {
     expect(img?.getAttribute("alt")).toBe(profile.name);
   });
 
+  it("shows the picture in the bottom nav too", () => {
+    const { container } = render(<App />);
+    const photo = container.querySelector(".ig-bottomnav__photo") as HTMLImageElement | null;
+    expect(photo).toBeTruthy();
+    expect(photo?.getAttribute("src")).toBe(profile.avatar);
+  });
+
   it("is not draggable", () => {
     const { container } = render(<App />);
     const img = container.querySelector(".ig-avatar__photo");
