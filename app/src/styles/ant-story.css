@@ -49,3 +49,26 @@
 .world--sugar .sugar-cube{animation:sugar-glow 2.3s ease-in-out infinite alternate,sugar-tug 1.4s ease-in-out infinite}
 .world--sugar .ant-stage{animation:ant-tug 1.4s ease-in-out infinite}
 @keyframes ant-tug{0%,100%{translate:0 0}45%{translate:3px -1px}70%{translate:-1px 0}}
+
+
+/* Opening scene: warm desk light, tactile keyboard, and hands actively typing. */
+.typing-hands{position:absolute;z-index:5;left:calc(50% - 160px);bottom:5%;width:320px;height:105px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;opacity:0;transform:perspective(420px) rotateX(47deg) rotateZ(-8deg);transform-origin:center bottom;transition:opacity .7s ease}
+.typing-hand{position:relative;display:flex;align-items:flex-end;gap:5px;width:132px;height:83px;padding:0 9px 7px;border-radius:52% 48% 18px 18px;background:linear-gradient(145deg,#f1c4a2,#bd8265 75%);box-shadow:inset 0 3px 7px #ffe0c355,0 12px 16px #0004}
+.typing-hand--left{transform:rotate(8deg) translateY(4px)}.typing-hand--right{transform:rotate(-8deg) translateY(2px)}
+.typing-hand i{display:block;flex:1;height:52px;border-radius:13px 13px 8px 8px;background:linear-gradient(90deg,#c88f71,#f0c09c 48%,#c88b6c);transform-origin:center bottom;animation:type-tap .34s ease-in-out infinite alternate;box-shadow:inset 1px 0 2px #fff4}
+.typing-hand i:nth-child(2){height:66px;animation-delay:-.23s}.typing-hand i:nth-child(3){height:62px;animation-delay:-.11s}.typing-hand i:nth-child(4){height:48px;animation-delay:-.29s}
+.typing-hand--right i:nth-child(odd){animation-delay:-.16s}
+@keyframes type-tap{from{transform:translateY(0) scaleY(1)}to{transform:translateY(5px) scaleY(.93)}}
+.world--opening .keyboard-scene{opacity:1;transform:rotateX(56deg) rotateZ(-8deg) translateY(0) scale(1)}
+.world--opening .typing-hands{opacity:1}
+.world--opening .keyboard-scene i:nth-child(3n){animation:key-glow 1.1s ease-in-out infinite alternate}
+@keyframes key-glow{from{filter:brightness(.9);box-shadow:0 4px 0 #171415}to{filter:brightness(1.65);box-shadow:0 4px 0 #171415,0 0 13px #e6a17d55}}
+.world--opening .ant-stage{animation:opening-ant-journey 8s cubic-bezier(.2,.7,.2,1) 1 both}
+@keyframes opening-ant-journey{0%{left:50%;bottom:14%}18%{left:57%;bottom:18%}35%{left:62%;bottom:29%}52%{left:57%;bottom:43%}68%{left:48%;bottom:51%}82%{left:44%;bottom:46%}100%{left:50%;bottom:14%}}
+.story-modebar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(760px,100%);margin:0 0 14px;padding:7px;border:1px solid #ffffff20;border-radius:999px;background:#171312dd}
+.story-modebar>div{display:flex;gap:4px}.story-modebar button{border:1px solid transparent;border-radius:999px;padding:9px 12px;color:#bfae9f;background:transparent;font:10px 'DM Mono',monospace;cursor:pointer;white-space:nowrap}
+.story-modebar button.is-selected{color:#fff0e2;background:#e6a17d22;border-color:#e6a17d66}.story-modebar button:focus-visible,.story-chapters button:focus-visible,.story-primary:focus-visible,.ant-button:focus-visible{outline:2px solid #ffd1ad;outline-offset:4px}
+.story-content--book .story-card{background:#eee0c9;color:#34251e;border-color:#f7e9d4;box-shadow:0 22px 70px #0005}.story-content--book .story-card h1,.story-content--book .story-card h2{font-family:Georgia,'Times New Roman',serif;color:#34251e;letter-spacing:-.04em}.story-content--book .story-copy,.story-content--book .story-list{color:#58463a}.story-content--book .story-subtitle{color:#79583e}.story-content--book .story-eyebrow{color:#98633f}.story-content--book .story-metrics>div,.story-content--book .story-records>div{border-color:#6e4e372b;background:#6e4e370b}.story-content--book .story-metrics span,.story-content--book .story-records span{color:#795f4b}.story-content--book .story-primary{background:#3e2c23;color:#fff0df}
+.world--paused *{animation-play-state:paused!important}
+@media(max-width:700px){.typing-hands{width:280px;left:calc(50% - 140px);height:82px;bottom:5%;scale:.88}.typing-hand{width:119px;height:69px}.typing-hand i{height:42px}.typing-hand i:nth-child(2){height:53px}.typing-hand i:nth-child(3){height:50px}.typing-hand i:nth-child(4){height:38px}.story-modebar{border-radius:16px;align-items:stretch}.story-modebar button{padding:9px 8px;font-size:9px}.story-modebar>button{max-width:110px;white-space:normal}.world--opening .ant-stage{animation-duration:6s}}
+@media(prefers-reduced-motion:reduce){.typing-hand i,.world--opening .ant-stage,.world--opening .keyboard-scene i{animation:none!important}}
