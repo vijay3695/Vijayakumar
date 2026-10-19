@@ -20,10 +20,6 @@ body::before,body::after{display:none!important}#root{position:relative;z-index:
 .book-page-stack{position:relative;width:100%;height:100%;perspective:1800px;transform-style:preserve-3d}
 .book-page{position:absolute;inset:0;overflow:hidden;background:var(--paper);color:var(--ink);box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 16px 28px rgba(25,21,15,.15),0 36px 65px rgba(20,18,13,.15);backface-visibility:hidden;transform-style:preserve-3d}
 .book-page--current{z-index:1}
-.book-page--turn{z-index:3;transform-origin:left center;animation:turn-next .64s cubic-bezier(.55,.08,.22,.98) forwards;pointer-events:none}
-.book-page--prev{transform-origin:right center;animation-name:turn-prev}
-@keyframes turn-next{0%{transform:rotateY(0deg);box-shadow:0 4px 12px rgba(0,0,0,.12)}45%{box-shadow:-18px 5px 25px rgba(0,0,0,.22)}100%{transform:rotateY(-180deg);box-shadow:-3px 3px 9px rgba(0,0,0,.06)}}
-@keyframes turn-prev{0%{transform:rotateY(0deg);box-shadow:0 4px 12px rgba(0,0,0,.12)}45%{box-shadow:18px 5px 25px rgba(0,0,0,.22)}100%{transform:rotateY(180deg);box-shadow:3px 3px 9px rgba(0,0,0,.06)}}
 .paper-sheet{position:relative;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink)}
 .paper-sheet:before{content:"";position:absolute;z-index:1;inset:0 auto 0 0;width:14px;background:linear-gradient(90deg,rgba(53,45,31,.09),rgba(255,255,255,.12),transparent);pointer-events:none}
 .paper-grain{position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:var(--openzine-paper-grain,url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E"));mix-blend-mode:multiply}
@@ -82,30 +78,14 @@ body::before,body::after{display:none!important}#root{position:relative;z-index:
 
 
 .book-viewport{cursor:ew-resize}
-.book-viewport.is-turning{cursor:grabbing}
-.book-page--turn:after{content:"";position:absolute;z-index:8;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(31,26,18,.16),transparent 13%,transparent 72%,rgba(31,26,18,.08));opacity:.72;mix-blend-mode:multiply}
-.book-page--turn.book-page--next:before{content:"";position:absolute;z-index:9;top:0;bottom:0;right:0;width:34%;pointer-events:none;background:linear-gradient(270deg,rgba(31,26,18,.24),rgba(31,26,18,.08) 18%,transparent 100%);opacity:.85}
-.book-page--turn.book-page--prev:before{content:"";position:absolute;z-index:9;top:0;bottom:0;left:0;width:34%;pointer-events:none;background:linear-gradient(90deg,rgba(31,26,18,.24),rgba(31,26,18,.08) 18%,transparent 100%);opacity:.85}
 @media(max-width:600px){.book-bottom-note{font-size:7px}.book-viewport{min-height:420px;height:min(66svh,720px)}}
-@media(prefers-reduced-motion:reduce){.book-page--turn{animation-duration:.01ms!important}}
 
 
 /* A visible paper block gives the closed cover and each leaf physical thickness. */
-.book-page-stack:before{content:"";position:absolute;z-index:0;inset:3px -3px -4px 3px;border:1px solid rgba(70,58,38,.3);background:repeating-linear-gradient(180deg,#d6cdbb 0,#f4f0e6 1px,#ded5c4 2px,#f4f0e6 3px);box-shadow:5px 8px 18px rgba(17,15,10,.16);transform:translateZ(-3px);pointer-events:none}
-.book-page-stack:after{content:"";position:absolute;z-index:0;inset:6px -6px -7px 6px;border:1px solid rgba(70,58,38,.2);background:#c9bea9;box-shadow:10px 13px 22px rgba(17,15,10,.13);transform:translateZ(-7px);pointer-events:none}
 .book-page{outline:1px solid rgba(96,78,47,.07)}
-.book-page--turn{will-change:transform;transform-style:preserve-3d}
-.book-page--turn .paper-sheet:after{content:"";position:absolute;z-index:5;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.1),transparent 30%,transparent 65%,rgba(55,43,25,.12));mix-blend-mode:multiply}
 
 
 /* Live-DOM page curl: OpenZine-style depth cues without flattening React content into images. */
-.book-viewport.is-dragging .book-page--current{will-change:transform;transition:none;backface-visibility:hidden}
-.book-viewport.is-dragging .book-page--current:after{content:"";position:absolute;z-index:7;inset:0;pointer-events:none;opacity:.95;mix-blend-mode:multiply;background:linear-gradient(90deg,rgba(35,29,19,.22),transparent 12%,transparent 74%,rgba(35,29,19,.16))}
-.book-viewport.is-dragging .book-page--current:before{content:"";position:absolute;z-index:8;top:0;bottom:0;width:22%;pointer-events:none}
-.book-viewport.is-dragging .book-page--current:before{right:0;background:linear-gradient(270deg,rgba(30,25,17,.22),rgba(30,25,17,.06) 38%,transparent)}
-.book-viewport.is-dragging .book-page--current[style*="right center"]:before{right:auto;left:0;background:linear-gradient(90deg,rgba(30,25,17,.22),rgba(30,25,17,.06) 38%,transparent)}
-.book-page--turn{transform-origin:left center}
-.book-page--turn.book-page--prev{transform-origin:right center}
 @media(prefers-reduced-motion:reduce){.book-viewport.is-dragging .book-page--current{will-change:auto}}
 
 
