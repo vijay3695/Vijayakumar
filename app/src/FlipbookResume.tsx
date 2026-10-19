@@ -76,7 +76,7 @@ function makeOpenZinePage(content: ReactNode, index: number): string {
   return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
 
-export default function FlipbookResume() {
+export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
   const viewerDocument = useMemo(() => {
     // OpenZine requires page textures. Create them in-browser from the live JSX
     // page components; no pre-rendered resume images are committed to the repo.
@@ -97,6 +97,7 @@ export default function FlipbookResume() {
       <header className="flipbook-topline">
         <a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a>
         <div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div>
+        {onClose && <button type="button" className="flipbook-close" onClick={onClose}>CLOSE BOOK ×</button>}
         <a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a>
       </header>
       <iframe
