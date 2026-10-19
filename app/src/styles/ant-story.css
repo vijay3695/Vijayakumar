@@ -26,6 +26,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 .world-caption span{color:#d5a17e}.world-caption i{display:block;width:25px;height:1px;background:#b9896a}.world-caption strong{color:#fff0e2;font-weight:600}.world-caption em{margin-left:5px;color:#d5bca8;font-style:normal;font-size:9px;letter-spacing:.06em}
 
 .story-content{position:absolute;z-index:20;top:104px;left:clamp(20px,4.5vw,72px);right:auto;width:min(500px,39vw);max-height:calc(100svh - 210px);display:grid;grid-template-columns:minmax(0,1fr) 26px;gap:12px;margin:0;align-items:stretch}
+/* The opening identity belongs to the physical monitor, never a floating intro card. */
+.world--opening + .story-content{display:none}
 .story-content__copy{min-width:0;max-height:calc(100svh - 210px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#765641 transparent;padding:0 3px 5px 0}
 .story-content__copy::-webkit-scrollbar{width:4px}.story-content__copy::-webkit-scrollbar-thumb{background:#765641;border-radius:8px}
 .story-card{width:100%;min-height:0;padding:clamp(23px,2.2vw,34px);border:1px solid #f5d5bc28;border-radius:20px;background:linear-gradient(145deg,#191716ed,#100f0fed);box-shadow:0 28px 90px #0006, inset 0 1px #ffffff08;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
@@ -74,18 +76,20 @@ button,a{-webkit-tap-highlight-color:transparent}
 .story-footer span:nth-child(2){text-align:center}
 
 @media(max-width:900px){
+ .ant-story{overflow-x:hidden;overflow-y:visible;padding-bottom:76px}
  .story-topline{height:65px;padding-inline:20px}.story-location{margin-right:14px;font-size:8px;letter-spacing:.08em}
- .world{height:100svh;min-height:min(650px,100svh)}
- .three-world-canvas{width:100%;height:100%;object-fit:cover}
- .story-content{top:auto;bottom:84px;left:14px;right:14px;width:auto;max-height:min(42svh,340px);grid-template-columns:minmax(0,1fr);gap:0}
- .story-content__copy{max-height:min(42svh,340px);padding:0 1px 3px 0}
- .story-card{padding:18px 20px;border-radius:16px;background:linear-gradient(145deg,#151312e8,#100f0fe8)}
+ /* Mobile is a vertical composition: the 3D desk gets its own stage, details flow below it. */
+ .world{height:60svh;min-height:390px;max-height:680px}
+ .three-world-canvas{width:100%;height:100%}
+ .story-content{position:relative;top:auto;bottom:auto;left:auto;right:auto;width:auto;max-height:none;grid-template-columns:minmax(0,1fr);gap:0;margin:18px 14px 26px}
+ .story-content__copy{max-height:none;overflow:visible;padding:0 1px 3px 0}
+ .story-card{padding:18px 20px;border-radius:16px;background:linear-gradient(145deg,#151312f5,#100f0ff5)}
  .story-card--intro{padding-top:19px}.story-card h1{font-size:clamp(27px,5.6vw,39px)}.story-card h2{font-size:clamp(24px,5vw,32px)}
  .story-copy{font-size:12px;line-height:1.72;margin:10px 0}.story-narrative{font-size:12px;line-height:1.7;margin:14px 0 16px}.story-subtitle{font-size:12px;margin:10px 0 13px}
  .story-eyebrow{margin-bottom:10px}.story-metrics{margin:12px 0}.story-metrics>div{padding:9px 10px}.story-metrics strong{font-size:20px}
  .story-rail{display:none}.story-motion-control{margin-bottom:7px}.story-motion-control button{font-size:8px;padding:7px 10px}
- .world-caption{left:20px;right:20px;bottom:calc(min(42svh,340px) + 104px);font-size:9px;flex-wrap:wrap;row-gap:5px}.world-caption em{flex-basis:100%;margin-left:0;padding-left:1px;font-size:8px}
- .story-chapters{left:12px;right:12px;bottom:12px;gap:6px;padding:5px 0 3px}
+ .world-caption{left:20px;right:20px;bottom:18px;font-size:9px;flex-wrap:wrap;row-gap:5px}.world-caption em{flex-basis:100%;margin-left:0;padding-left:1px;font-size:8px}
+ .story-chapters{left:12px;right:12px;bottom:10px;gap:6px;padding:5px 0 3px;background:#0d0d0dd9;backdrop-filter:blur(14px);border-radius:12px}
  .story-chapters button{min-height:33px;padding:0 11px;font-size:9px}
  .story-footer{font-size:8px;letter-spacing:.03em;padding:15px 20px}
 }
