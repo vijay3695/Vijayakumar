@@ -58,7 +58,7 @@ for (let i = 0; i < TOTAL_PAGES; i++) {
   const page = await browser.newPage();
   await page.setViewport({ width: PAGE_WIDTH, height: PAGE_HEIGHT, deviceScaleFactor: 1 });
   await page.goto(`http://localhost:9876/?page=${i}`, { waitUntil: "networkidle0", timeout: 30000 });
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 5000));
   await page.screenshot({
     path: path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`),
     type: "png",
