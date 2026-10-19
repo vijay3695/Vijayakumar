@@ -93,3 +93,15 @@
 .three-world-ant-hitarea:focus-visible{outline:2px solid #ffd1ad;outline-offset:-5px;background:#ffd1ad12}
 .three-world-ant-hitarea.is-reacting{background:radial-gradient(ellipse,transparent 50%,#e6a17d12 70%,transparent 78%)}
 @media(max-width:700px){.three-world-ant-hitarea{width:190px;height:150px;bottom:0}}
+
+/* Desktop: the 3D world and readable resume remain visible together. */
+@media (min-width:900px) {
+  .story-content { position:absolute; top:94px; right:clamp(22px,4vw,70px); left:auto; width:min(51vw,680px); max-height:calc(min(740px,82vh) - 118px); margin:0; grid-template-columns:minmax(0,1fr) 28px; gap:10px; z-index:12; }
+  .story-content__copy { max-height:calc(min(740px,82vh) - 118px); overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#725443 transparent; padding:0 2px 10px; }
+  .story-card { max-width:none; background:linear-gradient(145deg,#231d1cf2,#151313f2); }
+  .story-rail { position:static; align-self:center; padding-top:0; }
+  .story-motion-control { padding-right:2px; }
+}
+@media (max-width:899px) {
+  .story-content { position:relative; top:auto; right:auto; left:auto; max-height:none; }
+}
