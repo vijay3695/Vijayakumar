@@ -107,3 +107,13 @@ body::before,body::after{display:none!important}#root{position:relative;z-index:
 .book-page--turn{transform-origin:left center}
 .book-page--turn.book-page--prev{transform-origin:right center}
 @media(prefers-reduced-motion:reduce){.book-viewport.is-dragging .book-page--current{will-change:auto}}
+
+
+/* Actual OpenZine viewer mounted as a portfolio experience. */
+.flipbook-app--openzine{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.flipbook-app--openzine .flipbook-topline{flex:0 0 68px}
+.openzine-viewer{display:block;width:100%;height:calc(100% - 68px);flex:1 1 auto;min-height:0;border:0;background:#f6f6f3}
+.flipbook-close{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#f6f3eb;font:9px var(--mono);letter-spacing:.07em;cursor:pointer}
+.flipbook-close:hover{background:rgba(255,255,255,.1)}
+.flipbook-app--openzine .flipbook-print{margin-left:0}
+@media(max-width:520px){.flipbook-app--openzine .flipbook-topline{gap:12px;padding-inline:14px}.flipbook-app--openzine .flipbook-topline>div{font-size:8px;gap:5px}.flipbook-app--openzine .flipbook-print{font-size:7px;gap:5px}.flipbook-close{font-size:8px;padding:7px 8px}}
