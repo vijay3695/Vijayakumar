@@ -103,6 +103,7 @@ export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
         {onClose && <button type="button" className="flipbook-close" onClick={onClose}>CLOSE BOOK ×</button>}
         <a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a>
       </header>
+      {!viewerDocument && <div className="openzine-preparing" role="status">PREPARING THE INTERACTIVE BOOK…</div>}
       <iframe
         className="openzine-viewer"
         title="Interactive resume book with OpenZine paper-turn renderer"
