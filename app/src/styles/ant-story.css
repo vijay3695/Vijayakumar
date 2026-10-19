@@ -44,3 +44,8 @@
 
 .world.world--exp-senior-csa .notebook-scene{opacity:1;transform:rotateZ(-11deg) rotateX(14deg) translateX(0)}
 .world.world--exp-team-leader .report-scene{opacity:1;transform:rotateZ(8deg) rotateX(10deg) translateX(0)}
+
+@keyframes sugar-tug{0%,100%{translate:0 0;rotate:0deg}35%{translate:2px -1px;rotate:2deg}70%{translate:-2px 1px;rotate:-2deg}}
+.world--sugar .sugar-cube{animation:sugar-glow 2.3s ease-in-out infinite alternate,sugar-tug 1.4s ease-in-out infinite}
+.world--sugar .ant-stage{animation:ant-tug 1.4s ease-in-out infinite}
+@keyframes ant-tug{0%,100%{translate:0 0}45%{translate:3px -1px}70%{translate:-1px 0}}
