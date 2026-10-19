@@ -509,8 +509,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
         [-1.0, .158, 2.0], [-1.7, .158, 2.0], [-2.7, .158, 2.0], [-3.25, .158, 2.0],
         [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ],
         [6.5, deskY, aisleZ], [6.5, deskY, -2.4], [1.2, deskY, -2.4], [1.2, deskY, -3.55],
-        [.22, deskY, -3.55], [.22, deskY, -3.60], [.22, .131, -3.60], [.22, .131, -4.0],
-        [.22, .866, -4.0], [.22, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]
+        [0, deskY, -3.55], [0, deskY, -4.1], [0, .145, -4.1], [0, .145, -4.25],
+        [0, .86, -4.25], [0, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]
       ];
       const makeRoute = (start: number[], chapterIndex: number, sourceChapter: number) => {
         const points: number[][] = [[start[0], start[1], start[2]]];
