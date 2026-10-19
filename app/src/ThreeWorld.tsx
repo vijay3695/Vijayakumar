@@ -284,12 +284,12 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const aisleZ = 4.25; // clear front aisle, in front of keyboard and hands
       const path = [
         [2.48, 4.01, -4.24], // opening: monitor top-right bezel, not the screen
-        [-5.2, .083, -.2],   // About: notebook page
+        [-5.2, .094, -.2],   // About: notebook page
         [-2.7, .083, -1.25], // Summary: open-book page
-        [4.9, 2.036, -2.70], // Competencies: dashboard top-right bezel
+        [4.9, 2.036, -2.78], // Competencies: dashboard top-right bezel
         [2.48, 4.01, -4.24], // Team Manager: monitor top-right bezel
-        [5.1, .106, -.3],    // Team Leader: report page
-        [-1.75, .081, -3.45],// Senior Associate: case-file page
+        [5.1, .121, -.3],    // Team Leader: report page
+        [-1.75, .069, -3.45],// Senior Associate: case-file page
         [-1.0, .158, 2.0],   // CSA: key tops
         [-4.1, .806, -3.15], // Certifications: top book
         [8.75, 3.98, -6.39], // Education: diploma frame's top-right edge
@@ -298,12 +298,12 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // Exit each prop by crawling to an edge before descending; then use a clear aisle.
       const exits: Record<number, number[][]> = {
         0: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
-        1: [[-5.2, .083, 1.35], [-5.2, deskY, 1.35], [-5.2, deskY, aisleZ]],
+        1: [[-5.2, .094, 1.35], [-5.2, deskY, 1.35], [-5.2, deskY, aisleZ]],
         2: [[-2.7, .083, -.275], [-2.7, deskY, -.275], [-2.7, deskY, 1.3], [-3.6, deskY, 1.3], [-3.6, deskY, aisleZ]],
         3: [[5.05, 2.036, -2.8], [5.05, deskY, -2.8], [6.5, deskY, -2.8], [6.5, deskY, aisleZ]],
         4: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
-        5: [[5.1, .106, 1.1], [5.1, deskY, 1.1], [5.1, deskY, aisleZ]],
-        6: [[-1.75, .081, -2.625], [-1.75, deskY, -2.625], [-3.0, deskY, -2.625], [-3.0, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
+        5: [[5.1, .121, 1.1], [5.1, deskY, 1.1], [5.1, deskY, aisleZ]],
+        6: [[-1.75, .069, -2.625], [-1.75, deskY, -2.625], [-3.0, deskY, -2.625], [-3.0, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
         7: [[-3.25, .158, 2.0], [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ]],
         8: [[-4.1, .806, -2.0], [-4.1, deskY, -2.0], [-5.2, deskY, -2.0], [-5.2, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
         9: [[8.875, 3.98, -6.39], [8.875, deskY, -6.39], [8.9, deskY, -6.39], [8.9, deskY, aisleZ]],
@@ -312,12 +312,12 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // Every destination has an approach point on its edge, a short climb, and a crawl
       // across the surface. Routes avoid cutting through the keyboard, charts, and books.
       const entries: Record<number, number[][]> = {
-        1: [[-5.2, deskY, aisleZ], [-5.2, deskY, 1.45], [-5.2, .083, 1.35], [-5.2, .083, -.2]],
+        1: [[-5.2, deskY, aisleZ], [-5.2, deskY, 1.45], [-5.2, .094, 1.35], [-5.2, .094, -.2]],
         2: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-2.7, deskY, -1.9], [-2.7, deskY, -2.225], [-2.7, .083, -2.225], [-2.7, .083, -1.25]],
-        3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.8], [5.05, deskY, -2.8], [5.05, 2.036, -2.8], [4.9, 2.036, -2.8], [4.9, 2.036, -2.70]],
+        3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.8], [5.05, deskY, -2.8], [5.05, 2.036, -2.8], [4.9, 2.036, -2.8], [4.9, 2.036, -2.78]],
         4: [[6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4], [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]],
-        5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .106, 1.1], [5.1, .106, -.3]],
-        6: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-3.0, deskY, -1.9], [-3.0, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .081, -2.625], [-1.75, .081, -3.45]],
+        5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .121, 1.1], [5.1, .121, -.3]],
+        6: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-3.0, deskY, -1.9], [-3.0, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .069, -2.625], [-1.75, .069, -3.45]],
         7: [[-3.6, deskY, aisleZ], [-3.6, deskY, 3.5], [-3.25, deskY, 3.5], [-3.25, deskY, 3.28], [-3.25, .158, 3.28], [-1.0, .158, 3.0], [-1.0, .158, 2.0]],
         8: [[-5.2, deskY, aisleZ], [-5.2, deskY, -1.9], [-4.1, deskY, -1.9], [-4.1, deskY, -2.0], [-4.1, .806, -2.0], [-4.1, .806, -3.15]],
         9: [[8.9, deskY, aisleZ], [8.9, deskY, -6.39], [8.875, deskY, -6.39], [8.875, 3.98, -6.39], [8.75, 3.98, -6.39]],
