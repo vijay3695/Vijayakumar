@@ -22,3 +22,17 @@
 @keyframes ant-bob{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-4px) rotate(1deg)}}@keyframes leg-step{from{transform:rotate(-11deg)}to{transform:rotate(14deg)}}@keyframes feelers{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}@keyframes ant-look{0%,100%{transform:rotate(0) translateY(0)}20%{transform:rotate(-9deg) translateY(-3px)}40%{transform:rotate(8deg) translateY(1px)}60%{transform:rotate(-7deg) translateY(0)}80%{transform:rotate(2deg)}}@keyframes scratch{0%,100%{opacity:0;transform:translate(0,0)}25%,75%{opacity:1;transform:translate(0,-4px)}}@keyframes sugar-glow{from{filter:drop-shadow(0 0 0 #ffdea000)}to{filter:drop-shadow(0 0 22px #ffdea073)}}
 @media(min-width:760px){.world{height:min(740px,82vh)}}@media(max-width:700px){.story-topline{padding:18px}.story-location{display:none}.world{height:60vh;min-height:430px}.monitor-scene{top:17%;transform:translateX(-50%) translateZ(-80px) scale(.78)}.notebook-scene{left:-7%;top:24%;scale:.72}.report-scene{right:-9%;top:20%;scale:.72}.dashboard-scene{top:20%;scale:.75}.skill-stones{gap:6px;top:36%}.skill-stones i{width:59px;font-size:7px}.education-book{left:-4%;scale:.8}.sugar-cube{left:61%;top:56%}.ant-stage{bottom:13%}.ant{width:165px}.world-caption{bottom:4%}.story-content{width:calc(100% - 24px);grid-template-columns:minmax(0,1fr) 30px;gap:9px;margin-top:-22px}.story-card{padding:23px 19px;border-radius:14px}.story-records{grid-template-columns:1fr}.story-rail{padding-top:28px}.story-chapters{width:calc(100% - 24px);margin-top:23px}.story-footer{flex-wrap:wrap;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.ant-story *,.ant-story *::before,.ant-story *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* Each resume chapter has its own miniature environment; the ant stays in frame while the world moves around it. */
+.world--about .monitor-scene,.world--summary .monitor-scene{opacity:.75}
+.world--exp-csa .keyboard-scene{transform:rotateX(56deg) rotateZ(-8deg) translateY(0) scale(1)}
+.world--exp-senior-csa .notebook-scene{opacity:1;transform:rotateZ(-11deg) rotateX(14deg) translateX(0)}
+.world--exp-team-leader .report-scene{opacity:1;transform:rotateZ(8deg) rotateX(10deg) translateX(0)}
+.world--exp-team-manager .dashboard-scene{opacity:1;transform:translate(-50%,0) scale(1)}
+.world--competencies .skill-stones{opacity:1;transform:translateX(-50%) translateY(0)}
+.world--certifications .skill-stones{opacity:1;transform:translateX(-50%) translateY(0) scale(1.05)}
+.world--education .education-book{opacity:1;transform:rotateZ(-9deg) translateX(0)}
+.world--sugar .sugar-cube{opacity:1;transform:rotateX(55deg) rotateZ(45deg) scale(1);animation:sugar-glow 2.3s ease-in-out infinite alternate}
+.world--sugar .ant-stage{left:54%}
+.world--sugar .ant-button{transform:rotateY(180deg)}
+@media(prefers-reduced-motion:reduce){.world-track,.ant-stage,.prop{transition:none!important}}
