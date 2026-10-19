@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import type { CSSProperties } from "react";
 import { profile, sections, type Section } from "./data/resume";
 import "./styles/ant-story.css";
 
@@ -90,11 +89,10 @@ export default function AntStory() {
     return () => window.removeEventListener("keydown", onKey);
   }, [beats.length]);
 
-  const sceneStyle = { "--scene-index": active } as CSSProperties;
   const jumpTo = (index: number) => setActive(Math.max(0, Math.min(beats.length - 1, index)));
 
   return (
-    <main className="ant-story" style={sceneStyle}>
+    <main className="ant-story">
       <div className="story-topline">
         <a className="story-wordmark" href="#story-start" onClick={(e) => { e.preventDefault(); jumpTo(0); }}>V<span>.</span>C</a>
         <span className="story-location">A tiny journey through a career</span>
