@@ -271,7 +271,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
-        const { active: currentActive, kind: currentKind, reacting: isReacting, paused: isPaused } = propsRef.current;
+        const { active: currentActive, reacting: isReacting, paused: isPaused } = propsRef.current;
         let target = path[Math.min(currentActive, path.length - 1)] || path[0];
         if (currentActive === 0) {
           // Let the opening breathe: the ant crosses the keycaps, reaches the
