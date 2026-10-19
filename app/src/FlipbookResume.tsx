@@ -80,17 +80,6 @@ export default function FlipbookResume() {
     }, 640);
   }, [current, turn]);
 
-  const jumpToPage = (index: number) => {
-    window.clearTimeout(turnTimer.current);
-    setCurrent(Math.max(0, Math.min(pages.length - 1, index)));
-    setTurn(null);
-    dragRef.current = { x: 0, y: 0 };
-    setDrag({ x: 0, y: 0 });
-    setDragging(false);
-    pointerStart.current = null;
-    setShowHelp(false);
-  };
-
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight" || event.key === "PageDown") { event.preventDefault(); go("next"); }
@@ -99,8 +88,10 @@ export default function FlipbookResume() {
       else if (event.key === "End") { event.preventDefault(); setCurrent(pages.length - 1); setTurn(null); }
     };
     window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("keydown", onKey); window.clearTimeout(turnTimer.current); };
+    return () => { window.removeEventListener("keydown", onKey); };
   }, [go]);
+
+  useEffect(() => () => window.clearTimeout(turnTimer.current), []);
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (turn) return;
@@ -151,7 +142,6 @@ export default function FlipbookResume() {
         <button className="book-edge book-edge--next" aria-label="Next page" onPointerDown={(event) => event.stopPropagation()} onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)}><span>›</span></button>
       </div>
       <div className="book-controls"><button type="button" onClick={() => go("prev")} disabled={current === 0 || Boolean(turn)} aria-label="Previous page">← <span>PREVIOUS</span></button><div className="book-progress" aria-label={"Page " + (current + 1) + " of " + pages.length}><div><span style={{ width: ((current + 1) / pages.length * 100) + "%" }} /></div><small>{String(current + 1).padStart(2, "0")} <i>/</i> {String(pages.length).padStart(2, "0")}</small></div><button type="button" onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)} aria-label="Next page"><span>NEXT</span> →</button></div>
-      <nav className="book-page-index" aria-label="Jump to a page"><span className="book-page-index__label">CONTENTS</span>{pages.map((page, index) => <button type="button" key={page.label + index} className={index === current ? "is-active" : ""} aria-current={index === current ? "page" : undefined} onClick={() => jumpToPage(index)} disabled={Boolean(turn)}><small>{String(index + 1).padStart(2, "0")}</small><span>{page.label}</span></button>)}</nav>
       <div className="book-bottom-note"><span>DESIGNED TO BE READ, ONE PAGE AT A TIME</span><span>← → KEYBOARD / SWIPE / DRAG</span></div>
     </section>
   </main>;
