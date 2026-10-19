@@ -23,7 +23,7 @@ function ResumeSection({ section, number }: { section: Section; number: string }
   );
 }
 
-export default function App() {
+export default function ResumePortfolio({ onOpenBook }: { onOpenBook: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const experience = sections.filter((section) => section.kind === "experience");
   const about = sections.find((section) => section.id === "about");
@@ -69,6 +69,7 @@ export default function App() {
           <div className="resume-statline"><strong>07<span>+</span></strong><small>YEARS IN SERVICE<br />& OPERATIONS</small></div>
           <div className="resume-sidebar__actions">
             <button type="button" className="resume-button resume-button--light" onClick={printResume}>PRINT / SAVE PDF <span>↗</span></button>
+            <button type="button" className="resume-button resume-button--book" onClick={onOpenBook}>OPEN INTERACTIVE BOOK <span>↗</span></button>
             {profile.links.map((link) => <a key={link.label} href={link.href} target="_blank" rel="noreferrer">{link.label} <span>↗</span></a>)}
           </div>
           <p className="resume-sidebar__foot">CHENNAI, INDIA<br />BUILT AROUND EXPERIENCE</p>
