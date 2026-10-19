@@ -1,26 +1,30 @@
-# Vijayakumar Chandiran — Interactive Resume Flipbook
+# Vijayakumar Chandiran — Portfolio
 
-A rich, single-page-at-a-time digital resume rendered with OpenZine’s page-turning book engine. The React + TypeScript resume source is rendered into page images during CI, then the vendored OpenZine skill bundles those pages and its renderer into one standalone HTML book.
+A responsive React + TypeScript portfolio presenting Vijayakumar Chandiran's profile, career history, skills, certifications, education and contact links. The primary experience is the portfolio itself—not a standalone resume converted into OpenZine pages.
 
-## Reading the book
+## Live site
 
-- Turn pages with the on-page arrows, click either half of the page, swipe, or drag.
-- Use the left/right arrow keys or Page Up/Page Down; Home and End jump to the first and last resume pages.
-- One page is shown on desktop and mobile. The page and controls adapt to the available screen space automatically.
-- Print / Save PDF is available from the top bar.
+- Live site: https://vijay3695.github.io/Vijayakumar/
+- Repository: https://github.com/vijay3695/Vijayakumar
+
+## Experience
+
+- Responsive portfolio layout with sticky profile panel and section navigation.
+- Career history, professional summary, competencies, certifications and education.
+- LinkedIn and GitHub links.
+- Print / Save PDF actions.
+- Accessible navigation and reduced-motion-aware scrolling.
 
 ## Stack
 
 - React 18 + TypeScript
 - Vite
-- OpenZine’s paper-bending WebGL renderer, paper shader, grain texture, and page shadows (single-page mode on desktop and mobile)
 - Vitest and Testing Library
-- GitHub Pages
-- Vendored OpenZine skill at `.codex/skills/openzine/`
+- GitHub Pages (intended source: **Deploy from a branch → main → /(root)**)
 
 ## Run locally
 
-```bash
+```sh
 npm ci
 npm run dev
 npm run typecheck
@@ -28,17 +32,25 @@ npm test
 npm run build
 ```
 
-## Resume content
+## Source of truth
 
-Source content lives in `app/src/data/resume.ts`: the professional summary, four Sutherland career stages, competencies, ten certifications, and education. The flipbook pages are arranged in `app/src/FlipbookResume.tsx`.
+- Portfolio layout: `app/src/ResumePortfolio.tsx`
+- Resume content: `app/src/data/resume.ts`
+- Global app entry: `app/src/App.tsx`
+- Styles: `app/src/styles/resume-portfolio.css`
 
-## OpenZine build workflow
+## Publish from the main branch root
 
-The OpenZine skill is stored in `.codex/skills/openzine/` in this repository, so no global/local skill installation is required. The GitHub Actions build renders the React resume into numbered page images with Puppeteer, runs the vendored `scripts/make-book.mjs` builder, and deploys the resulting standalone `dist/index.html`. The vendored runtime is adapted to keep a single page visible on both desktop and mobile. The generated book retains OpenZine’s Paper Mono attribution link in its footer; the LinkedIn and GitHub links remain available in the book header.
+The repository keeps the source under `app/` and the deployable Vite build at the repository root. After building, run:
 
-## Credits and licences
+```sh
+npm run deploy
+```
 
-OpenZine by Joseph Zhou (https://github.com/JosssphZhou/openzine) is vendored under `.codex/skills/openzine/`; its source skill and builder are included for reproducibility. OpenZine has mixed licensing: its own files have the file-specific terms in `OPENZINE-LICENSE.txt`, while the extracted Paper Mono page-turn renderer/shader/grain are copyright Paper and are not covered by OpenZine’s MIT licence. Three.js is MIT; the Paper Mono typeface is SIL OFL 1.1. The generated book preserves the Paper attribution link, and the applicable upstream notices are retained beside the vendored files. See `.codex/skills/openzine/UPSTREAM.md` and the bundled licence files.
+The script builds the project and publishes the generated `index.html` and `assets/` to `main` root (and mirrors the build into `docs/`). It does not use GitHub Actions.
 
-- Live site: https://vijay3695.github.io/Vijayakumar/
-- Repository: https://github.com/vijay3695/Vijayakumar
+**Important:** deleting the Actions workflow does not change the GitHub Pages source setting. In repository Settings → Pages, the source must be set to **Deploy from a branch**, branch **main**, folder **/(root)**. The GitHub connection available to this editing session cannot change that repository setting directly.
+
+## OpenZine attribution and scope
+
+The OpenZine runtime is vendored under `.codex/skills/openzine/` for reference, with upstream and licence notices retained there. It is an image-page booklet runtime that replaces the host document body; it is not wired into the live-DOM portfolio because that would convert the resume content into OpenZine pages, contrary to the portfolio requirement. The portfolio remains a React/TypeScript site.
