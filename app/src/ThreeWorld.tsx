@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { profile, sections } from "./data/resume";
 
 type ThreeWorldProps = {
   active: number;
@@ -7,6 +8,7 @@ type ThreeWorldProps = {
   reacting: boolean;
   paused: boolean;
   onAntClick: () => void;
+  reactionCount: number;
 };
 
 /**
@@ -14,11 +16,11 @@ type ThreeWorldProps = {
  * production bundle stays lean; the resume and navigation remain ordinary,
  * accessible React/HTML rather than text baked into a canvas.
  */
-export default function ThreeWorld({ active, kind, reacting, paused, onAntClick }: ThreeWorldProps) {
+export default function ThreeWorld({ active, kind, reacting, paused, onAntClick, reactionCount }: ThreeWorldProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const antHitAreaRef = useRef<HTMLButtonElement>(null);
-  const propsRef = useRef({ active, kind, reacting, paused, onAntClick });
-  propsRef.current = { active, kind, reacting, paused, onAntClick };
+  const propsRef = useRef({ active, kind, reacting, paused, onAntClick, reactionCount });
+  propsRef.current = { active, kind, reacting, paused, onAntClick, reactionCount };
 
   useEffect(() => {
     const host = hostRef.current;
@@ -116,6 +118,65 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const screenTexture = new THREE.CanvasTexture(screenCanvas); screenTexture.colorSpace = THREE.SRGBColorSpace;
       const screenPlane = new THREE.Mesh(new THREE.PlaneGeometry(4.82, 2.75), new THREE.MeshBasicMaterial({ map: screenTexture }));
       screenPlane.position.set(0, 2.48, -4.205); scene.add(screenPlane);
+      // Resume content is rendered onto the monitor glass itself. This is not a floating HUD:
+      // the camera approaches the monitor for the opening and each chapter uses the same screen.
+      const drawMonitorScreen = (chapter: number) => {
+        if (!screenCtx) return;
+        screenCtx.clearRect(0, 0, 1200, 700);
+        screenCtx.fillStyle = "#142321"; screenCtx.fillRect(0, 0, 1200, 700);
+        const glow = screenCtx.createRadialGradient(600, 300, 10, 600, 300, 680);
+        glow.addColorStop(0, "#25413a"); glow.addColorStop(1, "#101918");
+        screenCtx.fillStyle = glow; screenCtx.fillRect(0, 0, 1200, 700);
+        screenCtx.fillStyle = "#dba982"; screenCtx.font = "500 24px monospace";
+        screenCtx.fillText(chapter === 0 ? "WELCOME / PORTFOLIO" : "CAREER JOURNEY  /  " + String(chapter).padStart(2, "0"), 68, 68);
+        screenCtx.fillStyle = "#fff0dc";
+        screenCtx.font = "700 46px Arial, sans-serif";
+        if (chapter === 0) {
+          screenCtx.fillText(profile.name, 68, 156);
+          screenCtx.font = "26px Arial, sans-serif";
+          screenCtx.fillStyle = "#b5c7b9";
+          screenCtx.fillText("Lead Account Management", 68, 208);
+          screenCtx.fillText("Service Delivery Operations · Chennai, India", 68, 250);
+          screenCtx.fillStyle = "#8cc2a9"; screenCtx.fillRect(68, 292, 280, 5);
+          screenCtx.fillStyle = "#d5e0d4"; screenCtx.font = "25px Arial, sans-serif";
+          profile.bio.forEach((line, i) => screenCtx.fillText(line, 68, 355 + i * 45, 1050));
+          screenCtx.fillStyle = "#8cc2a9"; screenCtx.font = "20px monospace";
+          screenCtx.fillText("PEOPLE  ·  PROCESS  ·  PROGRESS", 68, 625);
+        } else {
+          const section = sections[chapter - 1];
+          if (!section) {
+            screenCtx.fillText("Always curious.", 68, 170);
+            screenCtx.fillText("Always growing.", 68, 228);
+            screenCtx.fillStyle = "#b5c7b9"; screenCtx.font = "26px Arial, sans-serif";
+            screenCtx.fillText("Thanks for exploring my career story.", 68, 292);
+            screenCtx.fillText("LinkedIn  ·  GitHub", 68, 342);
+          } else {
+            screenCtx.fillText(section.title, 68, 145, 1060);
+            screenCtx.fillStyle = "#dba982"; screenCtx.font = "24px Arial, sans-serif";
+            screenCtx.fillText([section.subtitle, section.meta].filter(Boolean).join("  ·  ") || section.kind.toUpperCase(), 68, 190, 1060);
+            const lines: string[] = [];
+            const addWrapped = (value: string, max = 66) => {
+              const words = value.split(/\s+/); let line = "";
+              for (const word of words) {
+                if ((line + " " + word).trim().length > max && line) { lines.push(line); line = word; }
+                else line = (line + " " + word).trim();
+              }
+              if (line) lines.push(line);
+            };
+            if (section.body.length) section.body.forEach(addWrapped);
+            else if (section.bullets?.length) section.bullets.forEach((item) => addWrapped("• " + item, 70));
+            else if (section.chips?.length) section.chips.forEach((item) => addWrapped("• " + item, 70));
+            else if (section.certs?.length) section.certs.forEach((item) => addWrapped("• " + item.name + " — " + item.issuer + " " + item.year, 70));
+            else if (section.education?.length) section.education.forEach((item) => addWrapped("• " + item.qualification + " — " + item.institution + " (" + item.years + ")", 70));
+            screenCtx.fillStyle = "#e3e9df"; screenCtx.font = "21px Arial, sans-serif";
+            const lineHeight = lines.length > 13 ? 35 : 39;
+            lines.slice(0, 13).forEach((line, i) => screenCtx.fillText(line, 68, 245 + i * lineHeight, 1060));
+            screenCtx.fillStyle = "#8cc2a9"; screenCtx.fillRect(68, 650, Math.min(280, 28 + chapter * 20), 5);
+          }
+        }
+        screenTexture.needsUpdate = true;
+      };
+      drawMonitorScreen(0);
       makeBox(.32, .8, .36, dark, 0, .48, -4.25);
       makeBox(1.8, .13, .85, dark, 0, .08, -4.1);
       makeBox(4.45, .018, .018, mat("#8bc4ac", .25, .1), 0, 3.38, -4.17);
@@ -376,6 +437,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const antHitArea = antHitAreaRef.current;
       const clock = new THREE.Clock();
       let previousActive = -1;
+      let previousReactionCount = 0;
       let routeTargetChapter = -1;
       let queuedChapter = -1;
       let routeProgress = 1;
@@ -425,11 +487,12 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
-        const { active: currentActive, reacting: isReacting, paused: isPaused } = propsRef.current;
+        const { active: currentActive, reacting: isReacting, paused: isPaused, reactionCount: currentReactionCount } = propsRef.current;
         if ((isPaused || isReacting) && lastFrameTime) routeStartedAt += t - lastFrameTime;
         lastFrameTime = t;
         if (currentActive !== previousActive) {
           previousActive = currentActive;
+          drawMonitorScreen(currentActive);
           if (routePoints.length > 1 && routeProgress < 1 && routeTargetChapter >= 0) {
             // Finish the current physical walk before changing destination. Rapid taps must
             // not turn a route into a diagonal flight through the room.
@@ -439,6 +502,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             beginRoute(currentActive, routeTargetChapter, [ant.position.x, ant.position.y, ant.position.z], t);
           }
         }
+        if (currentReactionCount !== previousReactionCount) previousReactionCount = currentReactionCount;
         let target = path[Math.min(currentActive, path.length - 1)] || path[0];
         let segmentStart = target;
         let segmentEnd = target;
@@ -492,7 +556,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             ant.rotation.y = isReacting || !moving
               ? faceCamera
               : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx);
-            ant.rotation.z = isReacting ? Math.sin(t * 9) * .035 : 0;
+            ant.rotation.z = isReacting ? Math.sin(t * (8 + (currentReactionCount % 3) * 3)) * .035 : 0;
             head.rotation.y = 0;
           }
           legs.forEach((leg) => {
@@ -510,16 +574,16 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             eye.scale.y = 1.15 * (1 - blink * .88);
             eyePupils[i].scale.y = 1 - blink * .85;
           });
-          antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * (isReacting ? 11 : 3.1) + i * 2.2) * (isReacting ? .19 : .11); feeler.rotation.x = Math.sin(t * 2.4 + i) * .045; });
+          antennae.forEach((feeler, i) => { const reactionStyle = currentReactionCount % 3; feeler.rotation.z = Math.sin(t * (isReacting ? 10 + reactionStyle * 4 : 3.1) + i * (reactionStyle === 1 ? 3.3 : 2.2)) * (isReacting ? .16 + reactionStyle * .035 : .11); feeler.rotation.x = Math.sin(t * (isReacting ? 3.4 + reactionStyle : 2.4) + i) * (isReacting ? .08 : .045); });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           const narrowViewport = host.clientWidth / Math.max(1, host.clientHeight) < .72;
           const cameraTargetX = target[0];
-          const cameraTargetY = Math.max(4.05, target[1] * .55 + 4.05);
-          const cameraTargetZ = target[2] + (narrowViewport ? 11.5 : 9.5);
-          camera.position.x += (cameraTargetX - camera.position.x) * .04;
-          camera.position.y += (cameraTargetY - camera.position.y) * .04;
-          camera.position.z += (cameraTargetZ - camera.position.z) * .04;
+          const cameraTargetY = Math.max(1.1, target[1] * .78 + (narrowViewport ? 1.6 : 1.1));
+          const cameraTargetZ = target[2] + (narrowViewport ? 8.8 : 7.2);
+          camera.position.x += (cameraTargetX - camera.position.x) * .035;
+          camera.position.y += (cameraTargetY - camera.position.y) * .035;
+          camera.position.z += (cameraTargetZ - camera.position.z) * .035;
         }
         camera.lookAt(target[0], Math.max(.7, target[1] * .55 + .45), target[2]);
         camera.updateMatrixWorld();
