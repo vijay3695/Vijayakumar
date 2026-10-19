@@ -162,10 +162,39 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       for (let i = 0; i < 6; i++) makeBox(.18, .22 + (i % 4) * .14, .04, green, -.72 + i * .27, -.25 + (i % 4) * .055, .11, dashboard);
       const books = new THREE.Group(); books.position.set(-4.1, .1, -3.15); books.rotation.z = -.06; scene.add(books);
       for (let i = 0; i < 3; i++) makeBox(1.7, .28, 2.3, [mat("#9a6346"), mat("#c1a17a"), mat("#506e65")][i], 0, i * .29, 0, books);
-      // Sugar cube waits at the far right end of the same desktop.
-      const sugar = new THREE.Group(); sugar.position.set(7.0, .2, 1.2); scene.add(sugar);
-      makeBox(.8, .8, .8, mat("#fff7e9", .28), 0, .25, 0, sugar);
-      makeBox(.63, .018, .63, mat("#ffffff", .3), 0, .66, 0, sugar);
+      // A recognisable sugar cube: softened edges, crystalline granules and tiny pores.
+      // It sits directly on the desk and never floats or spins like a generic prop.
+      const sugar = new THREE.Group(); sugar.position.set(7.0, -.055, 1.2); scene.add(sugar);
+      const sugarShape = new THREE.Shape();
+      sugarShape.moveTo(-.36, -.36); sugarShape.lineTo(.36, -.36); sugarShape.lineTo(.36, .36);
+      sugarShape.lineTo(-.36, .36); sugarShape.closePath();
+      const sugarGeometry = new THREE.ExtrudeGeometry(sugarShape, {
+        depth: .72, bevelEnabled: true, bevelSegments: 4, steps: 1,
+        bevelSize: .055, bevelThickness: .055, curveSegments: 4
+      });
+      sugarGeometry.translate(0, .055, -.36);
+      const sugarMaterial = new THREE.MeshStandardMaterial({ color: "#fff8eb", roughness: .92, metalness: 0 });
+      const sugarMesh = new THREE.Mesh(sugarGeometry, sugarMaterial);
+      sugarMesh.position.y = .02; sugarMesh.castShadow = true; sugarMesh.receiveShadow = true; sugar.add(sugarMesh);
+      const sugarGrain = mat("#e8dfd0", .98);
+      const sugarBright = mat("#ffffff", .9);
+      // Fine, irregular crystalline flecks on the visible front and top faces.
+      for (let i = 0; i < 95; i++) {
+        const x = (Math.sin(i * 12.9898) * 43758.5453 % 1) * .58;
+        const y = (Math.sin(i * 4.1414 + 2) * 12345.6789 % 1) * .58;
+        const z = (Math.sin(i * 7.713 + 4) * 9876.54321 % 1) * .58;
+        const radius = .012 + (i % 4) * .004;
+        const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 3 === 0 ? sugarBright : sugarGrain);
+        crystal.position.set(x, .42 + Math.abs(y), .365 + Math.abs(z) * .02);
+        crystal.scale.set(1.2, .7, .35); crystal.castShadow = true; sugar.add(crystal);
+      }
+      for (let i = 0; i < 45; i++) {
+        const x = (Math.sin(i * 8.11) * 43758.5453 % 1) * .58;
+        const z = (Math.sin(i * 3.17 + 1) * 7654.321 % 1) * .58;
+        const radius = .01 + (i % 3) * .004;
+        const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 2 ? sugarBright : sugarGrain);
+        crystal.position.set(x, .79, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
+      }
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
       makeBox(.72, .12, .72, mat("#292424", .3, .28), 7.85, -.01, -2.25);
@@ -205,17 +234,17 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
 
       // One path point per story beat: keyboard -> monitor -> desk props -> sugar cube.
       const path = [
-        [-1.0, .25, 2.0],       // opening: between the keys
-        [0.25, 2.45, -4.02],    // about: climbing onto the monitor
-        [-3.8, .22, -1.1],      // summary: notebook
-        [2.1, .22, -1.0],       // competencies: dashboard
-        [3.6, 1.55, -2.35],     // team manager: dashboard screen
-        [5.0, .22, -.3],        // team leader: report
-        [-4.5, .22, -.4],       // senior associate: notebook
-        [-1.0, .25, 1.8],       // associate: keyboard
-        [-3.7, .42, -2.9],      // certifications: books
-        [-4.1, .5, -3.15],      // education: book stack
-        [7.0, .8, 1.2]          // ending: sugar cube
+        [-1.0, .15, 2.0],       // opening: feet on the keyboard keycaps
+        [0.25, 2.45, -4.02],    // about: deliberate climb up the monitor
+        [-3.8, .01, -1.1],      // summary: feet on the desktop/notebook
+        [2.1, .01, -1.0],       // competencies: desktop
+        [3.6, 1.55, -2.35],     // team manager: dashboard shelf
+        [5.0, .01, -.3],        // team leader: report on desk
+        [-4.5, .01, -.4],       // senior associate: notebook
+        [-1.0, .15, 1.8],       // associate: keyboard keycaps
+        [-3.7, .28, -2.9],      // certifications: books
+        [-4.1, .57, -3.15],     // education: book stack
+        [7.0, .01, 1.2]         // ending: sugar cube, grounded on the desktop
       ];
       const onResize = () => {
         if (!host || !renderer) return;
@@ -247,8 +276,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           // Let the opening breathe: the ant crosses the keycaps, reaches the
           // monitor stand, then climbs onto the screen before the story advances.
           const route = [
-            [-1.0, .25, 2.0], [-.45, .25, 1.1], [.15, .25, .1],
-            [.22, .38, -1.5], [.22, .82, -2.75], [.25, 1.45, -3.65], [.25, 2.45, -4.02]
+            [-1.0, .15, 2.0], [-.45, .15, 1.1], [.15, .15, .1],
+            [.22, .02, -1.5], [.22, .42, -2.75], [.25, 1.15, -3.65], [.25, 2.45, -4.02]
           ];
           const progress = Math.min(t / 13, 1) * (route.length - 1);
           const segment = Math.min(Math.floor(progress), route.length - 2);
@@ -257,13 +286,21 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         }
         if (!isPaused) {
           ant.position.x += (target[0] - ant.position.x) * .035 + Math.sin(t * .75) * .002;
-          ant.position.y += (target[1] - ant.position.y) * .035 + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025);
+          // Keep the body close to the surface; only a tiny gait bob is allowed.
+          // The old constant bounce made the ant look like it was flying.
+          const gaitBob = Math.abs(Math.sin(t * 11)) * .008;
+          ant.position.y += (target[1] - ant.position.y) * .11 + (isReacting ? Math.sin(t * 14) * .012 : gaitBob);
           ant.position.z += (target[2] - ant.position.z) * .035;
           ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
           ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
           legs.forEach((leg) => {
-            leg.hip.rotation.z = isReacting && leg.isScratchLeg ? -1.1 + Math.sin(t * 18) * .12 : Math.sin(t * 11 + leg.phase) * .22;
-            leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12;
+            // Alternating tripod gait: the feet sweep back and lift only a little,
+            // while the opposite legs stay planted. No broad waving that reads as flight.
+            const stride = Math.sin(t * 10 + leg.phase);
+            leg.hip.rotation.z = isReacting && leg.isScratchLeg
+              ? -1.1 + Math.sin(t * 18) * .12
+              : stride * .3;
+            leg.hip.rotation.x = Math.cos(t * 10 + leg.phase) * .1;
           });
           eyeWhites.forEach((eye, i) => {
             const blink = Math.pow(Math.max(0, Math.cos(t * 1.8 + i * 2.4)), 32);
@@ -273,8 +310,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
-          sugar.rotation.y = Math.sin(t * 1.2) * .06;
-          if (currentKind === "ending" || currentActive === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
+          // The cube remains planted on the desk; no hovering or spinning.
           const cameraTargetX = currentActive > 0 ? target[0] * .85 : 0;
           camera.position.x += (cameraTargetX - camera.position.x) * .018;
         }
