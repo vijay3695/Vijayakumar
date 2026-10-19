@@ -71,23 +71,23 @@ body::before,body::after{display:none!important}#root{position:relative;z-index:
 
 
 /* Clear, reliable page navigation: every page is reachable without needing a perfect swipe. */
-.book-page-index{width:min(100%,620px);display:flex;align-items:center;gap:7px;margin:18px 0 10px;padding:10px 0 5px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
-.book-page-index__label{position:sticky;left:0;z-index:2;flex:0 0 auto;margin-right:4px;padding:8px 10px 8px 0;background:var(--stage);color:rgba(255,255,255,.58);font:8px var(--mono);letter-spacing:.12em}
-.book-page-index button{flex:0 0 auto;display:flex;align-items:center;gap:7px;min-height:32px;padding:6px 10px;border:1px solid rgba(255,255,255,.2);border-radius:2px;background:rgba(255,255,255,.035);color:rgba(255,255,255,.72);cursor:pointer;transition:background .18s,border-color .18s,color .18s}
-.book-page-index button small{font:8px var(--mono);color:#c8b68e}
-.book-page-index button span{font:9px var(--mono);white-space:nowrap}
-.book-page-index button:hover,.book-page-index button.is-active{border-color:#d3c19a;background:#e9e2d3;color:#29271f}
-.book-page-index button.is-active small{color:#98764a}
-.book-page-index button:disabled{cursor:wait;opacity:.65}
-.book-page-index::-webkit-scrollbar{height:4px}
-.book-page-index::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:5px}
+
+
+
+
+
+
+
+
+
+
 .book-viewport{cursor:ew-resize}
 .book-viewport.is-turning{cursor:grabbing}
 .book-page--turn:after{content:"";position:absolute;z-index:8;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(31,26,18,.16),transparent 13%,transparent 72%,rgba(31,26,18,.08));opacity:.72;mix-blend-mode:multiply}
 .book-page--turn.book-page--next:before{content:"";position:absolute;z-index:9;top:0;bottom:0;right:0;width:34%;pointer-events:none;background:linear-gradient(270deg,rgba(31,26,18,.24),rgba(31,26,18,.08) 18%,transparent 100%);opacity:.85}
 .book-page--turn.book-page--prev:before{content:"";position:absolute;z-index:9;top:0;bottom:0;left:0;width:34%;pointer-events:none;background:linear-gradient(90deg,rgba(31,26,18,.24),rgba(31,26,18,.08) 18%,transparent 100%);opacity:.85}
-@media(max-width:600px){.book-page-index{width:100%;margin-top:12px}.book-page-index__label{font-size:7px}.book-page-index button{min-height:30px;padding:6px 8px}.book-page-index button span{font-size:8px}.book-bottom-note{font-size:7px}.book-viewport{min-height:420px;height:min(66svh,720px)}}
-@media(prefers-reduced-motion:reduce){.book-page-index button{transition:none}.book-page--turn{animation-duration:.01ms!important}}
+@media(max-width:600px){.book-bottom-note{font-size:7px}.book-viewport{min-height:420px;height:min(66svh,720px)}}
+@media(prefers-reduced-motion:reduce){.book-page--turn{animation-duration:.01ms!important}}
 
 
 /* A visible paper block gives the closed cover and each leaf physical thickness. */
