@@ -69,7 +69,7 @@ describe("ant-led resume story", () => {
     render(<App />);
     const chapterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>(".story-chapters button"));
     for (const section of sections) {
-      const chapter = chapterButtons.find((button) => button.textContent?.trim().endsWith(section.highlight));
+      const chapter = chapterButtons.find((button) => button.textContent?.replace(/^\s*\d+\s*/, "").trim() === section.highlight);
       expect(chapter).toBeTruthy();
       fireEvent.click(chapter!);
       expect(screen.getByRole("heading", { name: section.title })).toBeTruthy();
