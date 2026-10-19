@@ -17,6 +17,18 @@ const sectionLocations: Record<string, string> = {
   education: "Diploma frame · education"
 };
 
+const chapterNarratives: Record<string, string> = {
+  about: "The ant reaches a well-used notebook. Before the job titles, meet the person behind the journey and the values carried from one role to the next.",
+  summary: "It opens a book. The pages connect the whole journey: customer experience, practical problem-solving, and the people who make service work.",
+  competencies: "A dashboard lights up with the tools used to turn daily challenges into consistent service: clear analysis, coaching, quality, and communication.",
+  "exp-team-manager": "The monitor becomes an operations command centre. At this stage, the focus expands to delivery across a 25-member team, client escalations, and measurable service performance.",
+  "exp-team-leader": "A performance report sits open on the desk. Leadership here means turning root-cause findings into coaching, corrective action, and dependable results for a 30-member team.",
+  "exp-senior-csa": "The case file holds the work behind a calm customer experience: resolving escalations, supporting key accounts, and helping new colleagues find their feet.",
+  "exp-csa": "Back at the keyboard, the story returns to its starting point: careful email support, collaboration with technical teams, and solving the customer's problem.",
+  certifications: "The ant climbs a stack of books. Each one represents a new tool learned along the way, from quality and root-cause analysis to account management and analytics.",
+  education: "At the framed diploma, the journey pauses at its academic foundation: computer science, analytical thinking, and a habit of continuing to learn."
+};
+
 function DetailCard({ beat }: { beat: Beat }) {
   const s = beat.section;
   if (!s) return null;
@@ -25,6 +37,7 @@ function DetailCard({ beat }: { beat: Beat }) {
       <p className="story-eyebrow">{s.highlight} · {s.kind === "experience" ? "CAREER JOURNEY" : "CHAPTER"}</p>
       <h2>{s.title}</h2>
       {s.subtitle && <p className="story-subtitle">{s.subtitle}{s.meta ? " · " + s.meta : ""}</p>}
+      {chapterNarratives[s.id] && <p className="story-narrative">{chapterNarratives[s.id]}</p>}
       {s.body.map((line) => <p className="story-copy" key={line}>{line}</p>)}
       {s.bullets && <ul className="story-list">{s.bullets.map((item) => <li key={item}>{item}</li>)}</ul>}
       {s.chips && <div className="story-chips">{s.chips.map((item) => <span key={item}>{item}</span>)}</div>}
