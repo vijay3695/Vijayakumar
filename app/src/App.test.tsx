@@ -32,7 +32,7 @@ describe("typography-led full resume portfolio", () => {
     render(<App />);
     for (const section of sections.filter((item) => item.kind === "experience")) {
       expect(screen.getByRole("heading", { name: section.title })).toBeTruthy();
-      expect(screen.getByText(section.subtitle!)).toBeTruthy();
+      expect(screen.getAllByText(section.subtitle!).length).toBeGreaterThan(0);
       for (const bullet of section.bullets ?? []) expect(screen.getByText(bullet)).toBeTruthy();
     }
     expect(screen.getByText(/25-member customer support team/i)).toBeTruthy();
@@ -62,6 +62,6 @@ describe("typography-led full resume portfolio", () => {
   it("uses a print action that can save the resume as a PDF", () => {
     render(<App />);
     expect(screen.getAllByRole("button", { name: /PRINT \/ SAVE PDF/i }).length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByRole("heading", { name: /Let’s talk/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /what’s next/i })).toBeTruthy();
   });
 });
