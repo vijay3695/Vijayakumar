@@ -72,3 +72,6 @@
 .world--paused *{animation-play-state:paused!important}
 @media(max-width:700px){.typing-hands{width:280px;left:calc(50% - 140px);height:82px;bottom:5%;scale:.88}.typing-hand{width:119px;height:69px}.typing-hand i{height:42px}.typing-hand i:nth-child(2){height:53px}.typing-hand i:nth-child(3){height:50px}.typing-hand i:nth-child(4){height:38px}.story-modebar{border-radius:16px;align-items:stretch}.story-modebar button{padding:9px 8px;font-size:9px}.story-modebar>button{max-width:110px;white-space:normal}.world--opening .ant-stage{animation-duration:6s}}
 @media(prefers-reduced-motion:reduce){.typing-hand i,.world--opening .ant-stage,.world--opening .keyboard-scene i{animation:none!important}}
+
+/* Layer the tactile foreground above the perspective floor. */
+.world-backdrop{z-index:2}.world-floor{z-index:1}.typing-hands{z-index:5}
