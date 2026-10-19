@@ -407,9 +407,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           ant.rotation.y = verticalClimb ? faceCamera : (isReacting || !moving
             ? faceCamera
             : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx));
-          ant.rotation.z = verticalClimb ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .035 : 0);
+          ant.rotation.z = verticalClimb && !isReacting ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .035 : 0);
           legs.forEach((leg) => {
-            const stride = moving ? Math.sin(t * 12 + leg.phase) : 0;
+            const stride = moving && !isReacting ? Math.sin(t * 12 + leg.phase) : 0;
             leg.hip.rotation.z = isReacting && leg.isScratchLeg
               ? -1.1 + Math.sin(t * 18) * .12
               : stride * .22;
@@ -423,10 +423,15 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * (isReacting ? 11 : 3.1) + i * 2.2) * (isReacting ? .19 : .11); feeler.rotation.x = Math.sin(t * 2.4 + i) * .045; });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
-          const cameraTargetX = currentActive > 0 ? target[0] * .85 : 0;
-          camera.position.x += (cameraTargetX - camera.position.x) * .025;
+          const narrowViewport = host.clientWidth / Math.max(1, host.clientHeight) < .72;
+          const cameraTargetX = target[0] * .85;
+          // Follow depth as well as horizontal position: rear-wall chapters must be framed
+          // close-up too, not left tiny at the far end of a desktop-wide establishing shot.
+          const cameraTargetZ = target[2] + (narrowViewport ? 11.5 : 9.5);
+          camera.position.x += (cameraTargetX - camera.position.x) * .035;
+          camera.position.z += (cameraTargetZ - camera.position.z) * .035;
         }
-        camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, Math.max(.7, target[1] * .55 + .45), target[2] * .28);
+        camera.lookAt(target[0] * .85, Math.max(.7, target[1] * .55 + .45), target[2]);
         if (antHitArea) {
           const projected = ant.position.clone();
           projected.y += .11;
