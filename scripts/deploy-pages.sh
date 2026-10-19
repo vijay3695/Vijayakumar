@@ -6,7 +6,10 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 BRANCH="${DEPLOY_BRANCH:-main}"
 
-echo "==> building"
+echo "==> running tests"
+npm test
+
+echo "==> typecheck and build"
 npm run build
 
 if [ ! -f dist/index.html ]; then
