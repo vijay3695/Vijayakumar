@@ -44,6 +44,6 @@ describe("interactive resume flipbook", () => {
     expect(screen.getByRole("link", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
     fireEvent.keyDown(window, { key: "End" });
     expect(screen.getByRole("heading", { name: /Made with respect/i })).toBeTruthy();
-    expect(screen.getByRole("link", { name: /View project/i })).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: /View project/i }).length).toBeGreaterThanOrEqual(2);
   });
 });
