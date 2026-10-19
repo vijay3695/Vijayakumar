@@ -234,7 +234,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const lampGlow = new THREE.PointLight("#ffc88d", 24, 8); lampGlow.position.set(7.15, 1.35, -2.05); scene.add(lampGlow);
 
       // Fully articulated ant: three pairs of legs, joints, abdomen, thorax, head, eyes and antennae.
-      const ant = new THREE.Group(); scene.add(ant);
+      const ant = new THREE.Group(); ant.position.set(-1.0, .14, 2.0); scene.add(ant);
       const antDark = mat("#402019", .42); const antShell = mat("#7c3528", .36); const antLight = mat("#b85d40", .38);
       makeSphere(.29, antShell, -.43, .45, 0, ant, 1.18, .95, 1.0);
       makeSphere(.2, antDark, -.06, .46, 0, ant, 1, .94, .9);
@@ -299,40 +299,95 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // so tapping the desk elsewhere doesn't accidentally trigger its reaction.
       const antHitArea = host.querySelector<HTMLButtonElement>(".three-world-ant-hitarea");
       const clock = new THREE.Clock();
+      let previousActive = -1;
+      let routeStartedAt = 0;
+      let lastFrameTime = 0;
+      let routeDuration = 14;
+      let routePoints: number[][] = [];
+      const openingRoute = [
+        [-1.0, .14, 2.0], [-.45, .14, 1.1], [.15, .14, .1],
+        [.15, -.1, -2.8], [.15, -.1, -3.55], [.15, .18, -4.02],
+        [.15, .65, -4.02], [.15, .9, -4.205], [.15, 1.35, -4.205],
+        [.15, 1.8, -4.205], [.15, 2.25, -4.205], [.25, 2.45, -4.205]
+      ];
+      const makeRoute = (start: number[], destination: number[]) => {
+        const floor = -.1;
+        const points: number[][] = [[start[0], start[1], start[2]]];
+        const add = (point: number[]) => {
+          const last = points[points.length - 1];
+          if (Math.hypot(point[0] - last[0], point[1] - last[1], point[2] - last[2]) > .04) points.push(point);
+        };
+        // Come down a vertical surface before crossing the desktop.
+        if (start[1] > floor + .16) add([start[0], floor, start[2]]);
+        // A deliberate ground-level route: no straight-line diagonal shortcuts through the air.
+        add([start[0], floor, 0]);
+        add([destination[0], floor, 0]);
+        add([destination[0], floor, destination[2]]);
+        if (destination[1] > floor + .04) add([destination[0], destination[1], destination[2]]);
+        else add(destination);
+        return points;
+      };
+      const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
+        const previous = points[index];
+        return sum + Math.hypot(point[0] - previous[0], point[1] - previous[1], point[2] - previous[2]);
+      }, 0);
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
         const { active: currentActive, reacting: isReacting, paused: isPaused } = propsRef.current;
-        let target = path[Math.min(currentActive, path.length - 1)] || path[0];
-        if (currentActive === 0) {
-          // Let the opening breathe: the ant crosses the keycaps, reaches the
-          // monitor stand, then climbs onto the screen before the story advances.
-          const route = [
-            [-1.0, .15, 2.0], [-.45, .15, 1.1], [.15, .15, .1],
-            [.22, .02, -1.5], [.22, .42, -2.75], [.25, 1.15, -3.65], [.25, 2.45, -4.02]
-          ];
-          const progress = Math.min(t / 13, 1) * (route.length - 1);
-          const segment = Math.min(Math.floor(progress), route.length - 2);
-          const blend = progress - segment;
-          target = route[segment].map((value, axis) => value + (route[segment + 1][axis] - value) * blend);
+        if (isPaused && lastFrameTime) routeStartedAt += t - lastFrameTime;
+        lastFrameTime = t;
+        if (currentActive !== previousActive) {
+          previousActive = currentActive;
+          routeStartedAt = t;
+          if (currentActive === 0) {
+            routePoints = openingRoute.map((point) => [...point]);
+            routeDuration = 14;
+          } else {
+            const destination = path[Math.min(currentActive, path.length - 1)] || path[0];
+            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], destination);
+            routeDuration = Math.min(9, Math.max(2.8, routeLength(routePoints) / 2.15));
+          }
         }
+        let target = path[Math.min(currentActive, path.length - 1)] || path[0];
+        let segmentStart = target;
+        let segmentEnd = target;
+        let moving = false;
+        if (routePoints.length > 1) {
+          const length = routeLength(routePoints);
+          const progress = Math.min(1, Math.max(0, (t - routeStartedAt) / routeDuration));
+          let distance = progress * length;
+          let segment = 0;
+          while (segment < routePoints.length - 2) {
+            const a = routePoints[segment]; const b = routePoints[segment + 1];
+            const part = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+            if (distance <= part) break;
+            distance -= part; segment++;
+          }
+          segmentStart = routePoints[segment];
+          segmentEnd = routePoints[Math.min(segment + 1, routePoints.length - 1)];
+          const partLength = Math.max(.0001, Math.hypot(segmentEnd[0] - segmentStart[0], segmentEnd[1] - segmentStart[1], segmentEnd[2] - segmentStart[2]));
+          const blend = progress >= 1 ? 1 : Math.min(1, distance / partLength);
+          target = segmentStart.map((value, axis) => value + (segmentEnd[axis] - value) * blend);
+          moving = progress < 1;
+        }
+        const verticalClimb = Math.abs(segmentEnd[1] - segmentStart[1]) > .15
+          && Math.abs(segmentEnd[0] - segmentStart[0]) < .1
+          && Math.abs(segmentEnd[2] - segmentStart[2]) < .1;
         if (!isPaused) {
-          ant.position.x += (target[0] - ant.position.x) * .035 + Math.sin(t * .75) * .002;
-          // Keep the body close to the surface; only a tiny gait bob is allowed.
-          // The old constant bounce made the ant look like it was flying.
-          const gaitBob = Math.abs(Math.sin(t * 11)) * .008;
-          ant.position.y += (target[1] - ant.position.y) * .11 + (isReacting ? Math.sin(t * 14) * .012 : gaitBob);
-          ant.position.z += (target[2] - ant.position.z) * .035;
-          ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
-          ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
+          // Set height relative to the surface target. Never accumulate a positive bob frame after frame.
+          const gaitBob = moving && !verticalClimb && !isReacting ? Math.abs(Math.sin(t * 12)) * .006 : 0;
+          ant.position.set(target[0], target[1] + gaitBob, target[2]);
+          const dx = segmentEnd[0] - segmentStart[0];
+          const dz = segmentEnd[2] - segmentStart[2];
+          ant.rotation.y = verticalClimb ? 0 : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx) + (isReacting ? Math.PI : 0);
+          ant.rotation.z = verticalClimb ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .08 : 0);
           legs.forEach((leg) => {
-            // Alternating tripod gait: the feet sweep back and lift only a little,
-            // while the opposite legs stay planted. No broad waving that reads as flight.
-            const stride = Math.sin(t * 10 + leg.phase);
+            const stride = moving ? Math.sin(t * 12 + leg.phase) : 0;
             leg.hip.rotation.z = isReacting && leg.isScratchLeg
               ? -1.1 + Math.sin(t * 18) * .12
-              : stride * .3;
-            leg.hip.rotation.x = Math.cos(t * 10 + leg.phase) * .1;
+              : stride * .22;
+            leg.hip.rotation.x = moving ? Math.cos(t * 12 + leg.phase) * .07 : 0;
           });
           eyeWhites.forEach((eye, i) => {
             const blink = Math.pow(Math.max(0, Math.cos(t * 1.8 + i * 2.4)), 32);
@@ -342,11 +397,10 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
-          // The cube remains planted on the desk; no hovering or spinning.
           const cameraTargetX = currentActive > 0 ? target[0] * .85 : 0;
-          camera.position.x += (cameraTargetX - camera.position.x) * .018;
+          camera.position.x += (cameraTargetX - camera.position.x) * .025;
         }
-        camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, 1.0, -.1);
+        camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, Math.max(.7, target[1] * .55 + .45), target[2] * .28);
         if (antHitArea) {
           const projected = ant.position.clone();
           projected.y += .24;
