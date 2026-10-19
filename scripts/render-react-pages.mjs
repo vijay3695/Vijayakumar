@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import puppeteer from "/workspace/app/node_modules/puppeteer/lib/puppeteer/puppeteer.js";
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
@@ -14,7 +15,7 @@ const TOTAL_PAGES = 14;
 
 await fs.mkdir(PAGES_DIR, { recursive: true });
 
-const js = await fs.readFile(path.join(PROJECT_ROOT, "dist-render", "single-page.js"), "utf8");
+const js = await fs.readFile(path.join(PROJECT_ROOT, "dist-render", "page-render.js"), "utf8");
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
@@ -26,8 +27,8 @@ for (let i = 0; i < TOTAL_PAGES; i++) {
   const page = await browser.newPage();
   await page.setViewport({ width: PAGE_WIDTH, height: PAGE_HEIGHT, deviceScaleFactor: 1 });
 
-  // Create standalone HTML with page parameter
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#f4f0e6}</style><script>window.__PAGE_INDEX__=${i};</script></head><body><div id="root" style="width:1440px;height:1986px;overflow:hidden;background:#f4f0e6"></div><script>${js.replace('const Jf=new URLSearchParams(window.location.search),', 'const Jf=new URLSearchParams("page=' + i + '"),')}</script></body></html>`;
+  // Create standalone HTML with page parameter embedded
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#f4f0e6}</style></head><body><div id="root" style="width:1440px;height:1986px;overflow:hidden;background:#f4f0e6"></div><script>const __PAGE__=${i};</script><script>${js.replace('const ed=new URLSearchParams(window.location.search),', 'const ed=new URLSearchParams("page=' + i + '"),')}</script></body></html>`;
   
   await page.setContent(html, { waitUntil: "networkidle0", timeout: 30000 });
   await new Promise(r => setTimeout(r, 3000));
@@ -44,7 +45,6 @@ for (let i = 0; i < TOTAL_PAGES; i++) {
 await browser.close();
 
 // Run make-book.mjs
-const { spawn } = await import("node:child_process");
 const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Interactive Resume", "--portrait", "single"], {
   stdio: "inherit",
   cwd: PROJECT_ROOT,
