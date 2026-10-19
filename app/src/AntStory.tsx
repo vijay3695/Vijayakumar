@@ -3,7 +3,19 @@ import ThreeWorld from "./ThreeWorld";
 import { profile, sections, type Section } from "./data/resume";
 import "./styles/ant-story.css";
 
-type Beat = { id: string; label: string; kind: string; section?: Section };
+type Beat = { id: string; label: string; kind: string; location: string; section?: Section };
+
+const sectionLocations: Record<string, string> = {
+  about: "Notebook · about me",
+  summary: "Open book · professional summary",
+  competencies: "Operations dashboard",
+  "exp-team-manager": "Monitor · service delivery",
+  "exp-team-leader": "Performance report",
+  "exp-senior-csa": "Case file · senior support",
+  "exp-csa": "Keyboard · frontline support",
+  certifications: "Book stack · certifications",
+  education: "Diploma frame · education"
+};
 
 function DetailCard({ beat }: { beat: Beat }) {
   const s = beat.section;
@@ -25,9 +37,12 @@ function DetailCard({ beat }: { beat: Beat }) {
 
 export default function AntStory() {
   const beats = useMemo<Beat[]>(() => [
-    { id: "opening", label: "The beginning", kind: "opening" },
-    ...sections.map((section) => ({ id: section.id, label: section.highlight, kind: section.kind, section })),
-    { id: "sugar", label: "The next goal", kind: "ending" }
+    { id: "opening", label: "The beginning", kind: "opening", location: "Keyboard → monitor" },
+    ...sections.map((section) => ({
+      id: section.id, label: section.highlight, kind: section.kind, section,
+      location: sectionLocations[section.id] ?? "Desk landmark"
+    })),
+    { id: "sugar", label: "The next goal", kind: "ending", location: "Sugar cube · next goal" }
   ], []);
   const [active, setActive] = useState(0);
   const [reacting, setReacting] = useState(false);
@@ -73,7 +88,10 @@ export default function AntStory() {
       </div>
       <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
         <ThreeWorld active={active} kind={current.kind} reacting={reacting} paused={motionPaused} onAntClick={() => setReacting((v) => !v)} />
-        <div className="world-caption" aria-hidden="true"><span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />{current.label}</div>
+        <div className="world-caption" aria-hidden="true">
+          <span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />
+          <strong>{current.label}</strong><em>{current.location}</em>
+        </div>
       </div>
       <section className="story-content" id="story-start">
         <div className="story-content__copy">
