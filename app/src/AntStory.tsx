@@ -59,6 +59,7 @@ export default function AntStory() {
   ], []);
   const [active, setActive] = useState(0);
   const [reacting, setReacting] = useState(false);
+  const [reactionCount, setReactionCount] = useState(0);
   const [motionPaused, setMotionPaused] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const current = beats[active];
@@ -68,7 +69,7 @@ export default function AntStory() {
     if (!reacting) return;
     const timer = window.setTimeout(() => { setReacting(false); }, 1900);
     return () => window.clearTimeout(timer);
-  }, [reacting]);
+  }, [reacting, reactionCount]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -100,7 +101,7 @@ export default function AntStory() {
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
       <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
-        <ThreeWorld active={active} kind={current.kind} reacting={reacting} paused={motionPaused} onAntClick={() => setReacting(true)} />
+        <ThreeWorld active={active} kind={current.kind} reacting={reacting} reactionCount={reactionCount} paused={motionPaused} onAntClick={() => { setReactionCount((count) => count + 1); setReacting(true); }} />
         <div className="world-caption" aria-hidden="true">
           <span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />
           <strong>{current.label}</strong><em>{current.location}</em>
