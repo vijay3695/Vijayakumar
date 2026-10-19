@@ -179,21 +179,22 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const sugarGrain = mat("#e8dfd0", .98);
       const sugarBright = mat("#ffffff", .9);
       // Fine, irregular crystalline flecks on the visible front and top faces.
+      const signed = (value: number) => Math.sin(value) * .29;
       for (let i = 0; i < 95; i++) {
-        const x = (Math.sin(i * 12.9898) * 43758.5453 % 1) * .58;
-        const y = (Math.sin(i * 4.1414 + 2) * 12345.6789 % 1) * .58;
-        const z = (Math.sin(i * 7.713 + 4) * 9876.54321 % 1) * .58;
-        const radius = .012 + (i % 4) * .004;
+        const x = signed(i * 12.9898);
+        const y = .055 + signed(i * 4.1414 + 2);
+        const radius = .009 + (i % 4) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 3 === 0 ? sugarBright : sugarGrain);
-        crystal.position.set(x, .42 + Math.abs(y), .365 + Math.abs(z) * .02);
+        // Crystals cling to the front face instead of hovering in front of the cube.
+        crystal.position.set(x, y, .006);
         crystal.scale.set(1.2, .7, .35); crystal.castShadow = true; sugar.add(crystal);
       }
       for (let i = 0; i < 45; i++) {
-        const x = (Math.sin(i * 8.11) * 43758.5453 % 1) * .58;
-        const z = (Math.sin(i * 3.17 + 1) * 7654.321 % 1) * .58;
-        const radius = .01 + (i % 3) * .004;
+        const x = signed(i * 8.11);
+        const z = signed(i * 3.17 + 1);
+        const radius = .009 + (i % 3) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 2 ? sugarBright : sugarGrain);
-        crystal.position.set(x, .79, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
+        crystal.position.set(x, .425, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
       }
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
@@ -236,15 +237,15 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const path = [
         [-1.0, .15, 2.0],       // opening: feet on the keyboard keycaps
         [0.25, 2.45, -4.02],    // about: deliberate climb up the monitor
-        [-3.8, .01, -1.1],      // summary: feet on the desktop/notebook
-        [2.1, .01, -1.0],       // competencies: desktop
+        [-3.8, -.11, -1.1],      // summary: feet on the desktop/notebook
+        [2.1, -.11, -1.0],       // competencies: desktop
         [3.6, 1.55, -2.35],     // team manager: dashboard shelf
-        [5.0, .01, -.3],        // team leader: report on desk
-        [-4.5, .01, -.4],       // senior associate: notebook
+        [5.0, -.11, -.3],        // team leader: report on desk
+        [-4.5, -.11, -.4],       // senior associate: notebook
         [-1.0, .15, 1.8],       // associate: keyboard keycaps
         [-3.7, .28, -2.9],      // certifications: books
         [-4.1, .57, -3.15],     // education: book stack
-        [7.0, .01, 1.2]         // ending: sugar cube, grounded on the desktop
+        [7.0, -.11, 1.2]         // ending: sugar cube, grounded on the desktop
       ];
       const onResize = () => {
         if (!host || !renderer) return;
