@@ -59,30 +59,34 @@ const pages: BookPage[] = [
   { label: "Contact", content: <div className="book-last-page"><p className="book-eyebrow">10 / THE NEXT CHAPTER</p><h2>Let’s make<br /><em>good work</em><br />happen.</h2><p className="book-copy">For opportunities in team leadership, service delivery, customer success, and operations.</p><div className="book-contact-links">{profile.links.map((link) => <a href={link.href} target="_blank" rel="noreferrer" key={link.label}>{link.label}<span>↗</span></a>)}</div><p className="book-location">{profile.location} · India</p></div> },
 ];
 
+const PAGE_WIDTH = 1440;
+const PAGE_HEIGHT = 1986;
 
-function makeOpenZinePage(content: ReactNode, index: number): string {
+function makeOpenZinePageSvg(content: ReactNode, index: number): string {
   const pageMarkup = renderToStaticMarkup(
     <PageFrame page={index} total={pages.length}>{content}</PageFrame>
   );
-  const css = flipbookStyles.replace(/^@import[^;]+;\s*/m, "");
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="720" height="993" viewBox="0 0 720 993">
-    <foreignObject x="0" y="0" width="720" height="993">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="width:720px;height:993px;overflow:hidden;background:#f4f0e6;color:#292820">
+  const css = flipbookStyles.replace(/^@import.*;\s*/m, "");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="${PAGE_WIDTH}" height="${PAGE_HEIGHT}" viewBox="0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}">
+    <foreignObject x="0" y="0" width="${PAGE_WIDTH}" height="${PAGE_HEIGHT}">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="width:${PAGE_WIDTH}px;height:${PAGE_HEIGHT}px;overflow:hidden;background:#f4f0e6;color:#292820">
         <style>${css}\n:root{--openzine-paper-grain:${openZinePaperGrain};--paper:#f4f0e6;--ink:#292820;--rule:#d7d0c2;--accent:#9b7846;--mono:'DM Mono',monospace}</style>
         ${pageMarkup}
       </div>
     </foreignObject>
   </svg>`;
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  return svg;
 }
 
-export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
+export default function FlipbookResume() {
   const [viewerDocument, setViewerDocument] = useState("");
 
   useEffect(() => {
-    // OpenZine requires page textures. Create them in-browser from the live JSX
-    // page components; no pre-rendered resume images are committed to the repo.
-    const pageUrls = pages.map((page, index) => makeOpenZinePage(page.content, index));
+    const pageUrls = pages.map((page, index) => {
+      const svg = makeOpenZinePageSvg(page.content, index);
+      return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+    });
+    
     const config = {
       title: "Vijayakumar Chandiran — Interactive Resume",
       lang: "en",
@@ -96,22 +100,16 @@ export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
     setViewerDocument(html);
   }, []);
 
+  if (!viewerDocument) {
+    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#77766f", color: "#f4f0e6", fontFamily: "monospace", fontSize: "12px", letterSpacing: "0.1em" }}>PREPARING THE INTERACTIVE BOOK…</div>;
+  }
+
   return (
-    <main className="flipbook-app flipbook-app--openzine">
-      <header className="flipbook-topline">
-        <a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a>
-        <div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div>
-        {onClose && <button type="button" className="flipbook-close" onClick={onClose}>CLOSE BOOK ×</button>}
-        <a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a>
-      </header>
-      {!viewerDocument && <div className="openzine-preparing" role="status">PREPARING THE INTERACTIVE BOOK…</div>}
-      <iframe
-        className="openzine-viewer"
-        title="Interactive resume book with OpenZine paper-turn renderer"
-        srcDoc={viewerDocument}
-        sandbox="allow-scripts"
-        allow="fullscreen"
-      />
-    </main>
+    <iframe
+      srcDoc={viewerDocument}
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }}
+      title="Interactive resume book with OpenZine paper-turn renderer"
+      allow="fullscreen"
+    />
   );
 }
