@@ -268,7 +268,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
       makeBox(2.35, .12, 3.1, mat("#b99a75"), 0, 0, 0, notebook);
       makeBox(2.14, .035, 2.85, cream, 0, .08, 0, notebook);
       for (let i = 0; i < 7; i++) makeBox(1.65, .012, .018, mat("#b9a38a"), -.05, .105, -.95 + i * .3, notebook);
-      addDocumentPlane(notebook, 2.08, 2.72, 0, .101, 0, "ABOUT ME", linesForSection("about"));
+      addDocumentPlane(notebook, 2.08, 2.72, 0, .116, 0, "ABOUT ME", linesForSection("about"));
       // The professional summary gets its own open book, with a spine, two pages and printed lines.
       const openBook = new THREE.Group(); openBook.position.set(-2.7, .015, -1.25); openBook.rotation.y = -.08; scene.add(openBook);
       makeBox(2.55, .1, 1.95, mat("#684734"), 0, 0, 0, openBook);
@@ -280,8 +280,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
           const x = page === 0 ? -.62 : .62;
           const width = line === 0 ? .72 : .91;
           makeBox(width, .009, .018, mat(line === 0 ? "#b58a63" : "#cbbba2"), x, .091, -.62 + line * .22, openBook);
-      addDocumentPlane(openBook, 1.12, 1.62, -.62, .085, 0, "PROFESSIONAL SUMMARY", linesForSection("summary"));
-      addDocumentPlane(openBook, 1.12, 1.62, .62, .085, 0, "CORE COMPETENCIES", linesForSection("competencies"), true, "#eee0c6");
+      addDocumentPlane(openBook, 1.12, 1.62, -.62, .102, 0, "PROFESSIONAL SUMMARY", linesForSection("summary"));
+      addDocumentPlane(openBook, 1.12, 1.62, .62, .102, 0, "CORE COMPETENCIES", linesForSection("competencies"), true, "#eee0c6");
         }
       }
       // A separate case file gives the senior-associate chapter a third desk location.
@@ -289,7 +289,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
       makeBox(1.8, .1, 1.65, mat("#526b65"), 0, 0, 0, caseFile);
       makeBox(1.58, .025, 1.42, mat("#e8dbc3"), 0, .065, 0, caseFile);
       for (let line = 0; line < 5; line++) makeBox(1.05, .012, .02, mat("#b9a58c"), -.05, .083, -.42 + line * .19, caseFile);
-      addDocumentPlane(caseFile, 1.5, 1.34, 0, .079, 0, "SENIOR CUSTOMER SUPPORT", linesForSection("exp-senior-csa"), true, "#e8dbc3");
+      addDocumentPlane(caseFile, 1.5, 1.34, 0, .098, 0, "SENIOR CUSTOMER SUPPORT", linesForSection("exp-senior-csa"), true, "#e8dbc3");
       const report = new THREE.Group(); report.position.set(5.1, .03, -.3); report.rotation.y = -.16; scene.add(report);
       makeBox(2.1, .14, 2.8, mat("#d5c3a7"), 0, 0, 0, report);
       makeBox(1.8, .03, 2.48, mat("#eee0c6"), 0, .09, 0, report);
@@ -304,7 +304,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
       makeBox(2.3, 1.4, .12, dark, 0, 0, 0, dashboard);
       makeBox(2.08, 1.18, .035, mat("#19302b", .32), 0, .02, .08, dashboard);
       for (let i = 0; i < 6; i++) makeBox(.18, .22 + (i % 4) * .14, .04, green, -.72 + i * .27, -.25 + (i % 4) * .055, .11, dashboard);
-      addDocumentPlane(dashboard, 1.98, 1.1, 0, .02, .104, "CORE COMPETENCIES", linesForSection("competencies"), false, "#19302b");
+      addDocumentPlane(dashboard, 1.98, 1.1, 0, .02, .14, "CORE COMPETENCIES", linesForSection("competencies"), false, "#19302b");
       const books = new THREE.Group(); books.position.set(-4.1, .1, -3.15); books.rotation.z = -.06; scene.add(books);
       for (let i = 0; i < 3; i++) makeBox(1.7, .28, 2.3, [mat("#9a6346"), mat("#c1a17a"), mat("#506e65")][i], 0, i * .29, 0, books);
       addDocumentPlane(books, 1.58, 2.14, 0, .722, 0, "CERTIFICATIONS", linesForSection("certifications"), true, "#e7dcc7");
@@ -639,13 +639,13 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           const narrowViewport = host.clientWidth / Math.max(1, host.clientHeight) < .72;
           const cameraTargetX = target[0];
-          const cameraTargetY = Math.max(1.1, target[1] * .78 + (narrowViewport ? 1.6 : 1.1));
+          const cameraTargetY = Math.max(1.05, target[1] * .35 + .9);
           const cameraTargetZ = target[2] + (narrowViewport ? 8.8 : 7.2);
           camera.position.x += (cameraTargetX - camera.position.x) * .035;
           camera.position.y += (cameraTargetY - camera.position.y) * .035;
           camera.position.z += (cameraTargetZ - camera.position.z) * .035;
         }
-        camera.lookAt(target[0], Math.max(.7, target[1] * .55 + .45), target[2]);
+        camera.lookAt(target[0], Math.max(.7, target[1] * .35 + .9), target[2]);
         camera.updateMatrixWorld();
         if (antHitArea) {
           const projected = ant.localToWorld(new THREE.Vector3(.12, .62, 0));
