@@ -1,25 +1,20 @@
-# Vijayakumar Chandiran — Portfolio
+# Vijayakumar Chandiran — Interactive Resume Flipbook
 
-An interactive 3D ant-led career story for Vijayakumar Chandiran. A fully articulated ant explores a physical WebGL desk with individual keyboard keys, typing hands, a monitor carrying the name and role, notebooks, operations dashboards, books, and a sugar cube. The 3D journey and readable resume chapters stay visible together.
+A rich, single-page-at-a-time digital resume inspired by the tactile feel of printed paper and the OpenZine page-turning experience. Built with React, TypeScript, and CSS 3D transforms.
 
-## Experience
+## Reading the book
 
-- **Opening scene:** animated typing hands, a physical keyboard, the ant, and the name and role on the monitor.
-- **Career chapters:** one scene per resume section, with readable content cards and a persistent chapter navigator.
-- **Ant interaction:** tap or click the ant to pause and greet the visitor.
-- **Desktop navigation:** chapter controls and the left/right arrow keys; Home and End jump to the beginning and finale.
-- **Phone navigation:** touch-friendly controls and horizontal swipes between chapters.
-- **Both at once:** the cinematic 3D scene and the readable resume story are visible together; there is no mutually exclusive movie/book toggle.
-- **Motion control:** pause and resume scene animations.
-- **Finale:** sugar-cube discovery, “Always curious. Always growing.”, and LinkedIn/GitHub links.
-- **Accessibility:** semantic controls, visible focus states, keyboard navigation, and reduced-motion support.
+- Turn pages with the on-page arrows, click either half of the page, swipe, or drag.
+- Use the left/right arrow keys or Page Up/Page Down; Home and End jump to the beginning and credits.
+- One page is shown on desktop and mobile. The page and controls adapt to the available screen space automatically.
+- Print / Save PDF is available from the top bar.
+- Includes a credits page acknowledging inspiration and third-party projects.
 
 ## Stack
 
-- React 18
-- TypeScript
+- React 18 + TypeScript
 - Vite
-- Plain CSS with perspective/3D transforms
+- CSS 3D perspective, page-turn animation, paper grain, and page shadows
 - Vitest and Testing Library
 - GitHub Pages
 
@@ -27,19 +22,19 @@ An interactive 3D ant-led career story for Vijayakumar Chandiran. A fully articu
 
 ```bash
 npm ci
-npm run dev        # http://localhost:5173
+npm run dev
 npm run typecheck
 npm test
 npm run build
 ```
 
-## Content
+## Resume content
 
-Resume data is maintained in `app/src/data/resume.ts`. The source contains the career summary, four Sutherland role stages (2018–2025), core competencies, ten certifications, and education. Update the data there instead of duplicating it in the UI.
+Source content lives in `app/src/data/resume.ts`: the professional summary, four Sutherland career stages, competencies, ten certifications, and education. The flipbook pages are arranged in `app/src/FlipbookResume.tsx`.
 
-## Deployment
+## Design and credits
 
-The workflow at `.github/workflows/deploy.yml` runs on pushes to `main` and can be started manually. It installs dependencies, runs TypeScript checking and tests, builds the production site, and deploys the `dist/` artifact to GitHub Pages.
+The page-turning interaction is inspired by [OpenZine by Joseph Zhou](https://github.com/JosssphZhou/openzine). The implementation here uses original React and CSS rather than copying OpenZine's Paper renderer, shader, or grain assets. The visual direction is inspired by [Paper Mono](https://app.paper.design/playground/paper-mono). The credits page is part of the book.
 
-- **Live site:** https://vijay3695.github.io/Vijayakumar/
-- **Repository:** https://github.com/vijay3695/Vijayakumar
+- Live site: https://vijay3695.github.io/Vijayakumar/
+- Repository: https://github.com/vijay3695/Vijayakumar
