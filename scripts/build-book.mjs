@@ -87,16 +87,20 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 80, 0, Math.PI * 2); ctx.stroke();
     // Main name
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
-    ctx.fillText("Vijayakumar", margin, 380);
-    ctx.fillText("Chandiran.", margin, 500);
+    ctx.font = "bold 140px \"Space Grotesk\", sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Vijayakumar", PAGE_WIDTH / 2, 380);
+    ctx.fillText("Chandiran.", PAGE_WIDTH / 2, 520);
+    ctx.textAlign = "left";
     // Accent line under name
     ctx.fillStyle = "#9b7846";
-    ctx.fillRect(margin, 530, 200, 3);
+    ctx.fillRect(PAGE_WIDTH / 2 - 100, 550, 200, 3);
     // Role
     ctx.font = "400 32px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#6f685a";
-    ctx.fillText(profile.role, margin, 600);
+    ctx.textAlign = "center";
+    ctx.fillText(profile.role, PAGE_WIDTH / 2, 620);
+    ctx.textAlign = "left";
     // Divider
     ctx.strokeStyle = "#d7d0c2";
     ctx.lineWidth = 1;
