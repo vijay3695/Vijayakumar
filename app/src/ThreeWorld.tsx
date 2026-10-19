@@ -639,7 +639,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           const narrowViewport = host.clientWidth / Math.max(1, host.clientHeight) < .72;
           const cameraTargetX = target[0];
-          const cameraTargetY = Math.max(1.05, target[1] * .35 + .9);
+          const cameraTargetY = Math.max(4.1, target[1] * .35 + .9);
           const cameraTargetZ = target[2] + (narrowViewport ? 8.8 : 7.2);
           camera.position.x += (cameraTargetX - camera.position.x) * .035;
           camera.position.y += (cameraTargetY - camera.position.y) * .035;
