@@ -89,7 +89,7 @@ export default function FlipbookResume() {
       initialSpread: 0,
       portrait: "single"
     };
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};</script><script>${openZineRuntime.replace(/<\\/script/gi, "<\\\\/script")}</script></body></html>`;
+    return \`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}</style></head><body><script>window.OPENZINE=\${JSON.stringify(config)};</script><script>\${openZineRuntime.split("</script").join("<\\/script")}</script></body></html>\`;
   }, []);
 
   return (
