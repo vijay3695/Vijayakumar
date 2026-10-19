@@ -41,3 +41,6 @@
 .world--experience .notebook-scene,.world--experience .report-scene{opacity:0}
 .world--exp-senior-csa .notebook-scene{opacity:1}
 .world--exp-team-leader .report-scene{opacity:1}
+
+.world.world--exp-senior-csa .notebook-scene{opacity:1;transform:rotateZ(-11deg) rotateX(14deg) translateX(0)}
+.world.world--exp-team-leader .report-scene{opacity:1;transform:rotateZ(8deg) rotateX(10deg) translateX(0)}
