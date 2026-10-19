@@ -11,7 +11,8 @@ describe("ant-led resume story", () => {
     expect(screen.getByRole("heading", { name: profile.name })).toBeTruthy();
     expect(screen.getByText(profile.role + " · " + profile.location)).toBeTruthy();
     expect(screen.getByRole("button", { name: /start the journey/i })).toBeTruthy();
-    expect(container.querySelector(".ant")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /pause and greet the tiny ant/i })).toBeTruthy();
+    expect(container.querySelector(".three-world")).toBeTruthy();
     expect(container.querySelector(".world--opening")).toBeTruthy();
   });
 
@@ -40,7 +41,7 @@ describe("ant-led resume story", () => {
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /the next goal/i }));
     expect(screen.getByRole("heading", { name: /always curious. always growing./i })).toBeTruthy();
-    expect(container.querySelector(".world--sugar .sugar-cube")).toBeTruthy();
+    expect(container.querySelector(".world--sugar")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: /take the journey again/i }));
     expect(screen.getByRole("heading", { name: profile.name })).toBeTruthy();
   });
@@ -52,13 +53,13 @@ describe("ant-led resume story", () => {
     expect(ant.className).toContain("is-reacting");
   });
 
-  it("switches between movie and book modes and pauses motion", () => {
+  it("shows the 3D world and readable resume together, with no competing mode switch", () => {
     const { container } = render(<App />);
-    const bookMode = screen.getByRole("button", { name: /book mode/i });
-    fireEvent.click(bookMode);
-    expect(container.querySelector(".story-content--book")).toBeTruthy();
-    expect(bookMode.getAttribute("aria-pressed")).toBe("true");
-    const pause = screen.getByRole("button", { name: /pause motion/i });
+    expect(container.querySelector(".three-world")).toBeTruthy();
+    expect(container.querySelector(".story-card")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /movie mode/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /book mode/i })).toBeNull();
+    const pause = screen.getByRole("button", { name: /pause scene/i });
     fireEvent.click(pause);
     expect(container.querySelector(".world--paused")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: /resume motion/i }));
