@@ -168,7 +168,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       makeBox(.63, .018, .63, mat("#ffffff", .3), 0, .66, 0, sugar);
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
-      const lampBase = makeBox(.72, .12, .72, mat("#292424", .3, .28), 7.85, -.01, -2.25);
+      makeBox(.72, .12, .72, mat("#292424", .3, .28), 7.85, -.01, -2.25);
       makeCylinderBetween([7.85, .04, -2.25], [7.55, 1.65, -2.25], .085, mat("#b98d68", .32, .42), scene);
       const lampShade = new THREE.Mesh(new THREE.ConeGeometry(.62, .55, 24, 1, true), mat("#40332d", .38, .2));
       lampShade.position.set(7.48, 1.72, -2.25); lampShade.rotation.z = .38; lampShade.castShadow = true; scene.add(lampShade);
