@@ -1,6 +1,6 @@
 # Vijayakumar Chandiran — Ant Story Portfolio
 
-An interactive, ant-led career story for Vijayakumar Chandiran. A tiny curious ant explores a warmly lit desk, crosses the keyboard and monitor, and guides visitors through the real resume: professional summary, competencies, career history, certifications, and education. The journey ends with a sugar-cube discovery.
+An interactive 3D ant-led career story for Vijayakumar Chandiran. A fully articulated ant explores a physical WebGL desk with individual keyboard keys, typing hands, a monitor carrying the name and role, notebooks, operations dashboards, books, and a sugar cube. The 3D journey and readable resume chapters stay visible together.
 
 ## Experience
 
@@ -9,7 +9,7 @@ An interactive, ant-led career story for Vijayakumar Chandiran. A tiny curious a
 - **Ant interaction:** tap or click the ant to pause and greet the visitor.
 - **Desktop navigation:** chapter controls and the left/right arrow keys; Home and End jump to the beginning and finale.
 - **Phone navigation:** touch-friendly controls and horizontal swipes between chapters.
-- **Movie mode / Book mode:** switch between cinematic presentation and a warm reading layout.
+- **Both at once:** the cinematic 3D scene and the readable resume story are visible together; there is no mutually exclusive movie/book toggle.
 - **Motion control:** pause and resume scene animations.
 - **Finale:** sugar-cube discovery, “Always curious. Always growing.”, and LinkedIn/GitHub links.
 - **Accessibility:** semantic controls, visible focus states, keyboard navigation, and reduced-motion support.
