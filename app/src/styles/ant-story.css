@@ -62,7 +62,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 .story-rail button:disabled{opacity:.3;cursor:default}
 .story-rail button:focus-visible,.story-chapters button:focus-visible,.story-primary:focus-visible,.story-contact:focus-visible,.story-motion-control button:focus-visible{outline:2px solid #ffd1ad;outline-offset:3px}
 
-.story-chapters{position:absolute;z-index:24;left:clamp(20px,4.5vw,72px);right:clamp(20px,4.5vw,72px);bottom:22px;display:flex;gap:7px;overflow-x:auto;padding:10px 2px 7px;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 0%,#000 96%,transparent 100%)}
+.story-chapters{position:fixed;z-index:24;left:clamp(20px,4.5vw,72px);right:clamp(20px,4.5vw,72px);bottom:22px;display:flex;gap:7px;overflow-x:auto;padding:10px 2px 7px;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 0%,#000 96%,transparent 100%)}
 .story-chapters::-webkit-scrollbar{display:none}
 .story-chapters button{display:flex;align-items:center;gap:9px;flex:0 0 auto;min-height:37px;padding:0 13px;border:1px solid #ffffff20;border-radius:999px;background:#141211b8;color:#b8a79a;font:10px Manrope, sans-serif;white-space:nowrap;cursor:pointer;backdrop-filter:blur(14px);transition:color .2s,background .2s,border-color .2s}
 .story-chapters button span{color:#b68b6d;font:9px 'DM Mono',monospace}
