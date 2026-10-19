@@ -38,7 +38,7 @@ describe("interactive resume flipbook", () => {
   });
 
   it("includes creator credits and keyboard-friendly page navigation", () => {
-    const { container } = render(<App />);
+    render(<App />);
     expect(screen.getByRole("button", { name: "Next page" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
