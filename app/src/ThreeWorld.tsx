@@ -367,8 +367,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
       // Exit each prop by crawling to an edge before descending; then use a clear aisle.
       const exits: Record<number, number[][]> = {
         // Monitor: descend the right bezel, crawl across the lower bezel, then use its stand.
-        0: [[2.6, 4.01, -4.16], [2.6, .86, -4.16], [.22, .86, -4.16], [.22, .86, -4.0],
-          [.22, .131, -4.0], [.22, .131, -3.60], [.22, deskY, -3.60], [1.2, deskY, -3.55],
+        0: [[2.6, 4.01, -4.16], [2.6, .86, -4.16], [0, .86, -4.16], [0, .86, -4.25],
+          [0, .145, -4.25], [0, .145, -4.1], [0, deskY, -4.1], [1.2, deskY, -3.55],
           [1.2, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
         1: [[-5.2, .094, 1.35], [-5.2, deskY, 1.35], [-5.2, deskY, aisleZ]],
         2: [[-2.7, .083, -.275], [-2.7, deskY, -.275], [-2.7, deskY, 1.3], [-3.6, deskY, 1.3], [-3.6, deskY, aisleZ]],
@@ -399,8 +399,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick,
           [5.05, .636, -2.70], [5.05, 2.036, -2.70], [4.9, 2.036, -2.78]],
         // Monitor: climb its stand and stem, cross the bottom bezel, then climb the right edge.
         4: [[6.5, deskY, aisleZ], [6.5, deskY, -2.4], [1.2, deskY, -2.4], [1.2, deskY, -3.55],
-          [.22, deskY, -3.55], [.22, deskY, -3.60], [.22, .131, -3.60], [.22, .131, -4.0],
-          [.22, .866, -4.0], [.22, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]],
+          [0, deskY, -3.55], [0, deskY, -4.1], [0, .145, -4.1], [0, .145, -4.25],
+          [0, .86, -4.25], [0, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]],
         5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .121, 1.1], [5.1, .121, -.3]],
         6: [[-3.6, deskY, aisleZ], [-3.6, deskY, 1.3], [-1.2, deskY, 1.3], [-1.2, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .069, -2.625], [-1.75, .069, -3.45]],
         7: [[-3.6, deskY, aisleZ], [-3.6, deskY, 3.5], [-3.25, deskY, 3.5], [-3.25, deskY, 3.28], [-3.25, .158, 3.28], [-1.0, .158, 3.0], [-1.0, .158, 2.0]],
