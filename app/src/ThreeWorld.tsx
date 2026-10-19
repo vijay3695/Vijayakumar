@@ -441,10 +441,13 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             leg.hip.rotation.z = isReacting && leg.isScratchLeg
               ? -1.1 + Math.sin(t * 18) * .12
               : stride * .22;
-            leg.hip.rotation.x = moving ? Math.cos(t * 12 + leg.phase) * .07 : 0;
+            leg.hip.rotation.x = moving && !isReacting ? Math.cos(t * 12 + leg.phase) * .07 : 0;
           });
           eyeWhites.forEach((eye, i) => {
-            const blink = Math.pow(Math.max(0, Math.cos(t * 1.8 + i * 2.4)), 32);
+            // A greeting always includes a visible blink; otherwise blink naturally while walking.
+            const blink = isReacting
+              ? Math.pow(Math.max(0, Math.cos(t * 8 + i * 1.2)), 14)
+              : Math.pow(Math.max(0, Math.cos(t * 1.8 + i * 2.4)), 32);
             eye.scale.y = 1.15 * (1 - blink * .88);
             eyePupils[i].scale.y = 1 - blink * .85;
           });
