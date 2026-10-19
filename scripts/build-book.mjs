@@ -8,6 +8,10 @@ const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
 const BOOK_OUT = path.join(PROJECT_ROOT, "openzine-book.html");
 const MAKE_BOOK = path.join(PROJECT_ROOT, ".codex", "skills", "openzine", "scripts", "make-book.mjs");
 
+import { GlobalFonts } from "@napi-rs/canvas";
+GlobalFonts.registerFromPath("/tmp/dmsans.woff2", "DM Sans");
+GlobalFonts.registerFromPath("/tmp/playfair.ttf", "Playfair Display");
+
 const PAGE_WIDTH = 1440;
 const PAGE_HEIGHT = 1984;
 
@@ -52,7 +56,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   
-  const margin = 120;
+  const margin = 100;
   const contentWidth = PAGE_WIDTH - 2 * margin;
   
   if (isCover) {
@@ -77,7 +81,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 64px serif";
+    ctx.font = "bold 72px serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
@@ -93,14 +97,14 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
     
     // Content
-    ctx.font = "32px serif";
+    ctx.font = "40px serif";
     ctx.fillStyle = "#59564c";
-    let y = 220;
-    const lineHeight = 48;
+    let y = 200;
+    const lineHeight = 60;
     
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 24; continue; }
+      if (line === "") { y += 36; continue; }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
