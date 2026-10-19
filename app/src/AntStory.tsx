@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
+import ThreeWorld from "./ThreeWorld";
 import { profile, sections, type Section } from "./data/resume";
 import "./styles/ant-story.css";
 
@@ -68,7 +69,6 @@ export default function AntStory() {
   const [active, setActive] = useState(0);
   const [reacting, setReacting] = useState(false);
   const [walking, setWalking] = useState(true);
-  const [mode, setMode] = useState<"movie" | "book">("movie");
   const [motionPaused, setMotionPaused] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const current = beats[active];
@@ -110,31 +110,13 @@ export default function AntStory() {
         <span className="story-location">A tiny journey through a career</span>
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
-      <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "") + (mode === "book" ? " world--book" : " world--movie")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
-        <div className="world-sky" /><div className="world-glow" />
-        <div className="world-backdrop">
-          <div className="monitor-scene prop"><div className="monitor-screen"><span>HELLO, I'M</span><strong>{profile.name}</strong><small>{profile.role}</small></div><div className="monitor-neck" /><div className="monitor-foot" /></div>
-          <div className="keyboard-scene prop" aria-label="A physical keyboard, with keys being typed">{Array.from({ length: 28 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 7) * -0.08}s` }} />)}</div>
-          <div className="typing-hands" aria-hidden="true"><span className="typing-hand typing-hand--left"><i /><i /><i /><i /></span><span className="typing-hand typing-hand--right"><i /><i /><i /><i /></span></div>
-          <div className="notebook-scene prop"><span>ideas</span><i /><i /><i /><i /><i /></div>
-          <div className="report-scene prop"><span>TEAM REPORT</span><i /><i /><i /><b>↗</b></div>
-          <div className="dashboard-scene prop"><span>OPERATIONS</span><div className="chart-bars"><i /><i /><i /><i /><i /><i /></div><small>SERVICE · PEOPLE · RESULTS</small></div>
-          <div className="skill-stones prop"><i>RCA</i><i>COACH</i><i>QUALITY</i><i>GROW</i></div>
-          <div className="education-book prop"><span>LEARN</span><b>✦</b></div>
-          <div className="sugar-cube prop"><i /><i /><i /><b>✦</b></div>
-        </div>
-        <div className="world-floor"><span className="floor-line floor-line-a" /><span className="floor-line floor-line-b" /><span className="floor-speck speck-a" /><span className="floor-speck speck-b" /><span className="floor-speck speck-c" /></div>
-        <div className="world-track" style={{ transform: "translate3d(-" + (active * 100) + "vw,0,0)" }}>
-          {beats.map((beat, index) => <div className={"world-chapter chapter--" + beat.kind} key={beat.id} aria-hidden="true"><span className="chapter-marker">{String(index + 1).padStart(2, "0")}</span><span className="chapter-dust" /></div>)}
-        </div>
-        <div className={"ant-stage" + (reacting ? " ant-stage--reacting" : "") + (walking && !motionPaused ? " ant-stage--walking" : " ant-stage--still")} style={{ transform: "translateX(calc(-50% + " + (active % 2 ? 10 : -8) + "px))" }}>
-          <Ant reacting={reacting} walking={walking} onClick={() => setReacting((v) => !v)} />
-        </div>
+      <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
+        <ThreeWorld active={active} kind={current.kind} reacting={reacting} onAntClick={() => setReacting((v) => !v)} />
         <div className="world-caption" aria-hidden="true"><span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />{current.label}</div>
       </div>
-      <section className={"story-content" + (mode === "book" ? " story-content--book" : " story-content--movie")} id="story-start">
+      <section className="story-content" id="story-start">
         <div className="story-content__copy">
-          <div className="story-modebar" aria-label="Story display controls"><div><button type="button" className={mode === "movie" ? "is-selected" : ""} aria-pressed={mode === "movie"} onClick={() => setMode("movie")}>◉ Movie mode</button><button type="button" className={mode === "book" ? "is-selected" : ""} aria-pressed={mode === "book"} onClick={() => setMode("book")}>▤ Book mode</button></div><button type="button" onClick={toggleMotion} aria-pressed={motionPaused}>{motionPaused ? "▶ Resume motion" : "Ⅱ Pause motion"}</button></div>
+          <div className="story-motion-control"><button type="button" onClick={toggleMotion} aria-pressed={motionPaused}>{motionPaused ? "▶ Resume motion" : "Ⅱ Pause scene"}</button></div>
           {current.kind === "opening" ? (
             <article className="story-card story-card--intro">
               <p className="story-eyebrow">A PORTFOLIO, WITH A LITTLE LIFE</p>
