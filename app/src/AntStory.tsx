@@ -68,7 +68,6 @@ export default function AntStory() {
   ], []);
   const [active, setActive] = useState(0);
   const [reacting, setReacting] = useState(false);
-  const [walking, setWalking] = useState(true);
   const [motionPaused, setMotionPaused] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const current = beats[active];
@@ -76,8 +75,7 @@ export default function AntStory() {
 
   useEffect(() => {
     if (!reacting) return;
-    setWalking(false);
-    const timer = window.setTimeout(() => { setReacting(false); setWalking(true); }, 1900);
+    const timer = window.setTimeout(() => { setReacting(false); }, 1900);
     return () => window.clearTimeout(timer);
   }, [reacting]);
 
@@ -93,7 +91,7 @@ export default function AntStory() {
   }, [beats.length]);
 
   const jumpTo = (index: number) => setActive(Math.max(0, Math.min(beats.length - 1, index)));
-  const toggleMotion = () => { setWalking(motionPaused); setMotionPaused(!motionPaused); };
+  const toggleMotion = () => setMotionPaused((paused) => !paused);
   const onWorldTouchStart = (event: TouchEvent<HTMLDivElement>) => { touchStart.current = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; };
   const onWorldTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     if (!touchStart.current) return;
@@ -111,7 +109,7 @@ export default function AntStory() {
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
       <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
-        <ThreeWorld active={active} kind={current.kind} reacting={reacting} onAntClick={() => setReacting((v) => !v)} />
+        <ThreeWorld active={active} kind={current.kind} reacting={reacting} paused={motionPaused} onAntClick={() => setReacting((v) => !v)} />
         <div className="world-caption" aria-hidden="true"><span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />{current.label}</div>
       </div>
       <section className="story-content" id="story-start">
