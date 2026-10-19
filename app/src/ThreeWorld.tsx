@@ -62,7 +62,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const wood = mat("#594035"); const woodEdge = mat("#8b6045"); const dark = mat("#211d1d", .35);
       const keyMat = mat("#4a3b37", .4); const keyTop = mat("#b88d6c", .42);
       const cream = mat("#f1dfc4"); const gold = mat("#dfad73", .4, .18);
-      const green = mat("#48796a", .48); const red = mat("#853d2e", .43);
+      const green = mat("#48796a", .48);
       const makeBox = (w: number, h: number, d: number, material: any, x: number, y: number, z: number, parent: any = scene) => {
         const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
         mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh); return mesh;
