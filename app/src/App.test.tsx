@@ -37,4 +37,14 @@ describe("portfolio experience", () => {
     expect(screen.getByRole("link", { name: /LinkedIn/i })).toBeTruthy();
     expect(screen.getByRole("link", { name: /GitHub/i })).toBeTruthy();
   });
+
+  it("opens the actual OpenZine viewer from the portfolio and closes it cleanly", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /OPEN INTERACTIVE BOOK/i }));
+    const viewer = screen.getByTitle(/OpenZine paper-turn renderer/i);
+    expect(viewer.getAttribute("srcdoc")).toContain("window.OPENZINE=");
+    expect(viewer.getAttribute("srcdoc")).toContain("Paper Mono");
+    fireEvent.click(screen.getByRole("button", { name: /CLOSE BOOK/i }));
+    expect(screen.queryByTitle(/OpenZine paper-turn renderer/i)).toBeNull();
+  });
 });
