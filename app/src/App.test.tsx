@@ -58,6 +58,7 @@ describe("ant-led resume story", () => {
     fireEvent.click(screen.getByRole("button", { name: /about/i }));
     expect(screen.getByRole("heading", { name: "About me" })).toBeTruthy();
     expect(screen.getByText("Notebook · about me")).toBeTruthy();
+    expect(screen.getByText(/The ant reaches a well-used notebook/i)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /summary/i }));
     expect(screen.getByRole("heading", { name: "Professional Summary" })).toBeTruthy();
