@@ -4,6 +4,7 @@ type ThreeWorldProps = {
   active: number;
   kind: string;
   reacting: boolean;
+  paused: boolean;
   onAntClick: () => void;
 };
 
@@ -12,10 +13,10 @@ type ThreeWorldProps = {
  * production bundle stays lean; the resume and navigation remain ordinary,
  * accessible React/HTML rather than text baked into a canvas.
  */
-export default function ThreeWorld({ active, kind, reacting, onAntClick }: ThreeWorldProps) {
+export default function ThreeWorld({ active, kind, reacting, paused, onAntClick }: ThreeWorldProps) {
   const hostRef = useRef<HTMLDivElement>(null);
-  const propsRef = useRef({ active, kind, reacting, onAntClick });
-  propsRef.current = { active, kind, reacting, onAntClick };
+  const propsRef = useRef({ active, kind, reacting, paused, onAntClick });
+  propsRef.current = { active, kind, reacting, paused, onAntClick };
 
   useEffect(() => {
     const host = hostRef.current;
@@ -27,6 +28,7 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
     let cleanup: (() => void) | undefined;
 
     const boot = async () => {
+      if (typeof window.WebGLRenderingContext === "undefined") { host.dataset.error = "webgl-unavailable"; return; }
       const moduleUrl = "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
       const THREE: any = await import(/* @vite-ignore */ moduleUrl);
       if (cancelled || !host) return;
@@ -206,18 +208,20 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
-        const { active: currentActive, kind: currentKind, reacting: isReacting } = propsRef.current;
+        const { active: currentActive, kind: currentKind, reacting: isReacting, paused: isPaused } = propsRef.current;
         const target = path[Math.min(currentActive, path.length - 1)] || path[0];
-        ant.position.set(target[0] + Math.sin(t * .75) * .035, target[1] + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025), target[2]);
-        ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
-        ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
-        legs.forEach((leg) => { leg.hip.rotation.z = Math.sin(t * 11 + leg.phase) * .22; leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12; });
-        antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
-        typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
-        keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
-        sugar.rotation.y = Math.sin(t * 1.2) * .06;
-        if (currentKind === "ending" || currentActive === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
-        camera.position.x += ((active > 3 ? Math.max(-.8, Math.min(.8, target[0] * .075)) : 0) - camera.position.x) * .012;
+        if (!isPaused) {
+          ant.position.set(target[0] + Math.sin(t * .75) * .035, target[1] + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025), target[2]);
+          ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
+          ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
+          legs.forEach((leg) => { leg.hip.rotation.z = Math.sin(t * 11 + leg.phase) * .22; leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12; });
+          antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
+          typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
+          keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
+          sugar.rotation.y = Math.sin(t * 1.2) * .06;
+          if (currentKind === "ending" || currentActive === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
+          camera.position.x += ((currentActive > 3 ? Math.max(-.8, Math.min(.8, target[0] * .075)) : 0) - camera.position.x) * .012;
+        }
         camera.lookAt(0, 1.0, -.1);
         renderer.render(scene, camera);
         frame = requestAnimationFrame(animate);
