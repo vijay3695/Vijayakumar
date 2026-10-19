@@ -1,5 +1,5 @@
-import AntStory from "./AntStory";
+import ResumePortfolio from "./ResumePortfolio";
 
 export default function App() {
-  return <AntStory />;
+  return <ResumePortfolio />;
 }
