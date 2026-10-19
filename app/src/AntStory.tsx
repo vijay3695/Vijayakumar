@@ -138,7 +138,7 @@ export default function AntStory() {
           {current.kind === "opening" ? (
             <article className="story-card story-card--intro">
               <p className="story-eyebrow">A PORTFOLIO, WITH A LITTLE LIFE</p>
-              <h1>{profile.name}<span className="name-period">.</span></h1>
+              <h1>{profile.name}<span className="name-period" aria-hidden="true">.</span></h1>
               <p className="story-subtitle">{profile.role} · {profile.location}</p>
               <p className="story-copy">Someone is typing in a quiet, warmly lit room. A tiny ant steps between the moving keys, pauses to study the strange landscape, then begins climbing toward the glowing screen. Your name is already waiting there. Follow the ant as it crosses the monitor and leads you through the work, lessons, and people that shaped my career.</p>
               {profile.bio.map((line) => <p className="story-copy" key={line}>{line}</p>)}
