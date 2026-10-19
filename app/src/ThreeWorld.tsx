@@ -313,11 +313,11 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // across the surface. Routes avoid cutting through the keyboard, charts, and books.
       const entries: Record<number, number[][]> = {
         1: [[-5.2, deskY, aisleZ], [-5.2, deskY, 1.45], [-5.2, .094, 1.35], [-5.2, .094, -.2]],
-        2: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-2.7, deskY, -1.9], [-2.7, deskY, -2.225], [-2.7, .083, -2.225], [-2.7, .083, -1.25]],
+        2: [[-5.2, deskY, aisleZ], [-5.2, deskY, -2.1], [-3.6, deskY, -2.1], [-2.7, deskY, -2.1], [-2.7, deskY, -2.225], [-2.7, .083, -2.225], [-2.7, .083, -1.25]],
         3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.8], [5.05, deskY, -2.8], [5.05, 2.036, -2.8], [4.9, 2.036, -2.8], [4.9, 2.036, -2.78]],
         4: [[6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4], [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]],
         5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .121, 1.1], [5.1, .121, -.3]],
-        6: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-3.0, deskY, -1.9], [-3.0, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .069, -2.625], [-1.75, .069, -3.45]],
+        6: [[-3.6, deskY, aisleZ], [-3.6, deskY, 1.3], [-1.2, deskY, 1.3], [-1.2, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .069, -2.625], [-1.75, .069, -3.45]],
         7: [[-3.6, deskY, aisleZ], [-3.6, deskY, 3.5], [-3.25, deskY, 3.5], [-3.25, deskY, 3.28], [-3.25, .158, 3.28], [-1.0, .158, 3.0], [-1.0, .158, 2.0]],
         8: [[-5.2, deskY, aisleZ], [-5.2, deskY, -1.9], [-4.1, deskY, -1.9], [-4.1, deskY, -2.0], [-4.1, .806, -2.0], [-4.1, .806, -3.15]],
         9: [[8.9, deskY, aisleZ], [8.9, deskY, -6.39], [8.875, deskY, -6.39], [8.875, 3.98, -6.39], [8.75, 3.98, -6.39]],
@@ -385,8 +385,16 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           previousActive = currentActive;
           routeStartedAt = t;
           if (currentActive === 0) {
-            routePoints = openingRoute.map((point) => [...point]);
-            routeDuration = 12;
+            if (sourceChapter === 10) {
+              // Restart from the sugar-cube ending by walking back to the keyboard first;
+              // never teleport the ant to the opening position.
+              const returnToKeyboard = makeRoute([ant.position.x, ant.position.y, ant.position.z], 7, sourceChapter);
+              routePoints = returnToKeyboard.concat(openingRoute.slice(1).map((point) => [...point]));
+              routeDuration = Math.min(18, Math.max(7, routeLength(routePoints) / 2.5));
+            } else {
+              routePoints = openingRoute.map((point) => [...point]);
+              routeDuration = 12;
+            }
           } else {
             routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], currentActive, sourceChapter);
             routeDuration = Math.min(12, Math.max(3, routeLength(routePoints) / 2.5));
