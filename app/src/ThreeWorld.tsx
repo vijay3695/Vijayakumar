@@ -234,7 +234,10 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const lampGlow = new THREE.PointLight("#ffc88d", 24, 8); lampGlow.position.set(7.15, 1.35, -2.05); scene.add(lampGlow);
 
       // Fully articulated ant: three pairs of legs, joints, abdomen, thorax, head, eyes and antennae.
-      const ant = new THREE.Group(); ant.position.set(-1.0, .14, 2.0); scene.add(ant);
+      const ant = new THREE.Group();
+      ant.position.set(-1.0, .14, 2.0);
+      ant.scale.setScalar(.34);
+      scene.add(ant);
       const antDark = mat("#402019", .42); const antShell = mat("#7c3528", .36); const antLight = mat("#b85d40", .38);
       makeSphere(.29, antShell, -.43, .45, 0, ant, 1.18, .95, 1.0);
       makeSphere(.2, antDark, -.06, .46, 0, ant, 1, .94, .9);
@@ -266,24 +269,35 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // keyboard -> monitor -> notebook -> open book -> dashboard -> monitor -> report
       // -> case file -> keyboard -> book stack -> diploma -> sugar cube.
       const path = [
-        [-1.0, .14, 2.0],       // opening: keyboard, then a planned climb up the monitor
-        [-5.2, .067, -.2],       // About me: notebook
-        [-2.7, .058, -1.25],     // Professional summary: open book
-        [3.9, 1.35, -2.66],     // Core competencies: dashboard screen
-        [0.0, 2.25, -4.16],    // Team Manager: monitor screen
-        [5.1, .095, -.3],        // Team Leader: report folder
-        [-1.75, .043, -3.45],   // Senior Associate: case file
-        [-1.0, .14, 2.0],       // Customer Support Associate: keyboard
-        [-4.1, .78, -3.15],     // Certifications: top of book stack
-        [7.65, 3.15, -6.34],    // Education: framed diploma
-        [6.35, -.11, 1.2]       // Ending: beside the sugar cube, feet on the desk
+        [-1.0, .18, 2.0],       // opening: keyboard, then monitor's right edge
+        [-5.2, .086, -.2],      // About me: notebook top
+        [-2.7, .10, -1.25],     // Professional summary: open-book page
+        [2.95, 2.06, -2.66],    // Core competencies: top-right edge of dashboard
+        [2.25, 4.02, -4.16],    // Team Manager: monitor's top-right bezel
+        [5.1, .14, -.3],        // Team Leader: report top
+        [-1.75, .095, -3.45],   // Senior Associate: case-file top
+        [-1.0, .18, 2.0],       // Customer Support Associate: keyboard keys
+        [-4.1, .83, -3.15],     // Certifications: top book, approached from its front edge
+        [8.55, 4.02, -6.34],    // Education: diploma frame's top-right edge
+        [6.35, -.08, 1.2]       // Ending: beside the sugar cube on the desk
       ];
+      // Each raised landmark has a front-edge staging point. The ant climbs the edge,
+      // then walks across the top instead of taking a diagonal shortcut through the prop.
+      const approachZ: Record<number, number> = {
+        1: 1.52, 2: -.12, 3: -2.54, 4: -4.03, 5: 1.25,
+        6: -2.48, 7: 3.38, 8: -1.84, 9: -6.12
+      };
       const onResize = () => {
         if (!host || !renderer) return;
         const w = Math.max(1, host.clientWidth); const h = Math.max(1, host.clientHeight);
         renderer.setSize(w, h, false);
         camera.aspect = w / h;
-        if (w / h < .9) {
+        if (w / h < .72) {
+          // Narrow phones: widen the view and keep the active landmark centered as the ant travels.
+          camera.fov = 52;
+          camera.position.y = 7.2;
+          camera.position.z = 21.5;
+        } else if (w / h < .95) {
           camera.fov = 46;
           camera.position.y = 6.2;
           camera.position.z = 18.5;
@@ -305,26 +319,35 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       let routeDuration = 14;
       let routePoints: number[][] = [];
       const openingRoute = [
-        [-1.0, .14, 2.0], [-.45, .14, 1.1], [.15, .14, .1],
-        [.15, -.1, -2.8], [.15, -.1, -3.55], [.15, .18, -4.02],
-        [.15, .65, -4.02], [.15, .85, -4.1], [.15, .9, -4.16], [.15, 1.35, -4.16],
-        [.15, 1.8, -4.16], [.15, 2.25, -4.16], [.25, 2.45, -4.16]
+        [-1.0, .18, 2.0], [-.45, .18, 1.1], [2.25, .18, 1.1],
+        [2.25, -.08, -2.8], [2.25, -.08, -3.95], [2.25, .08, -4.16],
+        [2.25, .65, -4.16], [2.25, 1.35, -4.16], [2.25, 2.05, -4.16],
+        [2.25, 2.8, -4.16], [2.25, 3.5, -4.16], [2.25, 4.02, -4.16]
       ];
-      const makeRoute = (start: number[], destination: number[]) => {
+      const makeRoute = (start: number[], destination: number[], chapterIndex: number) => {
         const floor = -.1;
         const points: number[][] = [[start[0], start[1], start[2]]];
         const add = (point: number[]) => {
           const last = points[points.length - 1];
           if (Math.hypot(point[0] - last[0], point[1] - last[1], point[2] - last[2]) > .04) points.push(point);
         };
-        // Come down a vertical surface before crossing the desktop.
-        if (start[1] > floor + .16) add([start[0], floor, start[2]]);
-        // A deliberate ground-level route: no straight-line diagonal shortcuts through the air.
+        // Return from a raised surface to the desktop without cutting diagonally through props.
+        if (start[1] > floor + .16) {
+          add([start[0], floor, start[2]]);
+          add([start[0], floor, 0]);
+        }
         add([start[0], floor, 0]);
         add([destination[0], floor, 0]);
-        add([destination[0], floor, destination[2]]);
-        if (destination[1] > floor + .04) add([destination[0], destination[1], destination[2]]);
-        else add(destination);
+        const stageZ = approachZ[chapterIndex];
+        if (stageZ !== undefined && destination[1] > floor + .04) {
+          add([destination[0], floor, stageZ]);
+          // Climb at the near edge, then crawl on the top/page/bezel to the chapter's landmark.
+          add([destination[0], destination[1], stageZ]);
+          add(destination);
+        } else {
+          add([destination[0], floor, destination[2]]);
+          add(destination);
+        }
         return points;
       };
       const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
@@ -335,7 +358,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         if (cancelled) return;
         const t = clock.getElapsedTime();
         const { active: currentActive, reacting: isReacting, paused: isPaused } = propsRef.current;
-        if (isPaused && lastFrameTime) routeStartedAt += t - lastFrameTime;
+        if ((isPaused || isReacting) && lastFrameTime) routeStartedAt += t - lastFrameTime;
         lastFrameTime = t;
         if (currentActive !== previousActive) {
           previousActive = currentActive;
@@ -345,7 +368,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             routeDuration = 14;
           } else {
             const destination = path[Math.min(currentActive, path.length - 1)] || path[0];
-            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], destination);
+            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], destination, currentActive);
             routeDuration = Math.min(9, Math.max(2.8, routeLength(routePoints) / 2.15));
           }
         }
@@ -380,8 +403,11 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           ant.position.set(target[0], target[1] + gaitBob, target[2]);
           const dx = segmentEnd[0] - segmentStart[0];
           const dz = segmentEnd[2] - segmentStart[2];
-          ant.rotation.y = verticalClimb ? 0 : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx) + (isReacting ? Math.PI : 0);
-          ant.rotation.z = verticalClimb ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .08 : 0);
+          const faceCamera = Math.atan2(-(camera.position.z - ant.position.z), camera.position.x - ant.position.x);
+          ant.rotation.y = verticalClimb ? faceCamera : (isReacting || !moving
+            ? faceCamera
+            : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx));
+          ant.rotation.z = verticalClimb ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .035 : 0);
           legs.forEach((leg) => {
             const stride = moving ? Math.sin(t * 12 + leg.phase) : 0;
             leg.hip.rotation.z = isReacting && leg.isScratchLeg
@@ -394,7 +420,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
             eye.scale.y = 1.15 * (1 - blink * .88);
             eyePupils[i].scale.y = 1 - blink * .85;
           });
-          antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
+          antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * (isReacting ? 11 : 3.1) + i * 2.2) * (isReacting ? .19 : .11); feeler.rotation.x = Math.sin(t * 2.4 + i) * .045; });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           const cameraTargetX = currentActive > 0 ? target[0] * .85 : 0;
@@ -403,12 +429,12 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, Math.max(.7, target[1] * .55 + .45), target[2] * .28);
         if (antHitArea) {
           const projected = ant.position.clone();
-          projected.y += .24;
+          projected.y += .11;
           projected.project(camera);
           antHitArea.style.left = ((projected.x * .5 + .5) * host.clientWidth) + "px";
           antHitArea.style.top = ((-projected.y * .5 + .5) * host.clientHeight) + "px";
-          antHitArea.style.width = (window.innerWidth < 700 ? 100 : 116) + "px";
-          antHitArea.style.height = (window.innerWidth < 700 ? 86 : 100) + "px";
+          antHitArea.style.width = Math.max(64, Math.min(88, host.clientWidth * .13)) + "px";
+          antHitArea.style.height = Math.max(58, Math.min(78, host.clientWidth * .115)) + "px";
         }
         renderer.render(scene, camera);
         frame = requestAnimationFrame(animate);
