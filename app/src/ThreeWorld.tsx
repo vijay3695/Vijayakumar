@@ -268,9 +268,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const path = [
         [-1.0, .14, 2.0],       // opening: keyboard, then a planned climb up the monitor
         [-5.2, .067, -.2],       // About me: notebook
-        [-2.7, .075, -1.25],     // Professional summary: open book
-        [3.9, 1.35, -2.72],     // Core competencies: dashboard screen
-        [0.0, 2.25, -4.205],    // Team Manager: monitor screen
+        [-2.7, .058, -1.25],     // Professional summary: open book
+        [3.9, 1.35, -2.66],     // Core competencies: dashboard screen
+        [0.0, 2.25, -4.16],    // Team Manager: monitor screen
         [5.1, .095, -.3],        // Team Leader: report folder
         [-1.75, .043, -3.45],   // Senior Associate: case file
         [-1.0, .14, 2.0],       // Customer Support Associate: keyboard
@@ -307,8 +307,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const openingRoute = [
         [-1.0, .14, 2.0], [-.45, .14, 1.1], [.15, .14, .1],
         [.15, -.1, -2.8], [.15, -.1, -3.55], [.15, .18, -4.02],
-        [.15, .65, -4.02], [.15, .9, -4.205], [.15, 1.35, -4.205],
-        [.15, 1.8, -4.205], [.15, 2.25, -4.205], [.25, 2.45, -4.205]
+        [.15, .65, -4.02], [.15, .85, -4.1], [.15, .9, -4.16], [.15, 1.35, -4.16],
+        [.15, 1.8, -4.16], [.15, 2.25, -4.16], [.25, 2.45, -4.16]
       ];
       const makeRoute = (start: number[], destination: number[]) => {
         const floor = -.1;
