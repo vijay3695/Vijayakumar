@@ -5,43 +5,6 @@ import "./styles/ant-story.css";
 
 type Beat = { id: string; label: string; kind: string; section?: Section };
 
-function Ant({ reacting, walking, onClick }: { reacting: boolean; walking: boolean; onClick: () => void }) {
-  return (
-    <button className={"ant-button " + (reacting ? "is-reacting " : "") + (walking ? "is-walking" : "is-resting")} onClick={onClick} aria-label="Pause and greet the tiny ant" title="Tap to say hello">
-      <svg className="ant" viewBox="0 0 220 150" role="img" aria-label="A cute animated ant">
-        <ellipse cx="108" cy="137" rx="67" ry="7" fill="rgba(0,0,0,.22)" />
-        <g className="ant-legs" stroke="#442019" strokeWidth="7" strokeLinecap="round" fill="none">
-          <path className="leg leg-a" d="M94 91 L76 107 L66 126" /><path className="leg leg-b" d="M111 97 L108 115 L118 130" /><path className="leg leg-c" d="M127 91 L143 105 L151 124" />
-          <path className="leg leg-d" d="M95 89 L74 95 L61 109" /><path className="leg leg-e" d="M111 94 L126 108 L128 125" /><path className="leg leg-f" d="M127 87 L149 91 L162 105" />
-        </g>
-        <g className="ant-body">
-          <ellipse cx="145" cy="83" rx="34" ry="30" fill="#713426" />
-          <ellipse cx="145" cy="76" rx="26" ry="20" fill="#9c4b36" opacity=".7" />
-          <path d="M121 71 Q143 51 163 70" stroke="#c16c50" strokeWidth="5" fill="none" strokeLinecap="round" opacity=".8" />
-          <ellipse cx="102" cy="88" rx="25" ry="23" fill="#4b211c" />
-          <ellipse cx="102" cy="80" rx="17" ry="12" fill="#6f3327" />
-          <circle cx="70" cy="72" r="30" fill="#7c392b" />
-          <ellipse cx="62" cy="61" rx="20" ry="13" fill="#a8523a" opacity=".65" />
-          <ellipse cx="59" cy="75" rx="12" ry="14" fill="#fff7e9" />
-          <ellipse cx="82" cy="75" rx="12" ry="14" fill="#fff7e9" />
-          <ellipse className="eye-pupil" cx="63" cy="77" rx="5.5" ry="7" fill="#211513" />
-          <ellipse className="eye-pupil" cx="80" cy="77" rx="5.5" ry="7" fill="#211513" />
-          <circle cx="65" cy="74" r="2" fill="white" /><circle cx="82" cy="74" r="2" fill="white" />
-          <ellipse cx="49" cy="88" rx="7" ry="4.5" fill="#e98678" opacity=".85" />
-          <ellipse cx="91" cy="88" rx="7" ry="4.5" fill="#e98678" opacity=".85" />
-          <path d="M65 91 Q72 97 80 91" stroke="#3b1715" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-          <g className="ant-antennae" stroke="#442019" strokeWidth="5" strokeLinecap="round" fill="none">
-            <path d="M61 47 Q49 24 31 29" /><path d="M80 46 Q89 22 109 25" />
-          </g>
-          <circle cx="31" cy="29" r="5" fill="#442019" /><circle cx="109" cy="25" r="5" fill="#442019" />
-        </g>
-        <g className="scratch-hand" stroke="#442019" strokeWidth="6" strokeLinecap="round" fill="none"><path d="M91 95 Q76 78 78 62" /></g>
-      </svg>
-      <span className="ant-whisper">{reacting ? "Oh! Hello there." : "tap to say hello"}</span>
-    </button>
-  );
-}
-
 function DetailCard({ beat }: { beat: Beat }) {
   const s = beat.section;
   if (!s) return null;
