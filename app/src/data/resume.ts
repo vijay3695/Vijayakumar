@@ -1,10 +1,7 @@
 /* ============================================================================
    resume.ts - THE ONLY FILE YOU EDIT FOR CONTENT.
 
-   NOTE: the content below is SAMPLE DATA, written to look like a real
-   portfolio so the design can be judged properly. It is NOT real experience.
-   Replace it with your own details and then set `site.sampleData = false`
-   below to remove the warning banner.
+   Resume content is based on the supplied career history. Keep claims grounded in the supplied details.
    ==========================================================================*/
 
 export type Metric = { value: string; label: string };
@@ -41,7 +38,7 @@ export type Section = {
 /** site-level switches */
 export const site = {
   /** true while the content below is still sample data */
-  sampleData: true
+  sampleData: false
 };
 
 import { avatarImage } from "./avatar";
@@ -51,18 +48,18 @@ export const profile = {
   /** display picture - an inlined data URI, so no image file sits on the site */
   avatar: avatarImage,
   handle: "vijayakumar.dev",
-  role: "Lead – Service Delivery Operations",
+  role: "Lead Account Management – Service Delivery Operations",
   location: "Chennai, India",
-  available: "Open to senior backend roles",
+  available: "Open to leadership opportunities",
   bio: [
     "Operations & Customer Success Leader · 7 years.",
     "I build, mentor and scale high-performing service teams.",
     "Process, people, and the numbers behind both."
   ],
   stats: [
-    { value: "3", label: "Roles" },
-    { value: "7", label: "Years" },
-    { value: "12", label: "Projects" }
+    { value: "4", label: "Career stages" },
+    { value: "7", label: "Years of experience" },
+    { value: "10", label: "Certifications" }
   ],
   links: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/vijayakumar-chandiran" },
