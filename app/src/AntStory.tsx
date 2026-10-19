@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { profile, sections, type Section } from "./data/resume";
 import "./styles/ant-story.css";
 
@@ -68,6 +68,9 @@ export default function AntStory() {
   const [active, setActive] = useState(0);
   const [reacting, setReacting] = useState(false);
   const [walking, setWalking] = useState(true);
+  const [mode, setMode] = useState<"movie" | "book">("movie");
+  const [motionPaused, setMotionPaused] = useState(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const current = beats[active];
   const progress = Math.round((active / (beats.length - 1)) * 100);
 
@@ -90,6 +93,15 @@ export default function AntStory() {
   }, [beats.length]);
 
   const jumpTo = (index: number) => setActive(Math.max(0, Math.min(beats.length - 1, index)));
+  const toggleMotion = () => setMotionPaused((paused) => { setWalking(paused); return !paused; });
+  const onWorldTouchStart = (event: TouchEvent<HTMLDivElement>) => { touchStart.current = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; };
+  const onWorldTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    if (!touchStart.current) return;
+    const dx = event.changedTouches[0].clientX - touchStart.current.x;
+    const dy = event.changedTouches[0].clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.2) jumpTo(active + (dx < 0 ? 1 : -1));
+  };
 
   return (
     <main className="ant-story">
@@ -98,11 +110,12 @@ export default function AntStory() {
         <span className="story-location">A tiny journey through a career</span>
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
-      <div className={"world world--" + current.kind + " world--" + current.id} aria-live="polite">
+      <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "") + (mode === "book" ? " world--book" : " world--movie")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
         <div className="world-sky" /><div className="world-glow" />
         <div className="world-backdrop">
           <div className="monitor-scene prop"><div className="monitor-screen"><span>HELLO, I'M</span><strong>{profile.name}</strong><small>{profile.role}</small></div><div className="monitor-neck" /><div className="monitor-foot" /></div>
-          <div className="keyboard-scene prop">{Array.from({ length: 28 }, (_, i) => <i key={i} />)}</div>
+          <div className="keyboard-scene prop" aria-label="A physical keyboard, with keys being typed">{Array.from({ length: 28 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 7) * -0.08}s` }} />)}</div>
+          <div className="typing-hands" aria-hidden="true"><span className="typing-hand typing-hand--left"><i /><i /><i /><i /></span><span className="typing-hand typing-hand--right"><i /><i /><i /><i /></span></div>
           <div className="notebook-scene prop"><span>ideas</span><i /><i /><i /><i /><i /></div>
           <div className="report-scene prop"><span>TEAM REPORT</span><i /><i /><i /><b>↗</b></div>
           <div className="dashboard-scene prop"><span>OPERATIONS</span><div className="chart-bars"><i /><i /><i /><i /><i /><i /></div><small>SERVICE · PEOPLE · RESULTS</small></div>
@@ -114,19 +127,20 @@ export default function AntStory() {
         <div className="world-track" style={{ transform: "translate3d(-" + (active * 100) + "vw,0,0)" }}>
           {beats.map((beat, index) => <div className={"world-chapter chapter--" + beat.kind} key={beat.id} aria-hidden="true"><span className="chapter-marker">{String(index + 1).padStart(2, "0")}</span><span className="chapter-dust" /></div>)}
         </div>
-        <div className={"ant-stage" + (reacting ? " ant-stage--reacting" : "")} style={{ transform: "translateX(calc(-50% + " + (active % 2 ? 10 : -8) + "px))" }}>
+        <div className={"ant-stage" + (reacting ? " ant-stage--reacting" : "") + (walking && !motionPaused ? " ant-stage--walking" : " ant-stage--still")} style={{ transform: "translateX(calc(-50% + " + (active % 2 ? 10 : -8) + "px))" }}>
           <Ant reacting={reacting} walking={walking} onClick={() => setReacting((v) => !v)} />
         </div>
         <div className="world-caption" aria-hidden="true"><span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />{current.label}</div>
       </div>
-      <section className="story-content" id="story-start">
+      <section className={"story-content" + (mode === "book" ? " story-content--book" : " story-content--movie")} id="story-start">
+        <div className="story-modebar" aria-label="Story display controls"><div><button type="button" className={mode === "movie" ? "is-selected" : ""} aria-pressed={mode === "movie"} onClick={() => setMode("movie")}>◉ Movie mode</button><button type="button" className={mode === "book" ? "is-selected" : ""} aria-pressed={mode === "book"} onClick={() => setMode("book")}>▤ Book mode</button></div><button type="button" onClick={toggleMotion} aria-pressed={motionPaused}>{motionPaused ? "▶ Resume motion" : "Ⅱ Pause motion"}</button></div>
         <div className="story-content__copy">
           {current.kind === "opening" ? (
             <article className="story-card story-card--intro">
               <p className="story-eyebrow">A PORTFOLIO, WITH A LITTLE LIFE</p>
               <h1>{profile.name}<span className="name-period">.</span></h1>
               <p className="story-subtitle">{profile.role} · {profile.location}</p>
-              <p className="story-copy">Every big journey starts with a small step. Follow this curious little ant through the work, lessons, and people that shaped my career.</p>
+              <p className="story-copy">Someone is typing in a quiet, warmly lit room. A tiny ant steps between the moving keys, pauses to study the strange landscape, then begins climbing toward the glowing screen. Your name is already waiting there. Follow the ant as it crosses the monitor and leads you through the work, lessons, and people that shaped my career.</p>
               {profile.bio.map((line) => <p className="story-copy" key={line}>{line}</p>)}
               <p className="story-status"><span />{profile.available}</p>
               <div className="story-metrics">{profile.stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div>
