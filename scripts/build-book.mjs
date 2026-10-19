@@ -15,9 +15,6 @@ const PAGE_HEIGHT = 1984;
 const resumeModule = await import("/tmp/resume.js");
 const { profile, sections } = resumeModule;
 
-// Create pages directory
-await fs.mkdir(PAGES_DIR, { recursive: true });
-
 const manager = sections.find((s) => s.id === "exp-team-manager");
 const leader = sections.find((s) => s.id === "exp-team-leader");
 const senior = sections.find((s) => s.id === "exp-senior-csa");
@@ -28,58 +25,101 @@ const competencies = sections.find((s) => s.id === "competencies");
 const certifications = sections.find((s) => s.id === "certifications");
 const education = sections.find((s) => s.id === "education");
 
-function createPage(title, lines) {
+await fs.mkdir(PAGES_DIR, { recursive: true });
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let currentLine = "";
+  for (const word of words) {
+    const testLine = currentLine ? currentLine + " " + word : word;
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+  return lines;
+}
+
+function createPage(title, contentLines, pageNum, totalPages) {
   const canvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
   const ctx = canvas.getContext("2d");
+  
   // Background
   ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+  
+  // Margins
+  const margin = 100;
+  const contentWidth = PAGE_WIDTH - 2 * margin;
+  
   // Title
   ctx.fillStyle = "#292820";
-  ctx.font = "bold 64px serif";
-  ctx.fillText(title, 80, 120);
+  ctx.font = "bold 72px 'Playfair Display', Georgia, serif";
+  ctx.fillText(title, margin, 120);
+  
   // Underline
   ctx.strokeStyle = "#d7d0c2";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(80, 140);
-  ctx.lineTo(PAGE_WIDTH - 80, 140);
+  ctx.moveTo(margin, 150);
+  ctx.lineTo(PAGE_WIDTH - margin, 150);
   ctx.stroke();
+  
+  // Accent bar
+  ctx.fillStyle = "#9b7846";
+  ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 3);
+  
   // Content
-  ctx.font = "28px serif";
+  ctx.font = "32px 'DM Sans', sans-serif";
   ctx.fillStyle = "#59564c";
-  let y = 200;
-  for (const line of lines) {
-    if (y > PAGE_HEIGHT - 100) break;
-    ctx.fillText(line, 80, y);
-    y += 40;
+  let y = 220;
+  const lineHeight = 48;
+  
+  for (const line of contentLines) {
+    if (y > PAGE_HEIGHT - 120) break;
+    if (line === "") { y += 24; continue; }
+    const lines = wrapText(ctx, line, contentWidth);
+    for (const l of lines) {
+      if (y > PAGE_HEIGHT - 120) break;
+      ctx.fillText(l, margin, y);
+      y += lineHeight;
+    }
   }
+  
   // Footer
-  ctx.font = "16px monospace";
+  ctx.font = "16px 'DM Mono', monospace";
   ctx.fillStyle = "#8a8477";
-  ctx.fillText("VIJAYAKUMAR CHANDIRAN", 80, PAGE_HEIGHT - 40);
+  ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
+  ctx.fillText(`${String(pageNum).padStart(2, "0")} / ${String(totalPages).padStart(2, "0")}`, PAGE_WIDTH - margin - 80, PAGE_HEIGHT - 40);
+  
   return canvas.toBuffer("image/png");
 }
 
 const pageDefs = [
-  { title: "Vijayakumar Chandiran", lines: [profile.role, "", "CURRICULUM VITAE", "2026 EDITION", "", "CAREER / PEOPLE / OPERATIONS"] },
+  { title: "Vijayakumar Chandiran", lines: [profile.role, "", "CURRICULUM VITAE", "2026 EDITION", "", "CAREER / PEOPLE / OPERATIONS", "", "CHENNAI, INDIA"] },
   { title: "About Me", lines: about.body },
-  { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", ...summary.body] },
-  { title: manager.title, lines: [manager.subtitle, "", ...manager.bullets.slice(0, 4)] },
-  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", ...manager.bullets.slice(4)] },
-  { title: leader.title, lines: [leader.subtitle, "", ...leader.bullets] },
+  { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
+  { title: manager.title, lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
+  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
+  { title: leader.title, lines: [leader.subtitle, "", "30 team members supported", "", ...leader.bullets] },
   { title: senior.title, lines: [senior.subtitle, "", ...senior.bullets] },
   { title: associate.title, lines: [associate.subtitle, "", ...associate.bullets] },
   { title: "Core Competencies", lines: competencies.chips },
-  { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", ...competencies.chips.slice(6)] },
-  { title: "Certifications", lines: certifications.certs.map(c => `${c.name} - ${c.issuer} (${c.year})`) },
-  { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} - ${c.issuer} (${c.year})`) },
-  { title: "Education", lines: education.education.map(e => `${e.qualification} - ${e.institution} (${e.years})`) },
-  { title: "Contact", lines: ["Let's make good work happen.", "For opportunities in team leadership, service delivery, customer success, and operations.", profile.location + " \u00b7 India", ...profile.links.map(l => l.label + ": " + l.href)] },
+  { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
+  { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
+  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", `${profile.location} \u00b7 India`, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
 ];
 
+const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
-  const buf = createPage(pageDefs[i].title, pageDefs[i].lines);
+  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages);
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
