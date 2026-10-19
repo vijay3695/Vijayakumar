@@ -1,4 +1,4 @@
-name: Build and deploy ant-story portfolio
+name: Build and publish portfolio to branch
 
 on:
   push:
@@ -6,20 +6,20 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: true
+  group: branch-pages-deploy
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Check out main
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -33,17 +33,30 @@ jobs:
         run: npm test
       - name: Build production site
         run: npm run build
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Verify build output
+        shell: bash
+        run: |
+          test -f dist/index.html
+          grep -q './assets/' dist/index.html
+          if find dist -type f \( -iname 'avatar*' -o -iname 'dp.*' -o -iname 'profile-photo*' \) | grep -q .; then
+            echo "Refusing to publish: a profile photo is being emitted as a standalone file."
+            exit 1
+          fi
+      - name: Publish built site into main branch root and docs
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf assets docs
+          cp -R dist/assets assets
+          cp dist/index.html index.html
+          cp -R dist docs
+          touch .nojekyll docs/.nojekyll
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A index.html assets docs .nojekyll
+          if git diff --cached --quiet; then
+            echo "No published files changed."
+            exit 0
+          fi
+          git commit -m "deploy: publish portfolio build [skip ci]"
+          git push origin HEAD:main
