@@ -164,9 +164,10 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       makeSphere(.2, antDark, -.06, .46, 0, ant, 1, .94, .9);
       makeSphere(.28, antLight, .31, .62, 0, ant, 1, .94, .92);
       const eyeWhite = mat("#fff8e9", .22); const pupilMat = mat("#211312", .15);
+      const eyeWhites: any[] = []; const eyePupils: any[] = [];
       for (const side of [-1, 1]) {
-        makeSphere(.09, eyeWhite, .48, .68, side * .205, ant, 1, 1.15, .75);
-        makeSphere(.045, pupilMat, .52, .68, side * .25, ant);
+        const white = makeSphere(.09, eyeWhite, .48, .68, side * .205, ant, 1, 1.15, .75); eyeWhites.push(white);
+        const pupil = makeSphere(.045, pupilMat, .52, .68, side * .25, ant); eyePupils.push(pupil);
         makeSphere(.017, mat("#ffffff", .1), .535, .715, side * .276, ant);
       }
       const antennae: any[] = [];
@@ -182,7 +183,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const hip = new THREE.Group(); hip.position.set(x, .43, z); ant.add(hip);
         const upper = makeCylinderBetween([0, 0, 0], [i - 1 === 0 ? -.16 : i - 1 > 0 ? .13 : -.13, -.16, side * .13], .035, antDark, hip);
         const lower = makeCylinderBetween([upper.position.x + (i === 1 ? 0 : i === 0 ? -.13 : .13), -.16, side * .13], [i === 0 ? -.28 : i === 1 ? .04 : .31, -.39, side * .2], .026, antDark, hip);
-        legs.push({ hip, phase: (i + (side === 1 ? 1 : 0)) * Math.PI, upper, lower });
+        legs.push({ hip, phase: (i + (side === 1 ? 1 : 0)) * Math.PI, upper, lower, isScratchLeg: side === 1 && i === 2 });
       }
 
       const path = [
@@ -216,7 +217,15 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           ant.position.z += (target[2] - ant.position.z) * .035;
           ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
           ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
-          legs.forEach((leg) => { leg.hip.rotation.z = Math.sin(t * 11 + leg.phase) * .22; leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12; });
+          legs.forEach((leg) => {
+            leg.hip.rotation.z = isReacting && leg.isScratchLeg ? -1.1 + Math.sin(t * 18) * .12 : Math.sin(t * 11 + leg.phase) * .22;
+            leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12;
+          });
+          eyeWhites.forEach((eye, i) => {
+            const blink = Math.pow(Math.max(0, Math.cos(t * 1.8 + i * 2.4)), 32);
+            eye.scale.y = 1.15 * (1 - blink * .88);
+            eyePupils[i].scale.y = 1 - blink * .85;
+          });
           antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
