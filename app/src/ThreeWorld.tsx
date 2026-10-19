@@ -231,9 +231,10 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           sugar.rotation.y = Math.sin(t * 1.2) * .06;
           if (currentKind === "ending" || currentActive === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
-          camera.position.x += ((currentActive > 3 ? Math.max(-.8, Math.min(.8, target[0] * .075)) : 0) - camera.position.x) * .012;
+          const cameraTargetX = currentActive > 0 ? target[0] * .85 : 0;
+          camera.position.x += (cameraTargetX - camera.position.x) * .018;
         }
-        camera.lookAt(0, 1.0, -.1);
+        camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, 1.0, -.1);
         renderer.render(scene, camera);
         frame = requestAnimationFrame(animate);
       };
