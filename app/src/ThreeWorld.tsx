@@ -178,6 +178,11 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       makeBox(1.8, .03, 2.48, mat("#eee0c6"), 0, .09, 0, report);
       for (let i = 0; i < 6; i++) makeBox(.17, .22 + (i % 3) * .12, .18, i % 2 ? green : gold, -.6 + i * .23, .23, -.42, report);
       const dashboard = new THREE.Group(); dashboard.position.set(3.9, 1.35, -2.8); scene.add(dashboard);
+      // The operations dashboard is a real desk prop, not a floating chart: a weighted base
+      // and two supports connect its lower bezel to the desktop.
+      makeBox(1.7, .12, .5, dark, 3.9, -.01, -2.8);
+      makeBox(.14, .6, .14, dark, 3.35, .35, -2.8);
+      makeBox(.14, .6, .14, dark, 4.45, .35, -2.8);
       makeBox(2.3, 1.4, .12, dark, 0, 0, 0, dashboard);
       makeBox(2.08, 1.18, .035, mat("#19302b", .32), 0, .02, .08, dashboard);
       for (let i = 0; i < 6; i++) makeBox(.18, .22 + (i % 4) * .14, .04, green, -.72 + i * .27, -.25 + (i % 4) * .055, .11, dashboard);
@@ -300,16 +305,26 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       ];
       // Exit each prop by crawling to an edge before descending; then use a clear aisle.
       const exits: Record<number, number[][]> = {
-        0: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
+        // Monitor: descend the right bezel, crawl across the lower bezel, then use its stand.
+        0: [[2.6, 4.01, -4.16], [2.6, .86, -4.16], [.22, .86, -4.16], [.22, .86, -4.0],
+          [.22, .131, -4.0], [.22, .131, -3.60], [.22, deskY, -3.60], [1.2, deskY, -3.55],
+          [1.2, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
         1: [[-5.2, .094, 1.35], [-5.2, deskY, 1.35], [-5.2, deskY, aisleZ]],
         2: [[-2.7, .083, -.275], [-2.7, deskY, -.275], [-2.7, deskY, 1.3], [-3.6, deskY, 1.3], [-3.6, deskY, aisleZ]],
-        3: [[5.05, 2.036, -2.8], [5.05, deskY, -2.8], [6.5, deskY, -2.8], [6.5, deskY, aisleZ]],
-        4: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
+        // Dashboard: use its top edge, descend to the lower bezel, then down a support and base.
+        3: [[5.05, 2.036, -2.78], [5.05, .636, -2.70], [4.45, .636, -2.66],
+          [4.45, .036, -2.66], [4.45, .036, -2.49], [4.45, deskY, -2.49],
+          [6.5, deskY, -2.45], [6.5, deskY, aisleZ]],
+        4: [[2.6, 4.01, -4.16], [2.6, .86, -4.16], [.22, .86, -4.16], [.22, .86, -4.0],
+          [.22, .131, -4.0], [.22, .131, -3.60], [.22, deskY, -3.60], [1.2, deskY, -3.55],
+          [1.2, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
         5: [[5.1, .121, 1.1], [5.1, deskY, 1.1], [5.1, deskY, aisleZ]],
         6: [[-1.75, .069, -2.625], [-1.75, deskY, -2.625], [-3.0, deskY, -2.625], [-3.0, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
         7: [[-3.25, .158, 2.0], [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ]],
         8: [[-4.1, .806, -2.0], [-4.1, deskY, -2.0], [-5.2, deskY, -2.0], [-5.2, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
-        9: [[8.875, 3.98, -6.39], [8.875, deskY, -6.39], [8.9, deskY, -6.39], [8.9, deskY, aisleZ]],
+        // Diploma: leave the frame at its right edge, return to the wall, and descend the wall.
+        9: [[8.875, 3.98, -6.39], [8.875, 2.3, -6.39], [8.9, 2.3, -6.39],
+          [8.9, 2.3, -6.58], [8.9, deskY, -6.58], [8.9, deskY, aisleZ]],
         10: [[6.35, deskY, 1.2], [6.35, deskY, aisleZ]]
       };
       // Every destination has an approach point on its edge, a short climb, and a crawl
@@ -317,13 +332,21 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const entries: Record<number, number[][]> = {
         1: [[-5.2, deskY, aisleZ], [-5.2, deskY, 1.45], [-5.2, .094, 1.35], [-5.2, .094, -.2]],
         2: [[-5.2, deskY, aisleZ], [-5.2, deskY, -2.1], [-3.6, deskY, -2.1], [-2.7, deskY, -2.1], [-2.7, deskY, -2.225], [-2.7, .083, -2.225], [-2.7, .083, -1.25]],
-        3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.8], [5.05, deskY, -2.8], [5.05, 2.036, -2.8], [4.9, 2.036, -2.8], [4.9, 2.036, -2.78]],
-        4: [[6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4], [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]],
+        // Dashboard: climb the stand/base, then the right bezel—not the empty space below the chart.
+        3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.45], [4.45, deskY, -2.45], [4.45, deskY, -2.49],
+          [4.45, .036, -2.49], [4.45, .036, -2.66], [4.45, .636, -2.66],
+          [5.05, .636, -2.70], [5.05, 2.036, -2.70], [4.9, 2.036, -2.78]],
+        // Monitor: climb its stand and stem, cross the bottom bezel, then climb the right edge.
+        4: [[6.5, deskY, aisleZ], [6.5, deskY, -2.4], [1.2, deskY, -2.4], [1.2, deskY, -3.55],
+          [.22, deskY, -3.55], [.22, deskY, -3.60], [.22, .131, -3.60], [.22, .131, -4.0],
+          [.22, .866, -4.0], [.22, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]],
         5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .121, 1.1], [5.1, .121, -.3]],
         6: [[-3.6, deskY, aisleZ], [-3.6, deskY, 1.3], [-1.2, deskY, 1.3], [-1.2, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .069, -2.625], [-1.75, .069, -3.45]],
         7: [[-3.6, deskY, aisleZ], [-3.6, deskY, 3.5], [-3.25, deskY, 3.5], [-3.25, deskY, 3.28], [-3.25, .158, 3.28], [-1.0, .158, 3.0], [-1.0, .158, 2.0]],
         8: [[-5.2, deskY, aisleZ], [-5.2, deskY, -1.9], [-4.1, deskY, -1.9], [-4.1, deskY, -2.0], [-4.1, .806, -2.0], [-4.1, .806, -3.15]],
-        9: [[8.9, deskY, aisleZ], [8.9, deskY, -6.39], [8.875, deskY, -6.39], [8.875, 3.98, -6.39], [8.75, 3.98, -6.39]],
+        // Climb the back wall to the diploma's bottom edge, then climb the frame itself.
+        9: [[8.9, deskY, aisleZ], [8.9, deskY, -6.58], [8.9, 2.3, -6.58], [8.9, 2.3, -6.39],
+          [8.875, 2.3, -6.39], [8.875, 3.98, -6.39], [8.75, 3.98, -6.39]],
         10: [[6.35, deskY, aisleZ], [6.35, deskY, 1.2]]
       };
       const onResize = () => {
@@ -363,8 +386,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const openingRoute = [
         [-1.0, .158, 2.0], [-1.7, .158, 2.0], [-2.7, .158, 2.0], [-3.25, .158, 2.0],
         [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ],
-        [6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4],
-        [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]
+        [6.5, deskY, aisleZ], [6.5, deskY, -2.4], [1.2, deskY, -2.4], [1.2, deskY, -3.55],
+        [.22, deskY, -3.55], [.22, deskY, -3.60], [.22, .131, -3.60], [.22, .131, -4.0],
+        [.22, .866, -4.0], [.22, .86, -4.16], [2.6, .86, -4.16], [2.6, 4.01, -4.16], [2.48, 4.01, -4.16]
       ];
       const makeRoute = (start: number[], chapterIndex: number, sourceChapter: number) => {
         const points: number[][] = [[start[0], start[1], start[2]]];
@@ -449,7 +473,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         } else {
           routeProgress = 1;
         }
-        const verticalClimb = Math.abs(segmentEnd[1] - segmentStart[1]) > .15
+        const verticalClimb = Math.abs(segmentEnd[1] - segmentStart[1]) > .08
           && Math.abs(segmentEnd[0] - segmentStart[0]) < .1
           && Math.abs(segmentEnd[2] - segmentStart[2]) < .1;
         if (!isPaused) {
