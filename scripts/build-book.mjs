@@ -11,7 +11,6 @@ const MAKE_BOOK = path.join(PROJECT_ROOT, ".codex", "skills", "openzine", "scrip
 const PAGE_WIDTH = 1440;
 const PAGE_HEIGHT = 1984;
 
-// Read resume data
 const resumeModule = await import("/tmp/resume.js");
 const { profile, sections } = resumeModule;
 
@@ -45,7 +44,7 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
-function createPage(title, contentLines, pageNum, totalPages) {
+function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   const canvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
   const ctx = canvas.getContext("2d");
   
@@ -53,55 +52,77 @@ function createPage(title, contentLines, pageNum, totalPages) {
   ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   
-  // Margins
-  const margin = 100;
+  const margin = 120;
   const contentWidth = PAGE_WIDTH - 2 * margin;
   
-  // Title
-  ctx.fillStyle = "#292820";
-  ctx.font = "bold 72px 'Playfair Display', Georgia, serif";
-  ctx.fillText(title, margin, 120);
-  
-  // Underline
-  ctx.strokeStyle = "#d7d0c2";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(margin, 150);
-  ctx.lineTo(PAGE_WIDTH - margin, 150);
-  ctx.stroke();
-  
-  // Accent bar
-  ctx.fillStyle = "#9b7846";
-  ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 3);
-  
-  // Content
-  ctx.font = "32px 'DM Sans', sans-serif";
-  ctx.fillStyle = "#59564c";
-  let y = 220;
-  const lineHeight = 48;
-  
-  for (const line of contentLines) {
-    if (y > PAGE_HEIGHT - 120) break;
-    if (line === "") { y += 24; continue; }
-    const lines = wrapText(ctx, line, contentWidth);
-    for (const l of lines) {
+  if (isCover) {
+    // Cover page
+    ctx.fillStyle = "#e9e2d3";
+    ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    ctx.fillStyle = "#9b7846";
+    ctx.font = "bold 24px serif";
+    ctx.fillText("CURRICULUM VITAE", margin, 120);
+    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin - 200, 120);
+    ctx.fillStyle = "#292820";
+    ctx.font = "bold 96px serif";
+    ctx.fillText("Vijayakumar", margin, 320);
+    ctx.fillText("Chandiran.", margin, 420);
+    ctx.font = "24px serif";
+    ctx.fillStyle = "#6f685a";
+    ctx.fillText(profile.role, margin, 500);
+    ctx.font = "18px monospace";
+    ctx.fillStyle = "#756d5d";
+    ctx.fillText("CHENNAI, INDIA", margin, PAGE_HEIGHT - 120);
+    ctx.fillText("TURN THE PAGE \u2192", PAGE_WIDTH - margin - 200, PAGE_HEIGHT - 120);
+  } else {
+    // Title
+    ctx.fillStyle = "#292820";
+    ctx.font = "bold 64px serif";
+    ctx.fillText(title, margin, 120);
+    
+    // Underline
+    ctx.strokeStyle = "#d7d0c2";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margin, 150);
+    ctx.lineTo(PAGE_WIDTH - margin, 150);
+    ctx.stroke();
+    
+    // Accent bar
+    ctx.fillStyle = "#9b7846";
+    ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
+    
+    // Content
+    ctx.font = "32px serif";
+    ctx.fillStyle = "#59564c";
+    let y = 220;
+    const lineHeight = 48;
+    
+    for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      ctx.fillText(l, margin, y);
-      y += lineHeight;
+      if (line === "") { y += 24; continue; }
+      const lines = wrapText(ctx, line, contentWidth);
+      for (const l of lines) {
+        if (y > PAGE_HEIGHT - 120) break;
+        ctx.fillText(l, margin, y);
+        y += lineHeight;
+      }
     }
+    
+    // Footer
+    ctx.font = "16px monospace";
+    ctx.fillStyle = "#8a8477";
+    ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
+    ctx.textAlign = "right";
+    ctx.fillText(`${String(pageNum).padStart(2, "0")} / ${String(totalPages).padStart(2, "0")}`, PAGE_WIDTH - margin, PAGE_HEIGHT - 40);
+    ctx.textAlign = "left";
   }
-  
-  // Footer
-  ctx.font = "16px 'DM Mono', monospace";
-  ctx.fillStyle = "#8a8477";
-  ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
-  ctx.fillText(`${String(pageNum).padStart(2, "0")} / ${String(totalPages).padStart(2, "0")}`, PAGE_WIDTH - margin - 80, PAGE_HEIGHT - 40);
   
   return canvas.toBuffer("image/png");
 }
 
 const pageDefs = [
-  { title: "Vijayakumar Chandiran", lines: [profile.role, "", "CURRICULUM VITAE", "2026 EDITION", "", "CAREER / PEOPLE / OPERATIONS", "", "CHENNAI, INDIA"] },
+  { title: "Cover", lines: [], isCover: true },
   { title: "About Me", lines: about.body },
   { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
   { title: manager.title, lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
@@ -119,12 +140,11 @@ const pageDefs = [
 
 const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
-  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages);
+  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover);
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
 
-// Run make-book.mjs
 const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Interactive Resume", "--portrait", "single"], {
   stdio: "inherit",
   cwd: PROJECT_ROOT,

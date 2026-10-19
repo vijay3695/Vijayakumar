@@ -1,0 +1,30 @@
+const puppeteer = require("/workspace/app/node_modules/puppeteer");
+const CHROME = "/tmp/kilo-worktrees/a7daf38377cbcc3d4edf2a6223cd49ae02aaef69075accb69d652f17e0f3fdca/.cache/puppeteer/chrome/linux-155.0.8059.39/chrome-linux64/chrome";
+
+(async () => {
+  const browser = await puppeteer.launch({
+    executablePath: CHROME,
+    headless: true,
+    args: ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
+  });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 1986, deviceScaleFactor: 1 });
+
+  // Start the server
+  const { exec } = require("child_process");
+  // Navigate to the page render
+  await page.goto("http://localhost:9876/?page=0", { waitUntil: "networkidle0", timeout: 30000 });
+
+  await new Promise(r => setTimeout(r, 5000));
+
+  const content = await page.evaluate(() => {
+    const root = document.getElementById("root");
+    return root ? root.innerHTML.substring(0, 500) : "no root";
+  });
+  console.log("Root content:", content.substring(0, 300));
+
+  await page.screenshot({ path: "/tmp/debug_render.png" });
+  console.log("Screenshot saved");
+
+  await browser.close();
+})();
