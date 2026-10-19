@@ -133,8 +133,8 @@ export default function AntStory() {
         <div className="world-caption" aria-hidden="true"><span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />{current.label}</div>
       </div>
       <section className={"story-content" + (mode === "book" ? " story-content--book" : " story-content--movie")} id="story-start">
-        <div className="story-modebar" aria-label="Story display controls"><div><button type="button" className={mode === "movie" ? "is-selected" : ""} aria-pressed={mode === "movie"} onClick={() => setMode("movie")}>◉ Movie mode</button><button type="button" className={mode === "book" ? "is-selected" : ""} aria-pressed={mode === "book"} onClick={() => setMode("book")}>▤ Book mode</button></div><button type="button" onClick={toggleMotion} aria-pressed={motionPaused}>{motionPaused ? "▶ Resume motion" : "Ⅱ Pause motion"}</button></div>
         <div className="story-content__copy">
+          <div className="story-modebar" aria-label="Story display controls"><div><button type="button" className={mode === "movie" ? "is-selected" : ""} aria-pressed={mode === "movie"} onClick={() => setMode("movie")}>◉ Movie mode</button><button type="button" className={mode === "book" ? "is-selected" : ""} aria-pressed={mode === "book"} onClick={() => setMode("book")}>▤ Book mode</button></div><button type="button" onClick={toggleMotion} aria-pressed={motionPaused}>{motionPaused ? "▶ Resume motion" : "Ⅱ Pause motion"}</button></div>
           {current.kind === "opening" ? (
             <article className="story-card story-card--intro">
               <p className="story-eyebrow">A PORTFOLIO, WITH A LITTLE LIFE</p>
