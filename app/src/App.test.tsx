@@ -18,7 +18,7 @@ describe("interactive resume flipbook", () => {
   it("supports next and previous page controls and updates the page counter", () => {
     vi.useFakeTimers();
     render(<App />);
-    expect(screen.getByText("01")).toBeTruthy();
+    expect(screen.getByText(/01 \/ 15/)).toBeTruthy();
     fireEvent.click(screen.getAllByRole("button", { name: "Next page" })[1]);
     act(() => { vi.advanceTimersByTime(650); });
     expect(screen.getByRole("heading", { name: /A little about me/i })).toBeTruthy();
@@ -39,9 +39,11 @@ describe("interactive resume flipbook", () => {
 
   it("includes creator credits and keyboard-friendly page navigation", () => {
     const { container } = render(<App />);
-    expect(container.querySelector(".book-credit-list")).toBeNull();
     expect(screen.getByRole("button", { name: "Next page" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
+    fireEvent.keyDown(window, { key: "End" });
+    expect(screen.getByRole("heading", { name: /Made with respect/i })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /View project/i })).toBeTruthy();
   });
 });
