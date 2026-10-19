@@ -1,6 +1,6 @@
 # Vijayakumar Chandiran — Interactive Resume Flipbook
 
-A rich, single-page-at-a-time digital resume inspired by the tactile feel of printed paper and the OpenZine page-turning experience. Built with React, TypeScript, and CSS 3D transforms.
+A rich, single-page-at-a-time digital resume rendered with OpenZine’s page-turning book engine. The React + TypeScript resume source is rendered into page images during CI, then the vendored OpenZine skill bundles those pages and its renderer into one standalone HTML book.
 
 ## Reading the book
 
@@ -13,9 +13,10 @@ A rich, single-page-at-a-time digital resume inspired by the tactile feel of pri
 
 - React 18 + TypeScript
 - Vite
-- CSS 3D perspective, page-turn animation, paper grain, and page shadows
+- OpenZine’s paper-bending WebGL renderer, paper shader, grain texture, and page shadows (single-page mode on desktop and mobile)
 - Vitest and Testing Library
 - GitHub Pages
+- Vendored OpenZine skill at `.codex/skills/openzine/`
 
 ## Run locally
 
@@ -31,9 +32,13 @@ npm run build
 
 Source content lives in `app/src/data/resume.ts`: the professional summary, four Sutherland career stages, competencies, ten certifications, and education. The flipbook pages are arranged in `app/src/FlipbookResume.tsx`.
 
-## Design acknowledgements
+## OpenZine build workflow
 
-The page-turning interaction is inspired by [OpenZine by Joseph Zhou](https://github.com/JosssphZhou/openzine). The implementation here uses original React and CSS rather than copying OpenZine's Paper renderer, shader, or grain assets. The visual direction is inspired by [Paper Mono](https://app.paper.design/playground/paper-mono). Third-party acknowledgements and applicable licence notices are kept here in the repository README, not inside the resume.
+The OpenZine skill is stored in `.codex/skills/openzine/` in this repository, so no global/local skill installation is required. The GitHub Actions build renders the React resume into numbered page images with Puppeteer, runs the vendored `scripts/make-book.mjs` builder, and deploys the resulting standalone `dist/index.html`. The vendored runtime is adapted to keep a single page visible on both desktop and mobile. The generated book retains OpenZine’s Paper Mono attribution link in its footer; the LinkedIn and GitHub links remain available in the book header.
+
+## Credits and licences
+
+OpenZine by Joseph Zhou (https://github.com/JosssphZhou/openzine) is vendored under `.codex/skills/openzine/`; its source skill and builder are included for reproducibility. OpenZine has mixed licensing: its own files have the file-specific terms in `OPENZINE-LICENSE.txt`, while the extracted Paper Mono page-turn renderer/shader/grain are copyright Paper and are not covered by OpenZine’s MIT licence. Three.js is MIT; the Paper Mono typeface is SIL OFL 1.1. The generated book preserves the Paper attribution link, and the applicable upstream notices are retained beside the vendored files. See `.codex/skills/openzine/UPSTREAM.md` and the bundled licence files.
 
 - Live site: https://vijay3695.github.io/Vijayakumar/
 - Repository: https://github.com/vijay3695/Vijayakumar
