@@ -18,7 +18,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 .three-world{position:absolute;inset:0;z-index:2;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#3d2c28,#171313 72%)}
 .three-world-canvas{display:block;width:100%;height:100%;outline:0}
 .three-world[data-error="3d-unavailable"]::after,.three-world[data-error="webgl-unavailable"]::after{content:"The 3D scene could not load. Check your connection and reload.";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,420px);padding:16px;border:1px solid #e6a17d66;border-radius:12px;background:#171313;color:#f5efe6;text-align:center;font-size:13px}
-.three-world-ant-hitarea{position:absolute;z-index:9;left:50%;top:50%;transform:translate(-50%,-50%);width:110px;height:100px;border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation}
+.three-world-ant-hitarea{position:absolute;z-index:25;left:50%;top:50%;transform:translate(-50%,-50%);width:84px;height:72px;border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation;pointer-events:auto}
 .three-world-ant-hitarea:focus-visible{outline:2px solid #ffd1ad;outline-offset:-5px;background:#ffd1ad12}
 .three-world-ant-hitarea.is-reacting{background:radial-gradient(ellipse,transparent 45%,#e6a17d16 72%,transparent 80%)}
 .world-caption{position:absolute;z-index:8;left:clamp(20px,4.5vw,72px);bottom:116px;display:flex;align-items:center;gap:11px;color:#f0d6c3;font:10px 'DM Mono',monospace;letter-spacing:.11em;text-transform:uppercase;text-shadow:0 2px 16px #000;pointer-events:none}
@@ -75,6 +75,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 @media(max-width:900px){
  .story-topline{height:65px;padding-inline:20px}.story-location{margin-right:14px;font-size:8px;letter-spacing:.08em}
  .world{min-height:650px}
+ .three-world-canvas{width:100%;height:100%;object-fit:cover}
  .story-content{top:auto;bottom:84px;left:14px;right:14px;width:auto;max-height:min(42svh,340px);grid-template-columns:minmax(0,1fr);gap:0}
  .story-content__copy{max-height:min(42svh,340px);padding:0 1px 3px 0}
  .story-card{padding:18px 20px;border-radius:16px;background:linear-gradient(145deg,#151312e8,#100f0fe8)}
@@ -90,6 +91,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 @media(max-width:520px){
  .story-topline{height:60px;padding-inline:16px}.story-wordmark{font-size:18px}.story-location{max-width:135px;margin-right:10px;text-align:right;font-size:7px;line-height:1.5}.story-contact{padding:8px 10px;font-size:9px}
  .world{min-height:640px}
+ .story-topline{gap:8px}
  .story-content{left:10px;right:10px;bottom:76px;max-height:min(42svh,340px)}
  .story-content__copy{max-height:min(42svh,340px)}
  .story-card{padding:16px}.story-card--intro{padding-top:17px}.story-card h1{font-size:28px}.story-card h2{font-size:24px}
