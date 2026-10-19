@@ -60,24 +60,64 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   const contentWidth = PAGE_WIDTH - 2 * margin;
   
   if (isCover) {
-    // Cover page
-    ctx.fillStyle = "#e9e2d3";
+    // Cover page - premium design
+    ctx.fillStyle = "#f4f0e6";
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    // Subtle grid
+    ctx.strokeStyle = "rgba(215,208,194,0.2)";
+    ctx.lineWidth = 1;
+    for (let gx = 0; gx < PAGE_WIDTH; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, PAGE_HEIGHT); ctx.stroke(); }
+    for (let gy = 0; gy < PAGE_HEIGHT; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(PAGE_WIDTH, gy); ctx.stroke(); }
+    // Accent bar top
     ctx.fillStyle = "#9b7846";
-    ctx.font = "bold 24px \"Space Grotesk\", sans-serif";
-    ctx.fillText("CURRICULUM VITAE", margin, 120);
-    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin - 200, 120);
+    ctx.fillRect(margin, 80, 60, 4);
+    // Small label top-left
+    ctx.font = "600 18px \"DM Sans\", sans-serif";
+    ctx.fillStyle = "#9b7846";
+    ctx.fillText("CURRICULUM VITAE", margin, 130);
+    // Top-right label
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#8a8477";
+    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin, 130);
+    ctx.textAlign = "left";
+    // Decorative circle
+    ctx.strokeStyle = "rgba(155,120,70,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 120, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 80, 0, Math.PI * 2); ctx.stroke();
+    // Main name
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 96px \"Space Grotesk\", sans-serif";
-    ctx.fillText("Vijayakumar", margin, 320);
-    ctx.fillText("Chandiran.", margin, 420);
-    ctx.font = "24px \"DM Sans\", sans-serif";
+    ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
+    ctx.fillText("Vijayakumar", margin, 380);
+    ctx.fillText("Chandiran.", margin, 500);
+    // Accent line under name
+    ctx.fillStyle = "#9b7846";
+    ctx.fillRect(margin, 530, 200, 3);
+    // Role
+    ctx.font = "400 32px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#6f685a";
-    ctx.fillText(profile.role, margin, 500);
-    ctx.font = "18px \"DM Sans\", monospace";
-    ctx.fillStyle = "#756d5d";
+    ctx.fillText(profile.role, margin, 600);
+    // Divider
+    ctx.strokeStyle = "#d7d0c2";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, 680);
+    ctx.lineTo(PAGE_WIDTH - margin, 680);
+    ctx.stroke();
+    // Bottom
+    ctx.font = "14px \"DM Sans\", monospace";
+    ctx.fillStyle = "#8a8477";
     ctx.fillText("CHENNAI, INDIA", margin, PAGE_HEIGHT - 120);
-    ctx.fillText("TURN THE PAGE \u2192", PAGE_WIDTH - margin - 200, PAGE_HEIGHT - 120);
+    ctx.textAlign = "right";
+    ctx.fillText("TURN THE PAGE", PAGE_WIDTH - margin, PAGE_HEIGHT - 120);
+    ctx.fillStyle = "#9b7846";
+    ctx.font = "bold 20px \"DM Sans\", sans-serif";
+    ctx.fillText("→", PAGE_WIDTH - margin, PAGE_HEIGHT - 90);
+    ctx.textAlign = "left";
+    // VC monogram watermark
+    ctx.font = "bold 48px \"Space Grotesk\", sans-serif";
+    ctx.fillStyle = "rgba(155,120,70,0.12)";
+    ctx.fillText("VC", PAGE_WIDTH - 200, PAGE_HEIGHT - 200);
   } else {
     // Title
     ctx.fillStyle = "#292820";
