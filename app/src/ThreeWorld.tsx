@@ -413,7 +413,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           routeDuration = Math.min(18, Math.max(7, routeLength(routePoints) / 2.5));
         } else if (chapterIndex === 0) {
           routePoints = openingRoute.map((point) => [...point]);
-          routeDuration = 12;
+          routeDuration = 9;
         } else {
           routePoints = makeRoute(start, chapterIndex, sourceChapter);
           routeDuration = Math.min(12, Math.max(3, routeLength(routePoints) / 2.5));
@@ -522,6 +522,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           camera.position.z += (cameraTargetZ - camera.position.z) * .04;
         }
         camera.lookAt(target[0], Math.max(.7, target[1] * .55 + .45), target[2]);
+        camera.updateMatrixWorld();
         if (antHitArea) {
           const projected = ant.localToWorld(new THREE.Vector3(.12, .62, 0));
           projected.project(camera);
