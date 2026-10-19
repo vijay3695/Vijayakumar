@@ -211,7 +211,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const { active: currentActive, kind: currentKind, reacting: isReacting, paused: isPaused } = propsRef.current;
         const target = path[Math.min(currentActive, path.length - 1)] || path[0];
         if (!isPaused) {
-          ant.position.set(target[0] + Math.sin(t * .75) * .035, target[1] + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025), target[2]);
+          ant.position.x += (target[0] - ant.position.x) * .035 + Math.sin(t * .75) * .002;
+          ant.position.y += (target[1] - ant.position.y) * .035 + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025);
+          ant.position.z += (target[2] - ant.position.z) * .035;
           ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
           ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
           legs.forEach((leg) => { leg.hip.rotation.z = Math.sin(t * 11 + leg.phase) * .22; leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12; });
@@ -231,7 +233,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         renderer.domElement.removeEventListener("pointerdown", pointerHandler);
         resizeObserver?.disconnect();
         scene.traverse((obj: any) => { if (obj.geometry) obj.geometry.dispose(); if (obj.material) { const materials = Array.isArray(obj.material) ? obj.material : [obj.material]; materials.forEach((m: any) => m.dispose()); } });
-        renderer.dispose(); renderer.domElement.remove();
+        screenTexture.dispose(); renderer.dispose(); renderer.domElement.remove();
       };
     };
 
