@@ -63,19 +63,34 @@ export default function FlipbookResume() {
   const [dragging, setDragging] = useState(false);
   const [showHelp, setShowHelp] = useState(true);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const dragRef = useRef({ x: 0, y: 0 });
+  const suppressClick = useRef(false);
   const turnTimer = useRef<number | undefined>(undefined);
   const go = useCallback((direction: "next" | "prev") => {
     if (turn) return;
-    if ((direction === "next" && current >= pages.length - 1) || (direction === "prev" && current <= 0)) return;
+    const destination = current + (direction === "next" ? 1 : -1);
+    if (destination < 0 || destination >= pages.length) return;
     setShowHelp(false);
     setTurn(direction);
     window.clearTimeout(turnTimer.current);
     turnTimer.current = window.setTimeout(() => {
-      setCurrent((page) => Math.max(0, Math.min(pages.length - 1, page + (direction === "next" ? 1 : -1))));
+      setCurrent(destination);
       setTurn(null);
+      dragRef.current = { x: 0, y: 0 };
       setDrag({ x: 0, y: 0 });
-    }, 620);
+    }, 640);
   }, [current, turn]);
+
+  const jumpToPage = (index: number) => {
+    window.clearTimeout(turnTimer.current);
+    setCurrent(Math.max(0, Math.min(pages.length - 1, index)));
+    setTurn(null);
+    dragRef.current = { x: 0, y: 0 };
+    setDrag({ x: 0, y: 0 });
+    setDragging(false);
+    pointerStart.current = null;
+    setShowHelp(false);
+  };
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -92,6 +107,7 @@ export default function FlipbookResume() {
     if (turn) return;
     pointerStart.current = { x: event.clientX, y: event.clientY };
     setDragging(true);
+    dragRef.current = { x: 0, y: 0 };
     setDrag({ x: 0, y: 0 });
     setShowHelp(false);
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -100,15 +116,22 @@ export default function FlipbookResume() {
     if (!dragging || !pointerStart.current || turn) return;
     const dx = event.clientX - pointerStart.current.x;
     const dy = event.clientY - pointerStart.current.y;
+    dragRef.current = { x: dx, y: dy };
     setDrag({ x: dx, y: dy });
   };
   const onPointerUp = () => {
     if (!pointerStart.current) return;
-    const dx = drag.x;
+    const { x: dx } = dragRef.current;
     setDragging(false);
     pointerStart.current = null;
-    if (Math.abs(dx) > 65) go(dx < 0 ? "next" : "prev");
-    else setDrag({ x: 0, y: 0 });
+    if (Math.abs(dx) > 65) {
+      suppressClick.current = true;
+      window.setTimeout(() => { suppressClick.current = false; }, 80);
+      go(dx < 0 ? "next" : "prev");
+    } else {
+      dragRef.current = { x: 0, y: 0 };
+      setDrag({ x: 0, y: 0 });
+    }
   };
 
   const activePage = pages[current];
@@ -119,7 +142,7 @@ export default function FlipbookResume() {
     <section className="flipbook-stage" id="book" aria-label="Interactive resume book">
       <div className="book-top-caption"><span>PERSONAL EDITION</span><span>{String(current + 1).padStart(2, "0")} — {String(pages.length).padStart(2, "0")}</span></div>
       <div className="book-shadow" />
-      <div className={"book-viewport" + (turn ? " is-turning" : "")} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={(event) => { if ((event.target as HTMLElement).closest("button, a")) return; const bounds = event.currentTarget.getBoundingClientRect(); go(event.clientX < bounds.left + bounds.width / 2 ? "prev" : "next"); }} onContextMenu={(event) => event.preventDefault()}>
+      <div className={"book-viewport" + (turn ? " is-turning" : "")} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={(event) => { if (suppressClick.current || (event.target as HTMLElement).closest("button, a")) return; const bounds = event.currentTarget.getBoundingClientRect(); go(event.clientX < bounds.left + bounds.width / 2 ? "prev" : "next"); }} onContextMenu={(event) => event.preventDefault()}>
         <div className="book-page-stack" aria-live="polite">
           <div className="book-page book-page--current" key={turn ? current + (turn === "next" ? 1 : -1) : current}><PageFrame page={turn ? current + (turn === "next" ? 1 : -1) : current} total={pages.length}>{basePage.content}</PageFrame></div>
           {turn && <div className={"book-page book-page--turn book-page--" + turn} key={current + turn} style={{ transform: dragging ? "translateX(" + drag.x * .12 + "px) rotateY(" + (turn === "next" ? -Math.min(165, Math.abs(drag.x) * .8) : Math.min(165, Math.abs(drag.x) * .8)) + "deg) rotateZ(" + drag.y * .025 + "deg)" : undefined }}><PageFrame page={turn === "next" ? current : Math.max(0, current - 1)} total={pages.length}>{turningPage.content}</PageFrame></div>}
@@ -129,6 +152,7 @@ export default function FlipbookResume() {
         <button className="book-edge book-edge--next" aria-label="Next page" onPointerDown={(event) => event.stopPropagation()} onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)}><span>›</span></button>
       </div>
       <div className="book-controls"><button type="button" onClick={() => go("prev")} disabled={current === 0 || Boolean(turn)} aria-label="Previous page">← <span>PREVIOUS</span></button><div className="book-progress" aria-label={"Page " + (current + 1) + " of " + pages.length}><div><span style={{ width: ((current + 1) / pages.length * 100) + "%" }} /></div><small>{String(current + 1).padStart(2, "0")} <i>/</i> {String(pages.length).padStart(2, "0")}</small></div><button type="button" onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)} aria-label="Next page"><span>NEXT</span> →</button></div>
+      <nav className="book-page-index" aria-label="Jump to a page"><span className="book-page-index__label">CONTENTS</span>{pages.map((page, index) => <button type="button" key={page.label + index} className={index === current ? "is-active" : ""} aria-current={index === current ? "page" : undefined} onClick={() => jumpToPage(index)} disabled={Boolean(turn)}><small>{String(index + 1).padStart(2, "0")}</small><span>{page.label}</span></button>)}</nav>
       <div className="book-bottom-note"><span>DESIGNED TO BE READ, ONE PAGE AT A TIME</span><span>← → KEYBOARD / SWIPE / DRAG</span></div>
     </section>
   </main>;
