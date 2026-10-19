@@ -96,3 +96,14 @@ body::before,body::after{display:none!important}#root{position:relative;z-index:
 .book-page{outline:1px solid rgba(96,78,47,.07)}
 .book-page--turn{will-change:transform;transform-style:preserve-3d}
 .book-page--turn .paper-sheet:after{content:"";position:absolute;z-index:5;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.1),transparent 30%,transparent 65%,rgba(55,43,25,.12));mix-blend-mode:multiply}
+
+
+/* Live-DOM page curl: OpenZine-style depth cues without flattening React content into images. */
+.book-viewport.is-dragging .book-page--current{will-change:transform;transition:none;backface-visibility:hidden}
+.book-viewport.is-dragging .book-page--current:after{content:"";position:absolute;z-index:7;inset:0;pointer-events:none;opacity:.95;mix-blend-mode:multiply;background:linear-gradient(90deg,rgba(35,29,19,.22),transparent 12%,transparent 74%,rgba(35,29,19,.16))}
+.book-viewport.is-dragging .book-page--current:before{content:"";position:absolute;z-index:8;top:0;bottom:0;width:22%;pointer-events:none}
+.book-viewport.is-dragging .book-page--current:before{right:0;background:linear-gradient(270deg,rgba(30,25,17,.22),rgba(30,25,17,.06) 38%,transparent)}
+.book-viewport.is-dragging .book-page--current[style*="right center"]:before{right:auto;left:0;background:linear-gradient(90deg,rgba(30,25,17,.22),rgba(30,25,17,.06) 38%,transparent)}
+.book-page--turn{transform-origin:left center}
+.book-page--turn.book-page--prev{transform-origin:right center}
+@media(prefers-reduced-motion:reduce){.book-viewport.is-dragging .book-page--current{will-change:auto}}
