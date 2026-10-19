@@ -100,7 +100,7 @@ export default function AntStory() {
         <span className="story-location">A tiny journey through a career</span>
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
-      <div className={"world world--" + current.kind} aria-live="polite">
+      <div className={"world world--" + current.kind + " world--" + current.id} aria-live="polite">
         <div className="world-sky" /><div className="world-glow" />
         <div className="world-backdrop">
           <div className="monitor-scene prop"><div className="monitor-screen"><span>HELLO, I'M</span><strong>{profile.name}</strong><small>{profile.role}</small></div><div className="monitor-neck" /><div className="monitor-foot" /></div>
