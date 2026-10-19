@@ -153,7 +153,7 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
       // Sugar cube waits at the far right end of the same desktop.
       const sugar = new THREE.Group(); sugar.position.set(7.0, .2, 1.2); scene.add(sugar);
       makeBox(.8, .8, .8, mat("#fff7e9", .28), 0, .25, 0, sugar);
-      const sugarTop = makeBox(.63, .018, .63, mat("#ffffff", .3), 0, .66, 0, sugar);
+      makeBox(.63, .018, .63, mat("#ffffff", .3), 0, .66, 0, sugar);
 
       // Fully articulated ant: three pairs of legs, joints, abdomen, thorax, head, eyes and antennae.
       const ant = new THREE.Group(); scene.add(ant);
@@ -179,7 +179,6 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
         const x = -.12 + i * .19; const z = side * .12;
         const hip = new THREE.Group(); hip.position.set(x, .43, z); ant.add(hip);
         const upper = makeCylinderBetween([0, 0, 0], [i - 1 === 0 ? -.16 : i - 1 > 0 ? .13 : -.13, -.16, side * .13], .035, antDark, hip);
-        const knee = upper.position.clone().add(new THREE.Vector3(i === 1 ? .03 : (i === 0 ? -.13 : .13), -.08, side * .13));
         const lower = makeCylinderBetween([upper.position.x + (i === 1 ? 0 : i === 0 ? -.13 : .13), -.16, side * .13], [i === 0 ? -.28 : i === 1 ? .04 : .31, -.39, side * .2], .026, antDark, hip);
         legs.push({ hip, phase: (i + (side === 1 ? 1 : 0)) * Math.PI, upper, lower });
       }
@@ -236,5 +235,5 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
     return () => { cancelled = true; cancelAnimationFrame(frame); resizeObserver?.disconnect(); cleanup?.(); };
   }, []);
 
-  return <div ref={hostRef} className="three-world" aria-hidden="false" />;
+  return <div ref={hostRef} className="three-world" aria-label="Three-dimensional ant career story"><button type="button" className={"three-world-ant-hitarea" + (reacting ? " is-reacting" : "")} aria-label="Pause and greet the tiny ant" title="Tap the ant to say hello" onClick={onAntClick} /></div>;
 }
