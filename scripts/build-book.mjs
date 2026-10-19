@@ -87,26 +87,26 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 80, 0, Math.PI * 2); ctx.stroke();
     // Main name
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 140px \"Space Grotesk\", sans-serif";
+    ctx.font = "bold 180px \"Space Grotesk\", sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Vijayakumar", PAGE_WIDTH / 2, 380);
-    ctx.fillText("Chandiran.", PAGE_WIDTH / 2, 520);
+    ctx.fillText("Vijayakumar", PAGE_WIDTH / 2, 820);
+    ctx.fillText("Chandiran.", PAGE_WIDTH / 2, 980);
     ctx.textAlign = "left";
     // Accent line under name
     ctx.fillStyle = "#9b7846";
-    ctx.fillRect(PAGE_WIDTH / 2 - 100, 550, 200, 3);
+    ctx.fillRect(PAGE_WIDTH / 2 - 150, 1010, 300, 4);
     // Role
-    ctx.font = "400 32px \"DM Sans\", sans-serif";
+    ctx.font = "400 48px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#6f685a";
     ctx.textAlign = "center";
-    ctx.fillText(profile.role, PAGE_WIDTH / 2, 620);
+    ctx.fillText(profile.role, PAGE_WIDTH / 2, 1090);
     ctx.textAlign = "left";
     // Divider
     ctx.strokeStyle = "#d7d0c2";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(margin, 680);
-    ctx.lineTo(PAGE_WIDTH - margin, 680);
+    ctx.moveTo(margin, 1160);
+    ctx.lineTo(PAGE_WIDTH - margin, 1160);
     ctx.stroke();
     // Bottom
     ctx.font = "14px \"DM Sans\", monospace";
