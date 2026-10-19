@@ -73,7 +73,11 @@ export const sections: Section[] = [
     kind: "about",
     highlight: "About",
     title: "About me",
-    body: [],
+    body: [
+      "I grew from frontline email support into senior service delivery and people-leadership roles at Sutherland Global Services, building experience across customer support, escalations, coaching, and operations.",
+      "My work connects customer experience, client relationships, team development, quality, and operational performance. I use practical root-cause analysis, clear communication, and consistent coaching to help teams deliver reliably.",
+      "I studied Computer Science and Engineering and continue to build my toolkit through training in service quality, key account management, analytics, and problem solving."
+    ],
     art: "radial-gradient(125% 85% at 18% 2%, rgba(96,124,232,0.32), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(120,80,190,0.18), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
     glyph: "01",
     accent: "96,124,232"
