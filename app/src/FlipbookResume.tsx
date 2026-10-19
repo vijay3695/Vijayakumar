@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { profile, sections } from "./data/resume";
 import flipbookStyles from "./styles/flipbook.css?inline";
 import openZineRuntime from "../../.codex/skills/openzine/runtime/openzine.js?raw";
-import { openZinePaperGrain } from "./openzine/grain";
+import { openZinePaperGrain, openZinePaperGrainDataUrl } from "./openzine/grain";
 
 type BookPage = { label: string; content: ReactNode; kind?: string };
 
@@ -88,10 +88,11 @@ export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
       lang: "en",
       pages: pageUrls,
       pageCount: pageUrls.length,
+      grain: openZinePaperGrainDataUrl,
       initialSpread: 0,
       portrait: "single"
     };
-    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}#credit{display:none!important}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};</script><script>${openZineRuntime.split("</script").join("<\\/script")}</script></body></html>`;
+    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><meta name="generator" content="OpenZine"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};</script><script>${openZineRuntime.split("</script").join("<\\/script")}</script></body></html>`;
     setViewerDocument(html);
   }, []);
 
