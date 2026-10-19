@@ -1,4 +1,4 @@
-# Vijayakumar Chandiran — Ant Story Portfolio
+# Vijayakumar Chandiran — Portfolio
 
 An interactive 3D ant-led career story for Vijayakumar Chandiran. A fully articulated ant explores a physical WebGL desk with individual keyboard keys, typing hands, a monitor carrying the name and role, notebooks, operations dashboards, books, and a sugar cube. The 3D journey and readable resume chapters stay visible together.
 
