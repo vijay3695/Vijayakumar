@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 type ThreeWorldProps = {
   active: number;
@@ -15,6 +16,7 @@ type ThreeWorldProps = {
  */
 export default function ThreeWorld({ active, kind, reacting, paused, onAntClick }: ThreeWorldProps) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const antHitAreaRef = useRef<HTMLButtonElement>(null);
   const propsRef = useRef({ active, kind, reacting, paused, onAntClick });
   propsRef.current = { active, kind, reacting, paused, onAntClick };
 
@@ -201,7 +203,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         depth: .72, bevelEnabled: true, bevelSegments: 4, steps: 1,
         bevelSize: .055, bevelThickness: .055, curveSegments: 4
       });
-      sugarGeometry.translate(0, .415, -.36);
+      sugarGeometry.translate(0, .36, -.36);
       const sugarMaterial = new THREE.MeshStandardMaterial({ color: "#fff8eb", roughness: .92, metalness: 0 });
       const sugarMesh = new THREE.Mesh(sugarGeometry, sugarMaterial);
       sugarMesh.position.y = 0; sugarMesh.castShadow = true; sugarMesh.receiveShadow = true; sugar.add(sugarMesh);
@@ -215,7 +217,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const radius = .009 + (i % 4) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 3 === 0 ? sugarBright : sugarGrain);
         // Crystals cling to the front face instead of hovering in front of the cube.
-        crystal.position.set(x, .415 + y, -.366);
+        crystal.position.set(x, .36 + y, -.366);
         crystal.scale.set(1.2, .7, .35); crystal.castShadow = true; sugar.add(crystal);
       }
       for (let i = 0; i < 45; i++) {
@@ -223,7 +225,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const z = signed(i * 3.17 + 1);
         const radius = .009 + (i % 3) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 2 ? sugarBright : sugarGrain);
-        crystal.position.set(x, .78, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
+        crystal.position.set(x, .72, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
       }
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
@@ -278,24 +280,48 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // One deliberate destination per chapter. Coordinates match the physical prop surfaces:
       // keyboard -> monitor -> notebook -> open book -> dashboard -> monitor -> report
       // -> case file -> keyboard -> book stack -> diploma -> sugar cube.
+      const deskY = -.084; // feet touch the desktop top at y = -.07
+      const aisleZ = 4.25; // clear front aisle, in front of keyboard and hands
       const path = [
-        [-1.0, .18, 2.0],       // opening: keyboard, then monitor's right edge
-        [-5.2, .086, -.2],      // About me: notebook top
-        [-2.7, .10, -1.25],     // Professional summary: open-book page
-        [2.95, 2.06, -2.66],    // Core competencies: top-right edge of dashboard
-        [2.25, 4.02, -4.16],    // Team Manager: monitor's top-right bezel
-        [5.1, .14, -.3],        // Team Leader: report top
-        [-1.75, .095, -3.45],   // Senior Associate: case-file top
-        [-1.0, .18, 2.0],       // Customer Support Associate: keyboard keys
-        [-4.1, .83, -3.15],     // Certifications: top book, approached from its front edge
-        [8.55, 4.02, -6.34],    // Education: diploma frame's top-right edge
-        [6.35, -.08, 1.2]       // Ending: beside the sugar cube on the desk
+        [2.48, 4.01, -4.24], // opening: monitor top-right bezel, not the screen
+        [-5.2, .083, -.2],   // About: notebook page
+        [-2.7, .083, -1.25], // Summary: open-book page
+        [4.9, 2.036, -2.70], // Competencies: dashboard top-right bezel
+        [2.48, 4.01, -4.24], // Team Manager: monitor top-right bezel
+        [5.1, .106, -.3],    // Team Leader: report page
+        [-1.75, .081, -3.45],// Senior Associate: case-file page
+        [-1.0, .158, 2.0],   // CSA: key tops
+        [-4.1, .806, -3.15], // Certifications: top book
+        [8.75, 3.98, -6.39], // Education: diploma frame's top-right edge
+        [6.35, deskY, 1.2]   // Ending: beside sugar cube, on desktop
       ];
-      // Each raised landmark has a front-edge staging point. The ant climbs the edge,
-      // then walks across the top instead of taking a diagonal shortcut through the prop.
-      const approachZ: Record<number, number> = {
-        1: 1.52, 2: -.12, 3: -2.54, 4: -4.03, 5: 1.25,
-        6: -2.48, 7: 3.38, 8: -1.84, 9: -6.12
+      // Exit each prop by crawling to an edge before descending; then use a clear aisle.
+      const exits: Record<number, number[][]> = {
+        0: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
+        1: [[-5.2, .083, 1.35], [-5.2, deskY, 1.35], [-5.2, deskY, aisleZ]],
+        2: [[-2.7, .083, -.275], [-2.7, deskY, -.275], [-2.7, deskY, 1.3], [-3.6, deskY, 1.3], [-3.6, deskY, aisleZ]],
+        3: [[5.05, 2.036, -2.8], [5.05, deskY, -2.8], [6.5, deskY, -2.8], [6.5, deskY, aisleZ]],
+        4: [[2.6, 4.01, -4.24], [2.6, deskY, -4.24], [5.5, deskY, -4.24], [5.5, deskY, -2.4], [6.5, deskY, -2.4], [6.5, deskY, aisleZ]],
+        5: [[5.1, .106, 1.1], [5.1, deskY, 1.1], [5.1, deskY, aisleZ]],
+        6: [[-1.75, .081, -2.625], [-1.75, deskY, -2.625], [-3.0, deskY, -2.625], [-3.0, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
+        7: [[-3.25, .158, 2.0], [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ]],
+        8: [[-4.1, .806, -2.0], [-4.1, deskY, -2.0], [-5.2, deskY, -2.0], [-5.2, deskY, -1.9], [-3.6, deskY, -1.9], [-3.6, deskY, aisleZ]],
+        9: [[8.875, 3.98, -6.39], [8.875, deskY, -6.39], [8.9, deskY, -6.39], [8.9, deskY, aisleZ]],
+        10: [[6.35, deskY, 1.2], [6.35, deskY, aisleZ]]
+      };
+      // Every destination has an approach point on its edge, a short climb, and a crawl
+      // across the surface. Routes avoid cutting through the keyboard, charts, and books.
+      const entries: Record<number, number[][]> = {
+        1: [[-5.2, deskY, aisleZ], [-5.2, deskY, 1.45], [-5.2, .083, 1.35], [-5.2, .083, -.2]],
+        2: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-2.7, deskY, -1.9], [-2.7, deskY, -2.225], [-2.7, .083, -2.225], [-2.7, .083, -1.25]],
+        3: [[6.5, deskY, aisleZ], [6.5, deskY, -2.8], [5.05, deskY, -2.8], [5.05, 2.036, -2.8], [4.9, 2.036, -2.8], [4.9, 2.036, -2.70]],
+        4: [[6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4], [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]],
+        5: [[6.5, deskY, aisleZ], [6.5, deskY, 1.2], [5.1, deskY, 1.2], [5.1, deskY, 1.1], [5.1, .106, 1.1], [5.1, .106, -.3]],
+        6: [[-3.6, deskY, aisleZ], [-3.6, deskY, -1.9], [-3.0, deskY, -1.9], [-3.0, deskY, -2.5], [-1.75, deskY, -2.5], [-1.75, deskY, -2.625], [-1.75, .081, -2.625], [-1.75, .081, -3.45]],
+        7: [[-3.6, deskY, aisleZ], [-3.6, deskY, 3.5], [-3.25, deskY, 3.5], [-3.25, deskY, 3.28], [-3.25, .158, 3.28], [-1.0, .158, 3.0], [-1.0, .158, 2.0]],
+        8: [[-5.2, deskY, aisleZ], [-5.2, deskY, -1.9], [-4.1, deskY, -1.9], [-4.1, deskY, -2.0], [-4.1, .806, -2.0], [-4.1, .806, -3.15]],
+        9: [[8.9, deskY, aisleZ], [8.9, deskY, -6.39], [8.875, deskY, -6.39], [8.875, 3.98, -6.39], [8.75, 3.98, -6.39]],
+        10: [[6.35, deskY, aisleZ], [6.35, deskY, 1.2]]
       };
       const onResize = () => {
         if (!host || !renderer) return;
@@ -321,7 +347,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       resizeObserver = new ResizeObserver(onResize); resizeObserver.observe(host); onResize();
       // The transparent touch target follows the ant's actual projected position,
       // so tapping the desk elsewhere doesn't accidentally trigger its reaction.
-      const antHitArea = host.querySelector<HTMLButtonElement>(".three-world-ant-hitarea");
+      const antHitArea = antHitAreaRef.current;
       const clock = new THREE.Clock();
       let previousActive = -1;
       let routeStartedAt = 0;
@@ -329,38 +355,22 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       let routeDuration = 14;
       let routePoints: number[][] = [];
       const openingRoute = [
-        [-1.0, .18, 2.0], [-.45, .18, 1.1], [2.25, .18, 1.1],
-        [2.25, -.08, -2.8], [2.25, -.08, -3.95], [2.25, .08, -4.16],
-        [2.25, .65, -4.16], [2.25, 1.35, -4.16], [2.25, 2.05, -4.16],
-        [2.25, 2.8, -4.16], [2.25, 3.5, -4.16], [2.25, 4.02, -4.16]
+        [-1.0, .158, 2.0], [-1.7, .158, 2.0], [-2.7, .158, 2.0], [-3.25, .158, 2.0],
+        [-3.25, deskY, 2.0], [-3.6, deskY, 2.0], [-3.6, deskY, aisleZ],
+        [6.5, deskY, aisleZ], [6.5, deskY, -4.4], [2.6, deskY, -4.4],
+        [2.6, deskY, -4.24], [2.6, 4.01, -4.24], [2.48, 4.01, -4.24]
       ];
-      const makeRoute = (start: number[], destination: number[], chapterIndex: number) => {
-        const floor = -.1;
+      const makeRoute = (start: number[], chapterIndex: number, sourceChapter: number) => {
         const points: number[][] = [[start[0], start[1], start[2]]];
         const add = (point: number[]) => {
           const last = points[points.length - 1];
-          if (Math.hypot(point[0] - last[0], point[1] - last[1], point[2] - last[2]) > .04) points.push(point);
+          if (Math.hypot(point[0] - last[0], point[1] - last[1], point[2] - last[2]) > .035) points.push(point);
         };
-        // Return from a raised surface to the desktop without cutting diagonally through props.
-        if (start[1] > floor + .16) {
-          add([start[0], floor, start[2]]);
-          add([start[0], floor, 0]);
-        }
-        add([start[0], floor, 0]);
-        add([destination[0], floor, 0]);
-        const stageZ = approachZ[chapterIndex];
-        if (stageZ !== undefined && destination[1] > floor + .04) {
-          add([destination[0], floor, stageZ]);
-          // Climb at the near edge, then crawl on the top/page/bezel to the chapter's landmark.
-          add([destination[0], destination[1], stageZ]);
-          add(destination);
-        } else {
-          add([destination[0], floor, destination[2]]);
-          add(destination);
-        }
+        for (const point of (exits[sourceChapter] ?? [[start[0], deskY, start[2]], [start[0], deskY, aisleZ]])) add(point);
+        for (const point of (entries[chapterIndex] ?? [[path[chapterIndex][0], deskY, aisleZ], path[chapterIndex]])) add(point);
         return points;
       };
-      const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
+            const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
         const previous = points[index];
         return sum + Math.hypot(point[0] - previous[0], point[1] - previous[1], point[2] - previous[2]);
       }, 0);
@@ -371,15 +381,15 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         if ((isPaused || isReacting) && lastFrameTime) routeStartedAt += t - lastFrameTime;
         lastFrameTime = t;
         if (currentActive !== previousActive) {
+          const sourceChapter = previousActive;
           previousActive = currentActive;
           routeStartedAt = t;
           if (currentActive === 0) {
             routePoints = openingRoute.map((point) => [...point]);
-            routeDuration = 14;
+            routeDuration = 12;
           } else {
-            const destination = path[Math.min(currentActive, path.length - 1)] || path[0];
-            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], destination, currentActive);
-            routeDuration = Math.min(9, Math.max(2.8, routeLength(routePoints) / 2.15));
+            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], currentActive, sourceChapter);
+            routeDuration = Math.min(12, Math.max(3, routeLength(routePoints) / 2.5));
           }
         }
         let target = path[Math.min(currentActive, path.length - 1)] || path[0];
@@ -434,22 +444,24 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
           keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
           const narrowViewport = host.clientWidth / Math.max(1, host.clientHeight) < .72;
-          const cameraTargetX = target[0] * .85;
-          // Follow depth as well as horizontal position: rear-wall chapters must be framed
-          // close-up too, not left tiny at the far end of a desktop-wide establishing shot.
+          const cameraTargetX = target[0];
+          const cameraTargetY = Math.max(4.05, target[1] * .55 + 4.05);
           const cameraTargetZ = target[2] + (narrowViewport ? 11.5 : 9.5);
-          camera.position.x += (cameraTargetX - camera.position.x) * .035;
-          camera.position.z += (cameraTargetZ - camera.position.z) * .035;
+          camera.position.x += (cameraTargetX - camera.position.x) * .04;
+          camera.position.y += (cameraTargetY - camera.position.y) * .04;
+          camera.position.z += (cameraTargetZ - camera.position.z) * .04;
         }
-        camera.lookAt(target[0] * .85, Math.max(.7, target[1] * .55 + .45), target[2]);
+        camera.lookAt(target[0], Math.max(.7, target[1] * .55 + .45), target[2]);
         if (antHitArea) {
-          const projected = ant.position.clone();
-          projected.y += .11;
+          const projected = ant.localToWorld(new THREE.Vector3(.12, .62, 0));
           projected.project(camera);
-          antHitArea.style.left = ((projected.x * .5 + .5) * host.clientWidth) + "px";
-          antHitArea.style.top = ((-projected.y * .5 + .5) * host.clientHeight) + "px";
-          antHitArea.style.width = Math.max(64, Math.min(88, host.clientWidth * .13)) + "px";
-          antHitArea.style.height = Math.max(58, Math.min(78, host.clientWidth * .115)) + "px";
+          const rect = host.getBoundingClientRect();
+          antHitArea.style.left = (rect.left + (projected.x * .5 + .5) * rect.width) + "px";
+          antHitArea.style.top = (rect.top + (-projected.y * .5 + .5) * rect.height) + "px";
+          antHitArea.style.width = (host.clientWidth < 700 ? 70 : 78) + "px";
+          antHitArea.style.height = (host.clientWidth < 700 ? 62 : 68) + "px";
+          antHitArea.style.visibility = Math.abs(projected.x) <= 1.08 && Math.abs(projected.y) <= 1.08 && projected.z >= -1 && projected.z <= 1 ? "visible" : "hidden";
+          antHitArea.style.pointerEvents = antHitArea.style.visibility === "visible" ? "auto" : "none";
         }
         renderer.render(scene, camera);
         frame = requestAnimationFrame(animate);
@@ -466,5 +478,13 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
     return () => { cancelled = true; cancelAnimationFrame(frame); resizeObserver?.disconnect(); cleanup?.(); };
   }, []);
 
-  return <div ref={hostRef} className="three-world" aria-label="Three-dimensional ant career story"><button type="button" className={"three-world-ant-hitarea" + (reacting ? " is-reacting" : "")} aria-label="Pause and greet the tiny ant" title="Tap the ant to say hello" onClick={onAntClick} /></div>;
+  return (
+    <>
+      <div ref={hostRef} className="three-world" aria-label="Three-dimensional ant career story" />
+      {typeof document !== "undefined" && createPortal(
+        <button ref={antHitAreaRef} type="button" className={"three-world-ant-hitarea" + (reacting ? " is-reacting" : "")} aria-label="Pause and greet the tiny ant" title="Tap the ant to say hello" onClick={onAntClick} />,
+        document.body
+      )}
+    </>
+  );
 }
