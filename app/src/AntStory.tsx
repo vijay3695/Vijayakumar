@@ -127,6 +127,8 @@ export default function AntStory() {
               <h1>{profile.name}<span className="name-period">.</span></h1>
               <p className="story-subtitle">{profile.role} · {profile.location}</p>
               <p className="story-copy">Every big journey starts with a small step. Follow this curious little ant through the work, lessons, and people that shaped my career.</p>
+              {profile.bio.map((line) => <p className="story-copy" key={line}>{line}</p>)}
+              <p className="story-status"><span />{profile.available}</p>
               <div className="story-metrics">{profile.stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div>
               <button className="story-primary" onClick={() => jumpTo(1)}>Start the journey <span>→</span></button>
             </article>
