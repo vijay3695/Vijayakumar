@@ -36,3 +36,8 @@
 .world--sugar .ant-stage{left:54%}
 .world--sugar .ant-button{transform:rotateY(180deg)}
 @media(prefers-reduced-motion:reduce){.world-track,.ant-stage,.prop{transition:none!important}}
+
+.story-status{display:flex;align-items:center;gap:9px;color:#b9d9b7;font-size:11px;margin:16px 0 0}.story-status span{width:7px;height:7px;border-radius:50%;background:#80c58d;box-shadow:0 0 12px #80c58d77}
+.world--experience .notebook-scene,.world--experience .report-scene{opacity:0}
+.world--exp-senior-csa .notebook-scene{opacity:1}
+.world--exp-team-leader .report-scene{opacity:1}
