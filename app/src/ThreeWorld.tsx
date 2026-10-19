@@ -148,10 +148,29 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         thumb.rotation.y = side * .6;
       }
       // A notebook, report folder and a little operations dashboard: props along one desk, not separate slides.
+      // "About me" lives on the working notebook: the first quiet stop after the monitor.
       const notebook = new THREE.Group(); notebook.position.set(-5.2, .01, -.2); notebook.rotation.y = .12; scene.add(notebook);
       makeBox(2.35, .12, 3.1, mat("#b99a75"), 0, 0, 0, notebook);
       makeBox(2.14, .035, 2.85, cream, 0, .08, 0, notebook);
       for (let i = 0; i < 7; i++) makeBox(1.65, .012, .018, mat("#b9a38a"), -.05, .105, -.95 + i * .3, notebook);
+      // The professional summary gets its own open book, with a spine, two pages and printed lines.
+      const openBook = new THREE.Group(); openBook.position.set(-2.7, .015, -1.25); openBook.rotation.y = -.08; scene.add(openBook);
+      makeBox(2.55, .1, 1.95, mat("#684734"), 0, 0, 0, openBook);
+      makeBox(1.22, .035, 1.78, mat("#f1e5cc"), -.62, .065, 0, openBook);
+      makeBox(1.22, .035, 1.78, mat("#f1e5cc"), .62, .065, 0, openBook);
+      makeBox(.06, .055, 1.84, mat("#b99a75"), 0, .07, 0, openBook);
+      for (let page = 0; page < 2; page++) {
+        for (let line = 0; line < 6; line++) {
+          const x = page === 0 ? -.62 : .62;
+          const width = line === 0 ? .72 : .91;
+          makeBox(width, .009, .018, mat(line === 0 ? "#b58a63" : "#cbbba2"), x, .091, -.62 + line * .22, openBook);
+        }
+      }
+      // A separate case file gives the senior-associate chapter a third desk location.
+      const caseFile = new THREE.Group(); caseFile.position.set(-1.75, .005, -3.45); caseFile.rotation.y = .07; scene.add(caseFile);
+      makeBox(1.8, .1, 1.65, mat("#526b65"), 0, 0, 0, caseFile);
+      makeBox(1.58, .025, 1.42, mat("#e8dbc3"), 0, .065, 0, caseFile);
+      for (let line = 0; line < 5; line++) makeBox(1.05, .012, .02, mat("#b9a58c"), -.05, .083, -.42 + line * .19, caseFile);
       const report = new THREE.Group(); report.position.set(5.1, .03, -.3); report.rotation.y = -.16; scene.add(report);
       makeBox(2.1, .14, 2.8, mat("#d5c3a7"), 0, 0, 0, report);
       makeBox(1.8, .03, 2.48, mat("#eee0c6"), 0, .09, 0, report);
@@ -162,9 +181,19 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       for (let i = 0; i < 6; i++) makeBox(.18, .22 + (i % 4) * .14, .04, green, -.72 + i * .27, -.25 + (i % 4) * .055, .11, dashboard);
       const books = new THREE.Group(); books.position.set(-4.1, .1, -3.15); books.rotation.z = -.06; scene.add(books);
       for (let i = 0; i < 3; i++) makeBox(1.7, .28, 2.3, [mat("#9a6346"), mat("#c1a17a"), mat("#506e65")][i], 0, i * .29, 0, books);
+      // Education is a framed diploma on the wall, distinct from the books used for certifications.
+      const diplomaFrame = new THREE.Group(); diplomaFrame.position.set(7.65, 3.15, -6.49); scene.add(diplomaFrame);
+      makeBox(2.45, 1.7, .16, mat("#9b744b", .36, .18), 0, 0, 0, diplomaFrame);
+      makeBox(2.17, 1.42, .04, mat("#e7d6b3"), 0, 0, .095, diplomaFrame);
+      makeBox(1.25, .045, .025, mat("#806343"), 0, .36, .125, diplomaFrame);
+      makeBox(1.65, .018, .018, mat("#b39a76"), 0, .12, .125, diplomaFrame);
+      makeBox(1.4, .018, .018, mat("#b39a76"), 0, -.04, .125, diplomaFrame);
+      makeBox(1.15, .018, .018, mat("#b39a76"), 0, -.2, .125, diplomaFrame);
+      const diplomaSeal = new THREE.Mesh(new THREE.CircleGeometry(.12, 24), mat("#a77843", .45, .15));
+      diplomaSeal.position.set(.68, -.43, .13); diplomaFrame.add(diplomaSeal);
       // A recognisable sugar cube: softened edges, crystalline granules and tiny pores.
       // It sits directly on the desk and never floats or spins like a generic prop.
-      const sugar = new THREE.Group(); sugar.position.set(7.0, -.055, 1.2); scene.add(sugar);
+      const sugar = new THREE.Group(); sugar.position.set(7.0, -.07, 1.2); scene.add(sugar);
       const sugarShape = new THREE.Shape();
       sugarShape.moveTo(-.36, -.36); sugarShape.lineTo(.36, -.36); sugarShape.lineTo(.36, .36);
       sugarShape.lineTo(-.36, .36); sugarShape.closePath();
@@ -172,10 +201,10 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         depth: .72, bevelEnabled: true, bevelSegments: 4, steps: 1,
         bevelSize: .055, bevelThickness: .055, curveSegments: 4
       });
-      sugarGeometry.translate(0, .055, -.36);
+      sugarGeometry.translate(0, .36, -.36);
       const sugarMaterial = new THREE.MeshStandardMaterial({ color: "#fff8eb", roughness: .92, metalness: 0 });
       const sugarMesh = new THREE.Mesh(sugarGeometry, sugarMaterial);
-      sugarMesh.position.y = .02; sugarMesh.castShadow = true; sugarMesh.receiveShadow = true; sugar.add(sugarMesh);
+      sugarMesh.position.y = 0; sugarMesh.castShadow = true; sugarMesh.receiveShadow = true; sugar.add(sugarMesh);
       const sugarGrain = mat("#e8dfd0", .98);
       const sugarBright = mat("#ffffff", .9);
       // Fine, irregular crystalline flecks on the visible front and top faces.
@@ -186,7 +215,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const radius = .009 + (i % 4) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 3 === 0 ? sugarBright : sugarGrain);
         // Crystals cling to the front face instead of hovering in front of the cube.
-        crystal.position.set(x, y, .006);
+        crystal.position.set(x, .36 + y, -.366);
         crystal.scale.set(1.2, .7, .35); crystal.castShadow = true; sugar.add(crystal);
       }
       for (let i = 0; i < 45; i++) {
@@ -194,7 +223,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const z = signed(i * 3.17 + 1);
         const radius = .009 + (i % 3) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 2 ? sugarBright : sugarGrain);
-        crystal.position.set(x, .425, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
+        crystal.position.set(x, .725, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
       }
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
@@ -233,19 +262,21 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         legs.push({ hip, phase: (i + (side === 1 ? 1 : 0)) * Math.PI, upper, lower, isScratchLeg: side === 1 && i === 2 });
       }
 
-      // One path point per story beat: keyboard -> monitor -> desk props -> sugar cube.
+      // One deliberate destination per chapter. Coordinates match the physical prop surfaces:
+      // keyboard -> monitor -> notebook -> open book -> dashboard -> monitor -> report
+      // -> case file -> keyboard -> book stack -> diploma -> sugar cube.
       const path = [
-        [-1.0, .15, 2.0],       // opening: feet on the keyboard keycaps
-        [0.25, 2.45, -4.02],    // about: deliberate climb up the monitor
-        [-3.8, -.11, -1.1],      // summary: feet on the desktop/notebook
-        [2.1, -.11, -1.0],       // competencies: desktop
-        [3.6, 1.55, -2.35],     // team manager: dashboard shelf
-        [5.0, -.11, -.3],        // team leader: report on desk
-        [-4.5, -.11, -.4],       // senior associate: notebook
-        [-1.0, .15, 1.8],       // associate: keyboard keycaps
-        [-3.7, .28, -2.9],      // certifications: books
-        [-4.1, .57, -3.15],     // education: book stack
-        [7.0, -.11, 1.2]         // ending: sugar cube, grounded on the desktop
+        [-1.0, .14, 2.0],       // opening: keyboard, then a planned climb up the monitor
+        [-5.2, .03, -.2],       // About me: notebook
+        [-2.7, .03, -1.25],     // Professional summary: open book
+        [3.9, 1.35, -2.72],     // Core competencies: dashboard screen
+        [0.0, 2.25, -4.205],    // Team Manager: monitor screen
+        [5.1, .07, -.3],        // Team Leader: report folder
+        [-1.75, .035, -3.45],   // Senior Associate: case file
+        [-1.0, .14, 2.0],       // Customer Support Associate: keyboard
+        [-4.1, .68, -3.15],     // Certifications: top of book stack
+        [7.65, 3.15, -6.34],    // Education: framed diploma
+        [6.35, -.11, 1.2]       // Ending: beside the sugar cube, feet on the desk
       ];
       const onResize = () => {
         if (!host || !renderer) return;
