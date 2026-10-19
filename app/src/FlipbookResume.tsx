@@ -9,7 +9,7 @@ import { openZinePaperGrain, openZinePaperGrainDataUrl } from "./openzine/grain"
 type BookPage = { label: string; content: ReactNode; kind?: string };
 
 function PageFrame({ children, page, total }: { children: ReactNode; page: number; total: number }) {
-  return <article className="paper-sheet">
+  return <article className={page === 0 ? "paper-sheet paper-sheet--cover" : "paper-sheet"}>
     <div className="paper-grain" aria-hidden="true" />
     <div className="paper-sheet__content">{children}</div>
     <footer className="paper-sheet__footer"><span>VIJAYAKUMAR CHANDIRAN</span><span>{String(page + 1).padStart(2, "0")} <i>/</i> {String(total).padStart(2, "0")}</span></footer>
@@ -36,13 +36,16 @@ const education = sections.find((section) => section.id === "education")!;
 
 const pages: BookPage[] = [
   { label: "Cover", kind: "cover", content: <div className="book-cover">
-    <div className="cover-overline"><span>CURRICULUM VITAE</span><span>2026 EDITION</span></div>
-    <div className="cover-orbit cover-orbit--one" /><div className="cover-orbit cover-orbit--two" />
-    <p className="cover-index">CAREER / PEOPLE / OPERATIONS</p>
-    <h1>Vijayakumar<br /><em>Chandiran.</em></h1>
-    <p className="cover-role">{profile.role}</p>
-    <div className="cover-bottom"><span>CHENNAI, INDIA</span><span>TURN THE PAGE <b>↗</b></span></div>
-    <div className="cover-spine-mark">VC</div>
+    <div className="cover-overline"><span>PORTFOLIO / 2026</span><span>VIJAYAKUMAR CHANDIRAN</span></div>
+    <div className="cover-rule" />
+    <div className="cover-main">
+      <p className="cover-index">LEADERSHIP · SERVICE DELIVERY · OPERATIONS</p>
+      <h1>Vijayakumar<br /><span>Chandiran</span></h1>
+      <div className="cover-name-rule" />
+      <p className="cover-role">Lead Account Management<br />Service Delivery Operations</p>
+      <p className="cover-meta">7 YEARS OF EXPERIENCE <i>·</i> CHENNAI, INDIA</p>
+    </div>
+    <div className="cover-bottom"><span>SELECTED EXPERIENCE / LEADERSHIP / SERVICE DELIVERY</span><span className="cover-page-number">01</span></div>
   </div> },
   { label: "About", content: <><SectionHeading eyebrow="01 / THE PERSON" title="A little about me" /><p className="book-lead">People, process, and the numbers behind both.</p>{about.body.map((paragraph) => <p className="book-copy" key={paragraph}>{paragraph}</p>)}<div className="book-quote">“Good service is built by people who feel supported, processes that make sense, and decisions grounded in evidence.”</div></> },
   { label: "Summary", content: <><SectionHeading eyebrow="02 / PROFESSIONAL PROFILE" title="Professional summary" /><p className="book-lead">Operations & customer success leader · 7 years</p>{summary.body.map((paragraph) => <p className="book-copy" key={paragraph}>{paragraph}</p>)}<div className="book-stat-row"><div><strong>4</strong><span>Career stages</span></div><div><strong>7+</strong><span>Years of experience</span></div><div><strong>10</strong><span>Certifications</span></div></div></> },
