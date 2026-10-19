@@ -115,7 +115,7 @@ export default function FlipbookResume() {
   const basePage = turn ? pages[Math.max(0, Math.min(pages.length - 1, current + (turn === "next" ? 1 : -1)))] : activePage;
   const turningPage = activePage;
   return <main className="flipbook-app">
-    <header className="flipbook-topline"><a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a><div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div><a className="flipbook-print" href="javascript:window.print()" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a></header>
+    <header className="flipbook-topline"><a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a><div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div><a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a></header>
     <section className="flipbook-stage" id="book" aria-label="Interactive resume book">
       <div className="book-top-caption"><span>PERSONAL EDITION</span><span>{String(current + 1).padStart(2, "0")} — {String(pages.length).padStart(2, "0")}</span></div>
       <div className="book-shadow" />
