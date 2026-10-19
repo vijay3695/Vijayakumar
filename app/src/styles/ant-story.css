@@ -88,3 +88,8 @@
 .story-motion-control button:hover{border-color:#e6a17d99}
 @media(max-width:700px){.three-world-canvas{width:100%;height:100%}.story-motion-control{margin-bottom:8px}}
 @media(prefers-reduced-motion:reduce){.three-world-canvas{scroll-behavior:auto}}
+
+.three-world-ant-hitarea{position:absolute;z-index:9;left:50%;bottom:2%;transform:translateX(-50%);width:clamp(150px,22vw,230px);height:clamp(120px,18vw,175px);border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation}
+.three-world-ant-hitarea:focus-visible{outline:2px solid #ffd1ad;outline-offset:-5px;background:#ffd1ad12}
+.three-world-ant-hitarea.is-reacting{background:radial-gradient(ellipse,transparent 50%,#e6a17d12 70%,transparent 78%)}
+@media(max-width:700px){.three-world-ant-hitarea{width:190px;height:150px;bottom:0}}
