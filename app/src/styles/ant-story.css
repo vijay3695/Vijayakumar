@@ -105,3 +105,23 @@
 @media (max-width:899px) {
   .story-content { position:relative; top:auto; right:auto; left:auto; max-height:none; }
 }
+
+/* Compact screens also keep the story card over the 3D scene instead of making users choose one. */
+@media (max-width:899px) {
+  .world{height:min(760px,72vh);min-height:520px}
+  .story-content{position:absolute;top:min(40vh,300px);left:12px;right:12px;width:auto;max-height:min(30vh,230px);margin:0;grid-template-columns:minmax(0,1fr);gap:0;z-index:12}
+  .story-content__copy{max-height:min(30vh,230px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#725443 transparent;padding:0 1px 8px}
+  .story-card{min-height:0;padding:18px;background:linear-gradient(145deg,#231d1cf5,#151313f5)}
+  .story-rail{display:none}
+}
+@media(max-width:700px){
+  .world{height:min(700px,72vh);min-height:520px}
+  .story-content{top:min(39vh,285px);max-height:min(30vh,220px)}
+  .story-content__copy{max-height:min(30vh,220px)}
+  .story-card h1{font-size:clamp(26px,7vw,38px)}
+  .story-card h2{font-size:clamp(23px,6vw,32px)}
+  .story-copy{font-size:12px;line-height:1.65}
+  .story-metrics{gap:7px;margin:14px 0}
+  .story-metrics>div{min-width:80px;padding:9px 11px}
+  .story-metrics strong{font-size:20px}
+}
