@@ -243,20 +243,23 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const antDark = mat("#402019", .42); const antShell = mat("#7c3528", .36); const antLight = mat("#b85d40", .38);
       makeSphere(.29, antShell, -.43, .45, 0, ant, 1.18, .95, 1.0);
       makeSphere(.2, antDark, -.06, .46, 0, ant, 1, .94, .9);
-      makeSphere(.28, antLight, .31, .62, 0, ant, 1, .94, .92);
+      const head = new THREE.Group();
+      head.position.set(.31, .62, 0);
+      ant.add(head);
+      makeSphere(.28, antLight, 0, 0, 0, head, 1, .94, .92);
       const eyeWhite = mat("#fff8e9", .22); const pupilMat = mat("#211312", .15);
       const eyeWhites: any[] = []; const eyePupils: any[] = [];
       for (const side of [-1, 1]) {
-        const white = makeSphere(.09, eyeWhite, .48, .68, side * .205, ant, 1, 1.15, .75); eyeWhites.push(white);
-        const pupil = makeSphere(.045, pupilMat, .52, .68, side * .25, ant); eyePupils.push(pupil);
-        makeSphere(.017, mat("#ffffff", .1), .535, .715, side * .276, ant);
+        const white = makeSphere(.09, eyeWhite, .17, .06, side * .205, head, 1, 1.15, .75); eyeWhites.push(white);
+        const pupil = makeSphere(.045, pupilMat, .21, .06, side * .25, head); eyePupils.push(pupil);
+        makeSphere(.017, mat("#ffffff", .1), .225, .095, side * .276, head);
       }
       const antennae: any[] = [];
       for (const side of [-1, 1]) {
-        // Each feeler has a real pivot at the head, so twitching moves the antenna from its base.
+        // The head can turn to greet the viewer while the legs/body stay attached to a vertical prop.
         const pivot = new THREE.Group();
-        pivot.position.set(.35, .83, side * .1);
-        ant.add(pivot);
+        pivot.position.set(.04, .21, side * .1);
+        head.add(pivot);
         const points = [
           new THREE.Vector3(0, 0, 0),
           new THREE.Vector3(.07, .19, side * .06),
@@ -456,10 +459,18 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           const dx = segmentEnd[0] - segmentStart[0];
           const dz = segmentEnd[2] - segmentStart[2];
           const faceCamera = Math.atan2(-(camera.position.z - ant.position.z), camera.position.x - ant.position.x);
-          ant.rotation.y = verticalClimb ? faceCamera : (isReacting || !moving
-            ? faceCamera
-            : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx));
-          ant.rotation.z = verticalClimb && !isReacting ? Math.PI / 2 : (isReacting ? Math.sin(t * 9) * .035 : 0);
+          if (verticalClimb) {
+            // Keep the body aligned to the wall; only the head turns toward the visitor.
+            ant.rotation.y = 0;
+            ant.rotation.z = Math.PI / 2;
+            head.rotation.y = isReacting ? -Math.PI / 2 : 0;
+          } else {
+            ant.rotation.y = isReacting || !moving
+              ? faceCamera
+              : Math.atan2(-dz, Math.abs(dx) < .001 ? .001 : dx);
+            ant.rotation.z = isReacting ? Math.sin(t * 9) * .035 : 0;
+            head.rotation.y = 0;
+          }
           legs.forEach((leg) => {
             const stride = moving && !isReacting ? Math.sin(t * 12 + leg.phase) : 0;
             leg.hip.rotation.z = isReacting && leg.isScratchLeg
