@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { ReactNode } from "react";
 import { profile, sections } from "./data/resume";
@@ -77,7 +77,9 @@ function makeOpenZinePage(content: ReactNode, index: number): string {
 }
 
 export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
-  const viewerDocument = useMemo(() => {
+  const [viewerDocument, setViewerDocument] = useState("");
+
+  useEffect(() => {
     // OpenZine requires page textures. Create them in-browser from the live JSX
     // page components; no pre-rendered resume images are committed to the repo.
     const pageUrls = pages.map((page, index) => makeOpenZinePage(page.content, index));
@@ -89,7 +91,8 @@ export default function FlipbookResume({ onClose }: { onClose?: () => void }) {
       initialSpread: 0,
       portrait: "single"
     };
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}#credit{display:none!important}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};</script><script>${openZineRuntime.split("</script").join("<\\/script")}</script></body></html>`;
+    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}#credit{display:none!important}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};</script><script>${openZineRuntime.split("</script").join("<\\/script")}</script></body></html>`;
+    setViewerDocument(html);
   }, []);
 
   return (
