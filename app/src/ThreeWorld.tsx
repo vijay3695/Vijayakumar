@@ -350,6 +350,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const antHitArea = antHitAreaRef.current;
       const clock = new THREE.Clock();
       let previousActive = -1;
+      let routeTargetChapter = -1;
+      let queuedChapter = -1;
+      let routeProgress = 1;
       let routeStartedAt = 0;
       let lastFrameTime = 0;
       let routeDuration = 14;
@@ -370,10 +373,28 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         for (const point of (entries[chapterIndex] ?? [[path[chapterIndex][0], deskY, aisleZ], path[chapterIndex]])) add(point);
         return points;
       };
-            const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
+      const routeLength = (points: number[][]) => points.slice(1).reduce((sum, point, index) => {
         const previous = points[index];
         return sum + Math.hypot(point[0] - previous[0], point[1] - previous[1], point[2] - previous[2]);
       }, 0);
+      const beginRoute = (chapterIndex: number, sourceChapter: number, start: number[], now: number) => {
+        if (chapterIndex === 0 && sourceChapter >= 0) {
+          // Any return to the opening chapter walks back to the keyboard before climbing
+          // the monitor. This also handles a restart from the sugar-cube ending.
+          const returnToKeyboard = makeRoute(start, 7, sourceChapter);
+          routePoints = returnToKeyboard.concat(openingRoute.slice(1).map((point) => [...point]));
+          routeDuration = Math.min(18, Math.max(7, routeLength(routePoints) / 2.5));
+        } else if (chapterIndex === 0) {
+          routePoints = openingRoute.map((point) => [...point]);
+          routeDuration = 12;
+        } else {
+          routePoints = makeRoute(start, chapterIndex, sourceChapter);
+          routeDuration = Math.min(12, Math.max(3, routeLength(routePoints) / 2.5));
+        }
+        routeTargetChapter = chapterIndex;
+        routeStartedAt = now;
+        routeProgress = 0;
+      };
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
@@ -381,23 +402,14 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         if ((isPaused || isReacting) && lastFrameTime) routeStartedAt += t - lastFrameTime;
         lastFrameTime = t;
         if (currentActive !== previousActive) {
-          const sourceChapter = previousActive;
           previousActive = currentActive;
-          routeStartedAt = t;
-          if (currentActive === 0) {
-            if (sourceChapter === 10) {
-              // Restart from the sugar-cube ending by walking back to the keyboard first;
-              // never teleport the ant to the opening position.
-              const returnToKeyboard = makeRoute([ant.position.x, ant.position.y, ant.position.z], 7, sourceChapter);
-              routePoints = returnToKeyboard.concat(openingRoute.slice(1).map((point) => [...point]));
-              routeDuration = Math.min(18, Math.max(7, routeLength(routePoints) / 2.5));
-            } else {
-              routePoints = openingRoute.map((point) => [...point]);
-              routeDuration = 12;
-            }
+          if (routePoints.length > 1 && routeProgress < 1 && routeTargetChapter >= 0) {
+            // Finish the current physical walk before changing destination. Rapid taps must
+            // not turn a route into a diagonal flight through the room.
+            queuedChapter = currentActive === routeTargetChapter ? -1 : currentActive;
           } else {
-            routePoints = makeRoute([ant.position.x, ant.position.y, ant.position.z], currentActive, sourceChapter);
-            routeDuration = Math.min(12, Math.max(3, routeLength(routePoints) / 2.5));
+            queuedChapter = -1;
+            beginRoute(currentActive, routeTargetChapter, [ant.position.x, ant.position.y, ant.position.z], t);
           }
         }
         let target = path[Math.min(currentActive, path.length - 1)] || path[0];
@@ -405,8 +417,18 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         let segmentEnd = target;
         let moving = false;
         if (routePoints.length > 1) {
-          const length = routeLength(routePoints);
-          const progress = Math.min(1, Math.max(0, (t - routeStartedAt) / routeDuration));
+          let length = routeLength(routePoints);
+          let progress = Math.min(1, Math.max(0, (t - routeStartedAt) / routeDuration));
+          if (progress >= 1 && queuedChapter >= 0) {
+            const nextChapter = queuedChapter;
+            const sourceChapter = routeTargetChapter;
+            const finalPoint = routePoints[routePoints.length - 1];
+            queuedChapter = -1;
+            beginRoute(nextChapter, sourceChapter, [...finalPoint], t);
+            length = routeLength(routePoints);
+            progress = 0;
+          }
+          routeProgress = progress;
           let distance = progress * length;
           let segment = 0;
           while (segment < routePoints.length - 2) {
@@ -421,6 +443,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           const blend = progress >= 1 ? 1 : Math.min(1, distance / partLength);
           target = segmentStart.map((value, axis) => value + (segmentEnd[axis] - value) * blend);
           moving = progress < 1;
+        } else {
+          routeProgress = 1;
         }
         const verticalClimb = Math.abs(segmentEnd[1] - segmentStart[1]) > .15
           && Math.abs(segmentEnd[0] - segmentStart[0]) < .1
