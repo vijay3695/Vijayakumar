@@ -8,8 +8,8 @@ const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
 const BOOK_OUT = path.join(PROJECT_ROOT, "openzine-book.html");
 const MAKE_BOOK = path.join(PROJECT_ROOT, ".codex", "skills", "openzine", "scripts", "make-book.mjs");
 
-const PAGE_WIDTH = 720;
-const PAGE_HEIGHT = 993;
+const PAGE_WIDTH = 1440;
+const PAGE_HEIGHT = 1986;
 
 // Read resume data
 const resumeModule = await import("/tmp/resume.js");
@@ -36,7 +36,7 @@ function createPage(title, lines) {
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   // Title
   ctx.fillStyle = "#292820";
-  ctx.font = "bold 32px serif";
+  ctx.font = "bold 64px serif";
   ctx.fillText(title, 80, 120);
   // Underline
   ctx.strokeStyle = "#d7d0c2";
@@ -46,7 +46,7 @@ function createPage(title, lines) {
   ctx.lineTo(PAGE_WIDTH - 80, 140);
   ctx.stroke();
   // Content
-  ctx.font = "14px serif";
+  ctx.font = "28px serif";
   ctx.fillStyle = "#59564c";
   let y = 200;
   for (const line of lines) {
@@ -55,7 +55,7 @@ function createPage(title, lines) {
     y += 40;
   }
   // Footer
-  ctx.font = "8px monospace";
+  ctx.font = "16px monospace";
   ctx.fillStyle = "#8a8477";
   ctx.fillText("VIJAYAKUMAR CHANDIRAN", 80, PAGE_HEIGHT - 40);
   return canvas.toBuffer("image/jpeg");
