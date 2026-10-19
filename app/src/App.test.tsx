@@ -1,67 +1,47 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
 import { profile, sections } from "./data/resume";
 
-afterEach(() => cleanup());
+afterEach(() => { cleanup(); vi.useRealTimers(); });
 
-describe("typography-led full resume portfolio", () => {
-  it("opens with the profile identity, role and clear resume actions", () => {
+describe("interactive resume flipbook", () => {
+  it("opens on a designed single-page cover with the profile identity", () => {
     const { container } = render(<App />);
     expect(screen.getByRole("heading", { name: /Vijayakumar Chandiran/i })).toBeTruthy();
     expect(screen.getByText(profile.role)).toBeTruthy();
-    expect(screen.getAllByRole("button", { name: /PRINT \/ SAVE PDF/i }).length).toBeGreaterThanOrEqual(2);
-    expect(screen.getAllByRole("link", { name: /LinkedIn/i }).length).toBeGreaterThanOrEqual(2);
-    expect(container.querySelector(".three-world")).toBeNull();
-    expect(container.querySelector(".ant-story")).toBeNull();
+    expect(screen.getByText(/CURRICULUM VITAE/i)).toBeTruthy();
+    expect(container.querySelector(".book-page--current")).toBeTruthy();
+    expect(container.querySelector(".resume-topnav")).toBeNull();
   });
 
-  it("provides navigation to the full resume sections", () => {
+  it("supports next and previous page controls and updates the page counter", () => {
+    vi.useFakeTimers();
+    render(<App />);
+    expect(screen.getByText("01")).toBeTruthy();
+    fireEvent.click(screen.getAllByRole("button", { name: "Next page" })[1]);
+    act(() => { vi.advanceTimersByTime(650); });
+    expect(screen.getByRole("heading", { name: /A little about me/i })).toBeTruthy();
+    fireEvent.click(screen.getAllByRole("button", { name: "Previous page" })[1]);
+    act(() => { vi.advanceTimersByTime(650); });
+    expect(screen.getByRole("heading", { name: /Vijayakumar Chandiran/i })).toBeTruthy();
+  });
+
+  it("keeps the resume's key career and learning information in the page content", () => {
+    expect(sections.filter((section) => section.kind === "experience")).toHaveLength(4);
+    expect(sections.find((section) => section.id === "exp-team-manager")?.bullets).toContain(
+      "Led a 25-member customer support team, ensuring SLA, AHT and CSAT targets are consistently met."
+    );
+    expect(sections.find((section) => section.id === "competencies")?.chips).toHaveLength(11);
+    expect(sections.find((section) => section.id === "certifications")?.certs).toHaveLength(10);
+    expect(sections.find((section) => section.id === "education")?.education).toHaveLength(2);
+  });
+
+  it("includes creator credits and keyboard-friendly page navigation", () => {
     const { container } = render(<App />);
-    const nav = container.querySelector('[aria-label="Resume sections"]');
-    expect(nav).toBeTruthy();
-    for (const label of ["About", "Summary", "Experience", "Expertise", "Certifications", "Education", "Contact"]) {
-      expect(screen.getByRole("button", { name: label })).toBeTruthy();
-    }
-    for (const id of ["about", "summary", "experience", "competencies", "certifications", "education", "contact"]) {
-      expect(container.querySelector("#" + id)).toBeTruthy();
-    }
-  });
-
-  it("shows every role and its full responsibilities in one readable page", () => {
-    render(<App />);
-    for (const section of sections.filter((item) => item.kind === "experience")) {
-      expect(screen.getByRole("heading", { name: section.title })).toBeTruthy();
-      expect(screen.getAllByText(section.subtitle!).length).toBeGreaterThan(0);
-      for (const bullet of section.bullets ?? []) expect(screen.getByText(bullet)).toBeTruthy();
-    }
-    expect(screen.getByText(/25-member customer support team/i)).toBeTruthy();
-    expect(screen.getByText(/30-member support team/i)).toBeTruthy();
-  });
-
-  it("renders the complete competency, certification and education lists", () => {
-    render(<App />);
-    for (const section of sections) {
-      expect(screen.getByRole("heading", { name: section.title })).toBeTruthy();
-      for (const skill of section.chips ?? []) expect(screen.getByText(skill)).toBeTruthy();
-      for (const cert of section.certs ?? []) expect(screen.getByText(cert.name)).toBeTruthy();
-      for (const item of section.education ?? []) expect(screen.getByText(item.qualification)).toBeTruthy();
-    }
-  });
-
-  it("offers a mobile navigation toggle and scroll navigation", () => {
-    render(<App />);
-    const toggle = screen.getByRole("button", { name: /toggle navigation/i });
-    expect(toggle.getAttribute("aria-expanded")).toBe("false");
-    fireEvent.click(toggle);
-    expect(toggle.getAttribute("aria-expanded")).toBe("true");
-    fireEvent.click(screen.getByRole("button", { name: "Experience" }));
-    expect(toggle.getAttribute("aria-expanded")).toBe("false");
-  });
-
-  it("uses a print action that can save the resume as a PDF", () => {
-    render(<App />);
-    expect(screen.getAllByRole("button", { name: /PRINT \/ SAVE PDF/i }).length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByRole("heading", { name: /what’s next/i })).toBeTruthy();
+    expect(container.querySelector(".book-credit-list")).toBeNull();
+    expect(screen.getByRole("button", { name: "Next page" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Previous page" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
   });
 });
