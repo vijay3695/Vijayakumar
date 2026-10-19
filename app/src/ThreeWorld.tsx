@@ -291,11 +291,11 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const deskY = -.084; // feet touch the desktop top at y = -.07
       const aisleZ = 4.25; // clear front aisle, in front of keyboard and hands
       const path = [
-        [2.48, 4.01, -4.24], // opening: monitor top-right bezel, not the screen
+        [2.48, 4.01, -4.16], // opening: monitor top-right bezel, not the screen
         [-5.2, .094, -.2],   // About: notebook page
         [-2.7, .083, -1.25], // Summary: open-book page
         [4.9, 2.036, -2.78], // Competencies: dashboard top-right bezel
-        [2.48, 4.01, -4.24], // Team Manager: monitor top-right bezel
+        [2.48, 4.01, -4.16], // Team Manager: monitor top-right bezel
         [5.1, .121, -.3],    // Team Leader: report page
         [-1.75, .069, -3.45],// Senior Associate: case-file page
         [-1.0, .158, 2.0],   // CSA: key tops
