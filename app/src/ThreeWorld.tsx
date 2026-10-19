@@ -242,7 +242,19 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         if (cancelled) return;
         const t = clock.getElapsedTime();
         const { active: currentActive, kind: currentKind, reacting: isReacting, paused: isPaused } = propsRef.current;
-        const target = path[Math.min(currentActive, path.length - 1)] || path[0];
+        let target = path[Math.min(currentActive, path.length - 1)] || path[0];
+        if (currentActive === 0) {
+          // Let the opening breathe: the ant crosses the keycaps, reaches the
+          // monitor stand, then climbs onto the screen before the story advances.
+          const route = [
+            [-1.0, .25, 2.0], [-.45, .25, 1.1], [.15, .25, .1],
+            [.22, .38, -1.5], [.22, .82, -2.75], [.25, 1.45, -3.65], [.25, 2.45, -4.02]
+          ];
+          const progress = Math.min(t / 13, 1) * (route.length - 1);
+          const segment = Math.min(Math.floor(progress), route.length - 2);
+          const blend = progress - segment;
+          target = route[segment].map((value, axis) => value + (route[segment + 1][axis] - value) * blend);
+        }
         if (!isPaused) {
           ant.position.x += (target[0] - ant.position.x) * .035 + Math.sin(t * .75) * .002;
           ant.position.y += (target[1] - ant.position.y) * .035 + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025);
