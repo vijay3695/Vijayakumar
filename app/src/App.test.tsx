@@ -8,7 +8,7 @@ afterEach(() => { cleanup(); vi.useRealTimers(); });
 describe("interactive resume flipbook", () => {
   it("opens on a designed single-page cover with the profile identity", () => {
     const { container } = render(<App />);
-    expect(screen.getByRole("heading", { name: /Vijayakumar Chandiran/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Vijayakumar\s*Chandiran/i })).toBeTruthy();
     expect(screen.getByText(profile.role)).toBeTruthy();
     expect(screen.getByText(/CURRICULUM VITAE/i)).toBeTruthy();
     expect(container.querySelector(".book-page--current")).toBeTruthy();
@@ -18,13 +18,13 @@ describe("interactive resume flipbook", () => {
   it("supports next and previous page controls and updates the page counter", () => {
     vi.useFakeTimers();
     render(<App />);
-    expect(screen.getByText(/01 \/ 15/)).toBeTruthy();
+    expect(document.querySelector(".book-progress small")?.textContent?.replace(/\s+/g, " ")).toContain("01 / 15");
     fireEvent.click(screen.getAllByRole("button", { name: "Next page" })[1]);
     act(() => { vi.advanceTimersByTime(650); });
     expect(screen.getByRole("heading", { name: /A little about me/i })).toBeTruthy();
     fireEvent.click(screen.getAllByRole("button", { name: "Previous page" })[1]);
     act(() => { vi.advanceTimersByTime(650); });
-    expect(screen.getByRole("heading", { name: /Vijayakumar Chandiran/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Vijayakumar\s*Chandiran/i })).toBeTruthy();
   });
 
   it("keeps the resume's key career and learning information in the page content", () => {
@@ -39,8 +39,8 @@ describe("interactive resume flipbook", () => {
 
   it("includes creator credits and keyboard-friendly page navigation", () => {
     render(<App />);
-    expect(screen.getByRole("button", { name: "Next page" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Previous page" })).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "Next page" }).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("button", { name: "Previous page" }).length).toBeGreaterThanOrEqual(2);
     expect(screen.getByRole("link", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
     fireEvent.keyDown(window, { key: "End" });
     expect(screen.getByRole("heading", { name: /Made with respect/i })).toBeTruthy();
