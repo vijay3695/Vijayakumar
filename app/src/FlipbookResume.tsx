@@ -112,15 +112,16 @@ export default function FlipbookResume() {
   };
 
   const activePage = pages[current];
-  const turningPage = turn === "next" ? activePage : pages[Math.max(0, current - 1)];
+  const basePage = turn ? pages[Math.max(0, Math.min(pages.length - 1, current + (turn === "next" ? 1 : -1)))] : activePage;
+  const turningPage = activePage;
   return <main className="flipbook-app">
     <header className="flipbook-topline"><a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a><div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div><a className="flipbook-print" href="javascript:window.print()" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a></header>
     <section className="flipbook-stage" id="book" aria-label="Interactive resume book">
       <div className="book-top-caption"><span>PERSONAL EDITION</span><span>{String(current + 1).padStart(2, "0")} — {String(pages.length).padStart(2, "0")}</span></div>
       <div className="book-shadow" />
-      <div className={"book-viewport" + (turn ? " is-turning" : "")} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onContextMenu={(event) => event.preventDefault()}>
+      <div className={"book-viewport" + (turn ? " is-turning" : "")} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={(event) => { if ((event.target as HTMLElement).closest(".book-edge")) return; const bounds = event.currentTarget.getBoundingClientRect(); go(event.clientX < bounds.left + bounds.width / 2 ? "prev" : "next"); }} onContextMenu={(event) => event.preventDefault()}>
         <div className="book-page-stack" aria-live="polite">
-          <div className="book-page book-page--current" key={current}><PageFrame page={current} total={pages.length}>{activePage.content}</PageFrame></div>
+          <div className="book-page book-page--current" key={turn ? current + (turn === "next" ? 1 : -1) : current}><PageFrame page={turn ? current + (turn === "next" ? 1 : -1) : current} total={pages.length}>{basePage.content}</PageFrame></div>
           {turn && <div className={"book-page book-page--turn book-page--" + turn} key={current + turn} style={{ transform: dragging ? "translateX(" + drag.x * .12 + "px) rotateY(" + (turn === "next" ? -Math.min(165, Math.abs(drag.x) * .8) : Math.min(165, Math.abs(drag.x) * .8)) + "deg) rotateZ(" + drag.y * .025 + "deg)" : undefined }}><PageFrame page={turn === "next" ? current : Math.max(0, current - 1)} total={pages.length}>{turningPage.content}</PageFrame></div>}
         </div>
         {showHelp && <div className="book-gesture-hint"><span>↙</span> DRAG A PAGE CORNER TO TURN <span>↗</span></div>}
