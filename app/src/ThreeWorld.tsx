@@ -251,10 +251,20 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       }
       const antennae: any[] = [];
       for (const side of [-1, 1]) {
-        const points = [new THREE.Vector3(.35, .83, side * .1), new THREE.Vector3(.42, 1.02, side * .16), new THREE.Vector3(.59, 1.06, side * .22)];
+        // Each feeler has a real pivot at the head, so twitching moves the antenna from its base.
+        const pivot = new THREE.Group();
+        pivot.position.set(.35, .83, side * .1);
+        ant.add(pivot);
+        const points = [
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(.07, .19, side * .06),
+          new THREE.Vector3(.24, .23, side * .12)
+        ];
         const curve = new THREE.CatmullRomCurve3(points);
-        const feeler = new THREE.Mesh(new THREE.TubeGeometry(curve, 10, .022, 6, false), antDark); ant.add(feeler); antennae.push(feeler);
-        makeSphere(.045, antLight, .59, 1.06, side * .22, ant);
+        const feeler = new THREE.Mesh(new THREE.TubeGeometry(curve, 10, .022, 6, false), antDark);
+        pivot.add(feeler);
+        makeSphere(.045, antLight, .24, .23, side * .12, pivot);
+        antennae.push(pivot);
       }
       const legs: any[] = [];
       for (const side of [-1, 1]) for (let i = 0; i < 3; i++) {
