@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { fireEvent, render, screen, cleanup } from "@testing-library/react";
 import App from "./App";
 import { profile, sections } from "./data/resume";
@@ -43,7 +43,10 @@ describe("portfolio experience", () => {
     fireEvent.click(screen.getByRole("button", { name: /OPEN INTERACTIVE BOOK/i }));
     const viewer = screen.getByTitle(/OpenZine paper-turn renderer/i);
     expect(viewer.getAttribute("srcdoc")).toContain("window.OPENZINE=");
+    expect(viewer.getAttribute("srcdoc")).toContain("data:image/webp;base64,");
     expect(viewer.getAttribute("srcdoc")).toContain("Paper Mono");
+    expect(viewer.getAttribute("srcdoc")).toContain("https://paper.design/mono");
+    expect(viewer.getAttribute("srcdoc")).not.toContain("#credit{display:none");
     fireEvent.click(screen.getByRole("button", { name: /CLOSE BOOK/i }));
     expect(screen.queryByTitle(/OpenZine paper-turn renderer/i)).toBeNull();
   });
