@@ -93,7 +93,7 @@ export default function AntStory() {
   }, [beats.length]);
 
   const jumpTo = (index: number) => setActive(Math.max(0, Math.min(beats.length - 1, index)));
-  const toggleMotion = () => setMotionPaused((paused) => { setWalking(paused); return !paused; });
+  const toggleMotion = () => { setWalking(motionPaused); setMotionPaused(!motionPaused); };
   const onWorldTouchStart = (event: TouchEvent<HTMLDivElement>) => { touchStart.current = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; };
   const onWorldTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     if (!touchStart.current) return;
