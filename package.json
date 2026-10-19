@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "React and TypeScript interactive resume flipbook with a live-DOM page curl and OpenZine paper texture.",
+  "description": "React and TypeScript portfolio with an optional interactive book using the original OpenZine/Paper Mono page-turn renderer.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
