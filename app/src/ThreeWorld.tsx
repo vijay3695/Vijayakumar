@@ -201,7 +201,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         depth: .72, bevelEnabled: true, bevelSegments: 4, steps: 1,
         bevelSize: .055, bevelThickness: .055, curveSegments: 4
       });
-      sugarGeometry.translate(0, .36, -.36);
+      sugarGeometry.translate(0, .415, -.36);
       const sugarMaterial = new THREE.MeshStandardMaterial({ color: "#fff8eb", roughness: .92, metalness: 0 });
       const sugarMesh = new THREE.Mesh(sugarGeometry, sugarMaterial);
       sugarMesh.position.y = 0; sugarMesh.castShadow = true; sugarMesh.receiveShadow = true; sugar.add(sugarMesh);
@@ -215,7 +215,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const radius = .009 + (i % 4) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 3 === 0 ? sugarBright : sugarGrain);
         // Crystals cling to the front face instead of hovering in front of the cube.
-        crystal.position.set(x, .36 + y, -.366);
+        crystal.position.set(x, .415 + y, -.366);
         crystal.scale.set(1.2, .7, .35); crystal.castShadow = true; sugar.add(crystal);
       }
       for (let i = 0; i < 45; i++) {
@@ -223,7 +223,7 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         const z = signed(i * 3.17 + 1);
         const radius = .009 + (i % 3) * .003;
         const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 0), i % 2 ? sugarBright : sugarGrain);
-        crystal.position.set(x, .725, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
+        crystal.position.set(x, .78, z); crystal.scale.set(1.1, .35, 1.1); sugar.add(crystal);
       }
 
       // A desk lamp on the far edge casts a warm pool of light into the workspace.
@@ -267,14 +267,14 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       // -> case file -> keyboard -> book stack -> diploma -> sugar cube.
       const path = [
         [-1.0, .14, 2.0],       // opening: keyboard, then a planned climb up the monitor
-        [-5.2, .03, -.2],       // About me: notebook
-        [-2.7, .03, -1.25],     // Professional summary: open book
+        [-5.2, .067, -.2],       // About me: notebook
+        [-2.7, .075, -1.25],     // Professional summary: open book
         [3.9, 1.35, -2.72],     // Core competencies: dashboard screen
         [0.0, 2.25, -4.205],    // Team Manager: monitor screen
-        [5.1, .07, -.3],        // Team Leader: report folder
-        [-1.75, .035, -3.45],   // Senior Associate: case file
+        [5.1, .095, -.3],        // Team Leader: report folder
+        [-1.75, .043, -3.45],   // Senior Associate: case file
         [-1.0, .14, 2.0],       // Customer Support Associate: keyboard
-        [-4.1, .68, -3.15],     // Certifications: top of book stack
+        [-4.1, .78, -3.15],     // Certifications: top of book stack
         [7.65, 3.15, -6.34],    // Education: framed diploma
         [6.35, -.11, 1.2]       // Ending: beside the sugar cube, feet on the desk
       ];
