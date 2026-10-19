@@ -9,7 +9,7 @@ const BOOK_OUT = path.join(PROJECT_ROOT, "openzine-book.html");
 const MAKE_BOOK = path.join(PROJECT_ROOT, ".codex", "skills", "openzine", "scripts", "make-book.mjs");
 
 const PAGE_WIDTH = 1440;
-const PAGE_HEIGHT = 1986;
+const PAGE_HEIGHT = 1984;
 
 // Read resume data
 const resumeModule = await import("/tmp/resume.js");
@@ -58,7 +58,7 @@ function createPage(title, lines) {
   ctx.font = "16px monospace";
   ctx.fillStyle = "#8a8477";
   ctx.fillText("VIJAYAKUMAR CHANDIRAN", 80, PAGE_HEIGHT - 40);
-  return canvas.toBuffer("image/jpeg");
+  return canvas.toBuffer("image/png");
 }
 
 const pageDefs = [
@@ -80,7 +80,7 @@ const pageDefs = [
 
 for (let i = 0; i < pageDefs.length; i++) {
   const buf = createPage(pageDefs[i].title, pageDefs[i].lines);
-  await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.jpg`), buf);
+  await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
 
