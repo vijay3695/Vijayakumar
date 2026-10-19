@@ -29,6 +29,16 @@ grep -q './assets/' dist/index.html || {
   exit 1
 }
 
+# Guard against accidentally publishing the old CSS-only imitation again.
+if ! grep -R -q "Paper Mono" dist/assets/*.js 2>/dev/null; then
+  echo "error: the built app does not contain the actual OpenZine/Paper Mono renderer" >&2
+  exit 1
+fi
+if ! grep -R -q "data:image/webp;base64," dist/assets/*.js 2>/dev/null; then
+  echo "error: the built app does not include the OpenZine paper-grain texture" >&2
+  exit 1
+fi
+
 echo "==> publishing built site to main root"
 rm -rf assets
 cp -r dist/assets assets
