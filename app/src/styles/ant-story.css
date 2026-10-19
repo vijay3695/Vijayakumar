@@ -75,3 +75,16 @@
 
 /* Layer the tactile foreground above the perspective floor. */
 .world-backdrop{z-index:2}.world-floor{z-index:1}.typing-hands{z-index:5}
+
+
+/* A real WebGL desk and ant now live behind the resume; the readable story stays visible at the same time. */
+.world{touch-action:pan-y;background:#171313}
+.three-world{position:absolute;inset:0;z-index:2;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#3d2c28,#171313 72%)}
+.three-world-canvas{display:block;width:100%;height:100%;outline:0}
+.three-world[data-error="3d-unavailable"]::after{content:"The 3D scene could not load. Check your connection and reload.";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,460px);padding:16px;border:1px solid #e6a17d66;border-radius:12px;background:#171313;color:#f5efe6;text-align:center;font-size:13px}
+.world-caption{pointer-events:none;text-shadow:0 2px 12px #000}
+.story-motion-control{display:flex;justify-content:flex-end;max-width:760px;margin:0 0 12px}
+.story-motion-control button{padding:9px 13px;border:1px solid #ffffff2b;border-radius:999px;background:#201b1ae8;color:#f0dfcf;font:10px 'DM Mono',monospace;cursor:pointer}
+.story-motion-control button:hover{border-color:#e6a17d99}
+@media(max-width:700px){.three-world-canvas{width:100%;height:100%}.story-motion-control{margin-bottom:8px}}
+@media(prefers-reduced-motion:reduce){.three-world-canvas{scroll-behavior:auto}}
