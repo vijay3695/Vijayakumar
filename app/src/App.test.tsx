@@ -10,7 +10,7 @@ describe("typography-led full resume portfolio", () => {
     const { container } = render(<App />);
     expect(screen.getByRole("heading", { name: /Vijayakumar Chandiran/i })).toBeTruthy();
     expect(screen.getByText(profile.role)).toBeTruthy();
-    expect(screen.getByRole("button", { name: /PRINT \/ SAVE PDF/i })).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: /PRINT \/ SAVE PDF/i }).length).toBeGreaterThanOrEqual(2);
     expect(screen.getByRole("link", { name: /LinkedIn/i })).toBeTruthy();
     expect(container.querySelector(".three-world")).toBeNull();
     expect(container.querySelector(".ant-story")).toBeNull();
