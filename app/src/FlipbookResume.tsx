@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode, type CSSProperties } from "react";
 import { profile, sections } from "./data/resume";
 import "./styles/flipbook.css";
+import { openZinePaperGrain } from "./openzine/grain";
 
 type BookPage = { label: string; content: ReactNode; kind?: string };
 
@@ -127,7 +128,7 @@ export default function FlipbookResume() {
   const activePage = pages[current];
   const basePage = turn ? pages[Math.max(0, Math.min(pages.length - 1, current + (turn === "next" ? 1 : -1)))] : activePage;
   const turningPage = activePage;
-  return <main className="flipbook-app">
+  return <main className="flipbook-app" style={{ "--openzine-paper-grain": openZinePaperGrain } as CSSProperties}>
     <header className="flipbook-topline"><a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a><div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div><a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a></header>
     <section className="flipbook-stage" id="book" aria-label="Interactive resume book">
       <div className="book-top-caption"><span>PERSONAL EDITION</span><span>{String(current + 1).padStart(2, "0")} — {String(pages.length).padStart(2, "0")}</span></div>
