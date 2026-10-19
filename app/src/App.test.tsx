@@ -20,7 +20,7 @@ describe("ant-led resume story", () => {
     expect(container.querySelectorAll(".story-chapters button")).toHaveLength(sections.length + 2);
     const chapterButtons = Array.from(container.querySelectorAll<HTMLButtonElement>(".story-chapters button"));
     for (const section of sections) {
-      expect(chapterButtons.find((button) => button.textContent?.trim().endsWith(section.highlight))).toBeTruthy();
+      expect(chapterButtons.find((button) => button.textContent?.replace(/^\s*\d+\s*/, "").trim() === section.highlight)).toBeTruthy();
     }
   });
 
@@ -29,7 +29,7 @@ describe("ant-led resume story", () => {
     fireEvent.click(screen.getByRole("button", { name: /start the journey/i }));
     expect(screen.getByRole("heading", { name: sections[0].title })).toBeTruthy();
     const experience = sections.find((section) => section.id === "exp-team-manager");
-    const managerChapter = Array.from(document.querySelectorAll<HTMLButtonElement>(".story-chapters button")).find((button) => button.textContent?.trim().endsWith(experience!.highlight));
+    const managerChapter = Array.from(document.querySelectorAll<HTMLButtonElement>(".story-chapters button")).find((button) => button.textContent?.replace(/^\s*\d+\s*/, "").trim() === experience!.highlight);
     expect(managerChapter).toBeTruthy();
     fireEvent.click(managerChapter!);
     expect(screen.getByRole("heading", { name: experience!.title })).toBeTruthy();
