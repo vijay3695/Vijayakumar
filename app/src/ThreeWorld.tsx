@@ -35,8 +35,8 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color("#171313");
-      scene.fog = new THREE.Fog("#171313", 10, 26);
-      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 80);
+      scene.fog = new THREE.Fog("#171313", 13, 34);
+      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
       camera.position.set(0, 5.1, 13.5);
       camera.lookAt(0, 1.1, 0);
 
@@ -63,6 +63,9 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       const keyMat = mat("#4a3b37", .4); const keyTop = mat("#b88d6c", .42);
       const cream = mat("#f1dfc4"); const gold = mat("#dfad73", .4, .18);
       const green = mat("#48796a", .48);
+      const wall = mat("#302724", .92);
+      const windowFrame = mat("#171b1e", .45);
+      const windowGlass = new THREE.MeshStandardMaterial({ color: "#73959a", emissive: "#385e64", emissiveIntensity: .65, roughness: .3, metalness: .05 });
       const makeBox = (w: number, h: number, d: number, material: any, x: number, y: number, z: number, parent: any = scene) => {
         const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
         mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh); return mesh;
@@ -80,6 +83,13 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         mesh.castShadow = true; parent.add(mesh); return mesh;
       };
 
+      // A small, warmly lit room gives the desk a real setting rather than a floating diorama.
+      makeBox(20, 8.5, .28, wall, 0, 3.25, -6.75);
+      makeBox(3.75, 2.85, .16, windowFrame, -6.25, 3.75, -6.54);
+      makeBox(3.38, 2.48, .06, windowGlass, -6.25, 3.75, -6.43);
+      makeBox(3.38, .055, .06, windowFrame, -6.25, 3.75, -6.37);
+      makeBox(.055, 2.48, .06, windowFrame, -6.25, 3.75, -6.37);
+      const windowLight = new THREE.PointLight("#8fbfc5", 11, 12); windowLight.position.set(-6, 4.1, -4.7); scene.add(windowLight);
       // A continuous, physical desktop environment.
       makeBox(19, .42, 12, wood, 0, -.28, -1);
       makeBox(19.1, .12, 12.1, woodEdge, 0, -.53, -1);
@@ -157,6 +167,13 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
       makeBox(.8, .8, .8, mat("#fff7e9", .28), 0, .25, 0, sugar);
       makeBox(.63, .018, .63, mat("#ffffff", .3), 0, .66, 0, sugar);
 
+      // A desk lamp on the far edge casts a warm pool of light into the workspace.
+      const lampBase = makeBox(.72, .12, .72, mat("#292424", .3, .28), 7.85, -.01, -2.25);
+      makeCylinderBetween([7.85, .04, -2.25], [7.55, 1.65, -2.25], .085, mat("#b98d68", .32, .42), scene);
+      const lampShade = new THREE.Mesh(new THREE.ConeGeometry(.62, .55, 24, 1, true), mat("#40332d", .38, .2));
+      lampShade.position.set(7.48, 1.72, -2.25); lampShade.rotation.z = .38; lampShade.castShadow = true; scene.add(lampShade);
+      const lampGlow = new THREE.PointLight("#ffc88d", 24, 8); lampGlow.position.set(7.15, 1.35, -2.05); scene.add(lampGlow);
+
       // Fully articulated ant: three pairs of legs, joints, abdomen, thorax, head, eyes and antennae.
       const ant = new THREE.Group(); scene.add(ant);
       const antDark = mat("#402019", .42); const antShell = mat("#7c3528", .36); const antLight = mat("#b85d40", .38);
@@ -186,25 +203,40 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
         legs.push({ hip, phase: (i + (side === 1 ? 1 : 0)) * Math.PI, upper, lower, isScratchLeg: side === 1 && i === 2 });
       }
 
+      // One path point per story beat: keyboard -> monitor -> desk props -> sugar cube.
       const path = [
-        [-1.1, .25, 2.0], [-1.1, .25, .5], [0, .4, -1.1], [.45, 1.1, -3.1],
-        [-2.2, .25, -.4], [-4.5, .22, -.4], [0, .22, -.3], [4.5, .22, -.3],
-        [3.5, 1.55, -2.35], [5.0, .22, -.3], [-3.7, .42, -2.9], [7.0, .8, 1.2]
+        [-1.0, .25, 2.0],       // opening: between the keys
+        [0.25, 2.45, -4.02],    // about: climbing onto the monitor
+        [-3.8, .22, -1.1],      // summary: notebook
+        [2.1, .22, -1.0],       // competencies: dashboard
+        [3.6, 1.55, -2.35],     // team manager: dashboard screen
+        [5.0, .22, -.3],        // team leader: report
+        [-4.5, .22, -.4],       // senior associate: notebook
+        [-1.0, .25, 1.8],       // associate: keyboard
+        [-3.7, .42, -2.9],      // certifications: books
+        [-4.1, .5, -3.15],      // education: book stack
+        [7.0, .8, 1.2]          // ending: sugar cube
       ];
       const onResize = () => {
         if (!host || !renderer) return;
         const w = Math.max(1, host.clientWidth); const h = Math.max(1, host.clientHeight);
-        renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        if (w / h < .9) {
+          camera.fov = 46;
+          camera.position.y = 6.2;
+          camera.position.z = 18.5;
+        } else {
+          camera.fov = 38;
+          camera.position.y = 5.1;
+          camera.position.z = 13.5;
+        }
+        camera.updateProjectionMatrix();
       };
       resizeObserver = new ResizeObserver(onResize); resizeObserver.observe(host); onResize();
-      const pointerHandler = (event: PointerEvent) => {
-        const rect = renderer.domElement.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width;
-        const y = (event.clientY - rect.top) / rect.height;
-        // The ant occupies the lower middle of the world in every chapter.
-        if (y > .25 && y < .99 && x > .15 && x < .85) propsRef.current.onAntClick();
-      };
-      renderer.domElement.addEventListener("pointerdown", pointerHandler);
+      // The transparent touch target follows the ant's actual projected position,
+      // so tapping the desk elsewhere doesn't accidentally trigger its reaction.
+      const antHitArea = host.querySelector<HTMLButtonElement>(".three-world-ant-hitarea");
       const clock = new THREE.Clock();
       const animate = () => {
         if (cancelled) return;
@@ -235,12 +267,20 @@ export default function ThreeWorld({ active, kind, reacting, paused, onAntClick 
           camera.position.x += (cameraTargetX - camera.position.x) * .018;
         }
         camera.lookAt(currentActive > 0 ? target[0] * .85 : 0, 1.0, -.1);
+        if (antHitArea) {
+          const projected = ant.position.clone();
+          projected.y += .24;
+          projected.project(camera);
+          antHitArea.style.left = ((projected.x * .5 + .5) * host.clientWidth) + "px";
+          antHitArea.style.top = ((-projected.y * .5 + .5) * host.clientHeight) + "px";
+          antHitArea.style.width = (window.innerWidth < 700 ? 100 : 116) + "px";
+          antHitArea.style.height = (window.innerWidth < 700 ? 86 : 100) + "px";
+        }
         renderer.render(scene, camera);
         frame = requestAnimationFrame(animate);
       };
       animate();
       cleanup = () => {
-        renderer.domElement.removeEventListener("pointerdown", pointerHandler);
         resizeObserver?.disconnect();
         scene.traverse((obj: any) => { if (obj.geometry) obj.geometry.dispose(); if (obj.material) { const materials = Array.isArray(obj.material) ? obj.material : [obj.material]; materials.forEach((m: any) => m.dispose()); } });
         screenTexture.dispose(); renderer.dispose(); renderer.domElement.remove();
