@@ -1,5 +1,5 @@
-import FlipbookResume from "./FlipbookResume";
+import ResumePortfolio from "./ResumePortfolio";
 
 export default function App() {
-  return <FlipbookResume />;
+  return <ResumePortfolio />;
 }
