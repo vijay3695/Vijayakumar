@@ -14,6 +14,8 @@ type ThreeWorldProps = {
  */
 export default function ThreeWorld({ active, kind, reacting, onAntClick }: ThreeWorldProps) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const propsRef = useRef({ active, kind, reacting, onAntClick });
+  propsRef.current = { active, kind, reacting, onAntClick };
 
   useEffect(() => {
     const host = hostRef.current;
@@ -85,7 +87,21 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
       }
       // Monitor, stand, bezel and luminous screen.
       makeBox(5.2, 3.15, .22, dark, 0, 2.45, -4.35);
-      makeBox(4.92, 2.86, .04, mat("#18302f", .25, .1), 0, 2.48, -4.21);
+      const screenCanvas = document.createElement("canvas"); screenCanvas.width = 1200; screenCanvas.height = 700;
+      const screenCtx = screenCanvas.getContext("2d");
+      if (screenCtx) {
+        screenCtx.fillStyle = "#142321"; screenCtx.fillRect(0, 0, 1200, 700);
+        const glow = screenCtx.createRadialGradient(600, 300, 10, 600, 300, 680); glow.addColorStop(0, "#25413a"); glow.addColorStop(1, "#111b1b");
+        screenCtx.fillStyle = glow; screenCtx.fillRect(0, 0, 1200, 700);
+        screenCtx.fillStyle = "#dba982"; screenCtx.font = "500 28px monospace"; screenCtx.fillText("HELLO, I'M", 90, 160);
+        screenCtx.fillStyle = "#fff0dc"; screenCtx.font = "700 70px Arial, sans-serif"; screenCtx.fillText("Vijayakumar", 90, 260); screenCtx.fillText("Chandiran", 90, 345);
+        screenCtx.fillStyle = "#b5c7b9"; screenCtx.font = "26px Arial, sans-serif"; screenCtx.fillText("Lead Account Management", 90, 430); screenCtx.fillText("Service Delivery Operations", 90, 470);
+        screenCtx.fillStyle = "#8cc2a9"; screenCtx.fillRect(90, 525, 310, 6);
+        screenCtx.fillStyle = "#b5c7b9"; screenCtx.font = "20px monospace"; screenCtx.fillText("PEOPLE  ·  PROCESS  ·  PROGRESS", 90, 580);
+      }
+      const screenTexture = new THREE.CanvasTexture(screenCanvas); screenTexture.colorSpace = THREE.SRGBColorSpace;
+      const screenPlane = new THREE.Mesh(new THREE.PlaneGeometry(4.82, 2.75), new THREE.MeshBasicMaterial({ map: screenTexture }));
+      screenPlane.position.set(0, 2.48, -4.205); scene.add(screenPlane);
       makeBox(.32, .8, .36, dark, 0, .48, -4.25);
       makeBox(1.8, .13, .85, dark, 0, .08, -4.1);
       makeBox(4.45, .018, .018, mat("#8bc4ac", .25, .1), 0, 3.38, -4.17);
@@ -104,6 +120,21 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
         }
       }
       makeBox(2.05, .075, .32, keyTop, 0, .14, 1.12, keyboard);
+      // Two hands sit naturally at the front edge of the keyboard and type continuously.
+      const skin = mat("#c58e6d", .72); const skinLight = mat("#e2b08c", .68);
+      const typingFingers: any[] = [];
+      for (const side of [-1, 1]) {
+        const hand = new THREE.Group(); hand.position.set(side * 1.18, .12, 3.2); hand.rotation.y = side * -.08; scene.add(hand);
+        makeSphere(.43, skin, 0, .08, .12, hand, 1.28, .48, 1.45);
+        for (let finger = 0; finger < 4; finger++) {
+          const digit = new THREE.Group(); digit.position.set((finger - 1.5) * .19, .06, -.23); hand.add(digit);
+          makeCylinderBetween([0, 0, 0], [0, -.025, -.43 - (finger === 1 || finger === 2 ? .05 : 0)], .065, skinLight, digit);
+          makeSphere(.065, skinLight, 0, -.025, -.44 - (finger === 1 || finger === 2 ? .05 : 0), digit, .9, .8, 1.15);
+          typingFingers.push({ digit, phase: finger * .65 + (side > 0 ? .8 : 0) });
+        }
+        const thumb = makeSphere(.085, skinLight, side * -.39, .04, -.06, hand, 1, .9, 1.5);
+        thumb.rotation.y = side * .6;
+      }
       // A notebook, report folder and a little operations dashboard: props along one desk, not separate slides.
       const notebook = new THREE.Group(); notebook.position.set(-5.2, .01, -.2); notebook.rotation.y = .12; scene.add(notebook);
       makeBox(2.35, .12, 3.1, mat("#b99a75"), 0, 0, 0, notebook);
@@ -169,22 +200,24 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
         const x = (event.clientX - rect.left) / rect.width;
         const y = (event.clientY - rect.top) / rect.height;
         // The ant occupies the lower middle of the world in every chapter.
-        if (y > .35 && y < .98 && x > .2 && x < .8) onAntClick();
+        if (y > .25 && y < .99 && x > .15 && x < .85) propsRef.current.onAntClick();
       };
       renderer.domElement.addEventListener("pointerdown", pointerHandler);
       const clock = new THREE.Clock();
       const animate = () => {
         if (cancelled) return;
         const t = clock.getElapsedTime();
-        const target = path[Math.min(active, path.length - 1)] || path[0];
-        ant.position.set(target[0] + Math.sin(t * .75) * .035, target[1] + (reacting ? .04 : Math.abs(Math.sin(t * 7)) * .025), target[2]);
-        ant.rotation.y = (active > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (reacting ? Math.PI : 0);
-        ant.rotation.z = reacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
+        const { active: currentActive, kind: currentKind, reacting: isReacting } = propsRef.current;
+        const target = path[Math.min(currentActive, path.length - 1)] || path[0];
+        ant.position.set(target[0] + Math.sin(t * .75) * .035, target[1] + (isReacting ? .04 : Math.abs(Math.sin(t * 7)) * .025), target[2]);
+        ant.rotation.y = (currentActive > 2 ? .35 : 0) + Math.sin(t * .8) * .06 + (isReacting ? Math.PI : 0);
+        ant.rotation.z = isReacting ? Math.sin(t * 9) * .08 : Math.sin(t * 7) * .025;
         legs.forEach((leg) => { leg.hip.rotation.z = Math.sin(t * 11 + leg.phase) * .22; leg.hip.rotation.x = Math.sin(t * 11 + leg.phase) * .12; });
         antennae.forEach((feeler, i) => { feeler.rotation.z = Math.sin(t * 2.8 + i) * .08; });
+        typingFingers.forEach((finger) => { finger.digit.position.y = .06 + Math.max(0, Math.sin(t * 8 + finger.phase)) * .045; });
         keyboard.children.forEach((key: any) => { if (key.userData.phase !== undefined) key.position.y = key.userData.homeY + Math.max(0, Math.sin(t * 8 + key.userData.phase)) * .025; });
         sugar.rotation.y = Math.sin(t * 1.2) * .06;
-        if (kind === "ending" || active === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
+        if (currentKind === "ending" || currentActive === path.length - 1) { sugar.position.y = .2 + Math.abs(Math.sin(t * 2)) * .025; }
         camera.position.x += ((active > 3 ? Math.max(-.8, Math.min(.8, target[0] * .075)) : 0) - camera.position.x) * .012;
         camera.lookAt(0, 1.0, -.1);
         renderer.render(scene, camera);
@@ -201,7 +234,7 @@ export default function ThreeWorld({ active, kind, reacting, onAntClick }: Three
 
     boot().catch((error) => { if (!cancelled && host) { host.dataset.error = "3d-unavailable"; console.error("Unable to initialize the 3D career scene", error); } });
     return () => { cancelled = true; cancelAnimationFrame(frame); resizeObserver?.disconnect(); cleanup?.(); };
-  }, [active, kind, reacting, onAntClick]);
+  }, []);
 
   return <div ref={hostRef} className="three-world" aria-hidden="false" />;
 }
