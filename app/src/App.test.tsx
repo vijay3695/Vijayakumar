@@ -53,6 +53,21 @@ describe("ant-led resume story", () => {
     expect(ant.className).toContain("is-reacting");
   });
 
+  it("keeps the resume heading and story location synchronized with the ant's landmark", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /about/i }));
+    expect(screen.getByRole("heading", { name: "About me" })).toBeTruthy();
+    expect(screen.getByText("Notebook · about me")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: /summary/i }));
+    expect(screen.getByRole("heading", { name: "Professional Summary" })).toBeTruthy();
+    expect(screen.getByText("Open book · professional summary")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: /education/i }));
+    expect(screen.getByRole("heading", { name: "Education" })).toBeTruthy();
+    expect(screen.getByText("Diploma frame · education")).toBeTruthy();
+  });
+
   it("shows the 3D world and readable resume together, with no competing mode switch", () => {
     const { container } = render(<App />);
     expect(container.querySelector(".three-world")).toBeTruthy();
