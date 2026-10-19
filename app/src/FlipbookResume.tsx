@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode, type CSSProperties } from "react";
+import { useMemo } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import type { ReactNode } from "react";
 import { profile, sections } from "./data/resume";
-import "./styles/flipbook.css";
+import flipbookStyles from "./styles/flipbook.css?inline";
+import openZineRuntime from "../../.codex/skills/openzine/runtime/openzine.js?raw";
 import { openZinePaperGrain } from "./openzine/grain";
 
 type BookPage = { label: string; content: ReactNode; kind?: string };
@@ -56,94 +59,53 @@ const pages: BookPage[] = [
   { label: "Contact", content: <div className="book-last-page"><p className="book-eyebrow">10 / THE NEXT CHAPTER</p><h2>Let’s make<br /><em>good work</em><br />happen.</h2><p className="book-copy">For opportunities in team leadership, service delivery, customer success, and operations.</p><div className="book-contact-links">{profile.links.map((link) => <a href={link.href} target="_blank" rel="noreferrer" key={link.label}>{link.label}<span>↗</span></a>)}</div><p className="book-location">{profile.location} · India</p></div> },
 ];
 
-export default function FlipbookResume() {
-  const [current, setCurrent] = useState(0);
-  const [turn, setTurn] = useState<"next" | "prev" | null>(null);
-  const [drag, setDrag] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const [showHelp, setShowHelp] = useState(true);
-  const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const dragRef = useRef({ x: 0, y: 0 });
-  const suppressClick = useRef(false);
-  const turnTimer = useRef<number | undefined>(undefined);
-  const go = useCallback((direction: "next" | "prev") => {
-    if (turn) return;
-    const destination = current + (direction === "next" ? 1 : -1);
-    if (destination < 0 || destination >= pages.length) return;
-    setShowHelp(false);
-    setTurn(direction);
-    window.clearTimeout(turnTimer.current);
-    turnTimer.current = window.setTimeout(() => {
-      setCurrent(destination);
-      setTurn(null);
-      dragRef.current = { x: 0, y: 0 };
-      setDrag({ x: 0, y: 0 });
-    }, 640);
-  }, [current, turn]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight" || event.key === "PageDown") { event.preventDefault(); go("next"); }
-      else if (event.key === "ArrowLeft" || event.key === "PageUp") { event.preventDefault(); go("prev"); }
-      else if (event.key === "Home") { event.preventDefault(); setCurrent(0); setTurn(null); }
-      else if (event.key === "End") { event.preventDefault(); setCurrent(pages.length - 1); setTurn(null); }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("keydown", onKey); };
-  }, [go]);
-
-  useEffect(() => () => window.clearTimeout(turnTimer.current), []);
-
-  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (turn) return;
-    pointerStart.current = { x: event.clientX, y: event.clientY };
-    setDragging(true);
-    dragRef.current = { x: 0, y: 0 };
-    setDrag({ x: 0, y: 0 });
-    setShowHelp(false);
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-  };
-  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!dragging || !pointerStart.current || turn) return;
-    const dx = event.clientX - pointerStart.current.x;
-    const dy = event.clientY - pointerStart.current.y;
-    dragRef.current = { x: dx, y: dy };
-    setDrag({ x: dx, y: dy });
-  };
-  const onPointerUp = () => {
-    if (!pointerStart.current) return;
-    const { x: dx } = dragRef.current;
-    setDragging(false);
-    pointerStart.current = null;
-    if (Math.abs(dx) > 65) {
-      suppressClick.current = true;
-      window.setTimeout(() => { suppressClick.current = false; }, 80);
-      go(dx < 0 ? "next" : "prev");
-    } else {
-      dragRef.current = { x: 0, y: 0 };
-      setDrag({ x: 0, y: 0 });
-    }
-  };
-
-  const activePage = pages[current];
-  const basePage = turn ? pages[Math.max(0, Math.min(pages.length - 1, current + (turn === "next" ? 1 : -1)))] : activePage;
-  const turningPage = activePage;
-  return <main className="flipbook-app" style={{ "--openzine-paper-grain": openZinePaperGrain } as CSSProperties}>
-    <header className="flipbook-topline"><a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a><div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div><a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a></header>
-    <section className="flipbook-stage" id="book" aria-label="Interactive resume book">
-      <div className="book-top-caption"><span>PERSONAL EDITION</span><span>{String(current + 1).padStart(2, "0")} — {String(pages.length).padStart(2, "0")}</span></div>
-      <div className="book-shadow" />
-      <div className={"book-viewport" + (turn ? " is-turning" : "") + (dragging ? " is-dragging" : "")} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={(event) => { if (suppressClick.current || (event.target as HTMLElement).closest("button, a")) return; const bounds = event.currentTarget.getBoundingClientRect(); go(event.clientX < bounds.left + bounds.width / 2 ? "prev" : "next"); }} onContextMenu={(event) => event.preventDefault()}>
-        <div className="book-page-stack" aria-live="polite">
-          <div className="book-page book-page--current" key={turn ? current + (turn === "next" ? 1 : -1) : current} style={dragging ? { transform: "rotateY(" + Math.max(-24, Math.min(24, drag.x * -.16)) + "deg) rotateZ(" + Math.max(-1.5, Math.min(1.5, drag.y * .008)) + "deg)", transformOrigin: drag.x < 0 ? "left center" : "right center", boxShadow: (drag.x < 0 ? "-12px" : "12px") + " 4px 24px rgba(25,21,15,.22)" } : undefined}><PageFrame page={turn ? current + (turn === "next" ? 1 : -1) : current} total={pages.length}>{basePage.content}</PageFrame></div>
-          {turn && <div className={"book-page book-page--turn book-page--" + turn} key={current + turn} style={{ transform: dragging ? "translateX(" + drag.x * .12 + "px) rotateY(" + (turn === "next" ? -Math.min(165, Math.abs(drag.x) * .8) : Math.min(165, Math.abs(drag.x) * .8)) + "deg) rotateZ(" + drag.y * .025 + "deg)" : undefined }}><PageFrame page={turn === "next" ? current : Math.max(0, current - 1)} total={pages.length}>{turningPage.content}</PageFrame></div>}
-        </div>
-        {showHelp && <div className="book-gesture-hint"><span>↙</span> DRAG FROM A PAGE EDGE TO TURN <span>↗</span></div>}
-        <button className="book-edge book-edge--prev" aria-label="Previous page" onPointerDown={(event) => event.stopPropagation()} onClick={() => go("prev")} disabled={current === 0 || Boolean(turn)}><span>‹</span></button>
-        <button className="book-edge book-edge--next" aria-label="Next page" onPointerDown={(event) => event.stopPropagation()} onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)}><span>›</span></button>
+function makeOpenZinePage(content: ReactNode, index: number): string {
+  const pageMarkup = renderToStaticMarkup(
+    <PageFrame page={index} total={pages.length}>{content}</PageFrame>
+  );
+  const css = flipbookStyles.replace(/^@import[^;]+;\s*/m, "");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="720" height="993" viewBox="0 0 720 993">
+    <foreignObject x="0" y="0" width="720" height="993">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="width:720px;height:993px;overflow:hidden;background:#f4f0e6;color:#292820">
+        <style>${css}\n:root{--openzine-paper-grain:${openZinePaperGrain};--paper:#f4f0e6;--ink:#292820;--rule:#d7d0c2;--accent:#9b7846;--mono:'DM Mono',monospace}</style>
+        ${pageMarkup}
       </div>
-      <div className="book-controls"><button type="button" onClick={() => go("prev")} disabled={current === 0 || Boolean(turn)} aria-label="Previous page">← <span>PREVIOUS</span></button><div className="book-progress" aria-label={"Page " + (current + 1) + " of " + pages.length}><div><span style={{ width: ((current + 1) / pages.length * 100) + "%" }} /></div><small>{String(current + 1).padStart(2, "0")} <i>/</i> {String(pages.length).padStart(2, "0")}</small></div><button type="button" onClick={() => go("next")} disabled={current === pages.length - 1 || Boolean(turn)} aria-label="Next page"><span>NEXT</span> →</button></div>
-      <div className="book-bottom-note"><span>DESIGNED TO BE READ, ONE PAGE AT A TIME</span><span>← → KEYBOARD / SWIPE / DRAG</span></div>
-    </section>
-  </main>;
+    </foreignObject>
+  </svg>`;
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+export default function FlipbookResume() {
+  const viewerDocument = useMemo(() => {
+    // OpenZine requires page textures. Create them in-browser from the live JSX
+    // page components; no pre-rendered resume images are committed to the repo.
+    const pageUrls = pages.map((page, index) => makeOpenZinePage(page.content, index));
+    const config = {
+      title: "Vijayakumar Chandiran — Interactive Resume",
+      lang: "en",
+      pages: pageUrls,
+      pageCount: pageUrls.length,
+      initialSpread: 0,
+      portrait: "single"
+    };
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f6f3}body{height:100svh}</style></head><body><script>window.OPENZINE=${JSON.stringify(config)};<\/script><script>${openZineRuntime.replace(/<\\/script/gi, "<\\\\/script")}</script></body></html>`;
+  }, []);
+
+  return (
+    <main className="flipbook-app flipbook-app--openzine">
+      <header className="flipbook-topline">
+        <a className="flipbook-monogram" href="#book" aria-label="Go to resume cover">VC<span>®</span></a>
+        <div><span>AN INTERACTIVE RESUME</span><i>·</i><span>2026</span></div>
+        <a className="flipbook-print" href="#print" onClick={(event) => { event.preventDefault(); window.print(); }}>PRINT / SAVE PDF <span>↗</span></a>
+      </header>
+      <iframe
+        className="openzine-viewer"
+        title="Interactive resume book with OpenZine paper-turn renderer"
+        srcDoc={viewerDocument}
+        sandbox="allow-scripts"
+        allow="fullscreen"
+      />
+    </main>
+  );
 }
