@@ -100,7 +100,7 @@ export default function AntStory() {
         <a className="story-contact" href={profile.links[0]?.href} target="_blank" rel="noreferrer">Say hello ↗</a>
       </div>
       <div className={"world world--" + current.kind + " world--" + current.id + (motionPaused ? " world--paused" : "")} aria-live="polite" onTouchStart={onWorldTouchStart} onTouchEnd={onWorldTouchEnd}>
-        <ThreeWorld active={active} kind={current.kind} reacting={reacting} paused={motionPaused} onAntClick={() => setReacting((v) => !v)} />
+        <ThreeWorld active={active} kind={current.kind} reacting={reacting} paused={motionPaused} onAntClick={() => setReacting(true)} />
         <div className="world-caption" aria-hidden="true">
           <span>CHAPTER {String(active + 1).padStart(2, "0")}</span><i />
           <strong>{current.label}</strong><em>{current.location}</em>
