@@ -214,7 +214,7 @@ for (let i = 0; i < pageDefs.length; i++) {
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
 
-const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Interactive Resume", "--portrait", "single"], {
+const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Resume", "--portrait", "single"], {
   stdio: "inherit",
   cwd: PROJECT_ROOT,
 });
