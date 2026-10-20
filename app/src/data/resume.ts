@@ -120,6 +120,33 @@ export const sections: Section[] = [
     accent: "58,168,150"
   },
   {
+    id: "exp-web-developer",
+    kind: "experience",
+    highlight: "Web Developer",
+    title: "Web Developer",
+    subtitle: "VAHN Accessories (Freelance)",
+    meta: "December 2025 \u2013 Present",
+    body: [],
+    bullets: [
+      "Designed and developed a full-stack e-commerce platform serving 500+ products across 100+ categories.",
+      "Built with Node.js/Express (server-side rendering) and JavaScript - optimized for performance and SEO.",
+      "Integrated Cloudflare CDN delivery, defending bot attack, reducing page load times for 500+ product images.",
+      "Implemented product catalog with search, pagination, category filtering, cart system, checkout flow, and deals/coupon engine.",
+      "Designed responsive UI with mobile-first approach with skeleton loading states.",
+      "Built admin dashboard for product management, inventory tracking, email automation and order processing.",
+      "Built customer dashboard for orders tracking, payment, wish list, chat feature to contact seller.",
+      "Added SEO optimization: JSON-LD structured data, Open Graph tags, Social Media Cards, canonical URLs.",
+      "PostgreSQL database integration with migration system for product catalog, inventory, and order tracking. Engineered RESTful API",
+      "Implemented comprehensive error handling middleware",
+      "Key technologies: Node.js, Express, JS, CSS3, Cloudflare Workers, Cloudflare Analytics, PostgreSQL",
+      "Languages: HTML, TypeScript, JavaScript, CSS, EJS, Kotlin, Python"
+    ],
+    metrics: [{ value: "500+", label: "Products served" }],
+    art: "radial-gradient(125% 85% at 18% 2%, rgba(100,180,120,0.26), transparent 62%), radial-gradient(95% 70% at 88% 100%, rgba(80,140,100,0.14), transparent 64%), linear-gradient(180deg,#0B0B13 0%,#06060A 100%)",
+    glyph: "WD",
+    accent: "100,180,120"
+  },
+  {
     id: "exp-team-manager",
     kind: "experience",
     highlight: "Team Manager",
