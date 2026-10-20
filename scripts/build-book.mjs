@@ -148,22 +148,14 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.stroke();
     
     // Content with improved design
-    ctx.font = "48px \"DM Sans\", sans-serif";
+    ctx.font = "36px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
-    // Calculate total content height for vertical centering
-    let _totalH = 0;
-    for (const _line of contentLines) {
-      if (_line === "") { _totalH += 80; continue; }
-      const _lines = wrapText(ctx, _line, contentWidth);
-      _totalH += _lines.length * 60 + 12;
-    }
-    const _availH = PAGE_HEIGHT - 320 - 100;
-    let y = Math.max(320, 320 + Math.floor((_availH - _totalH) / 2));
-    const lineHeight = 60;
+    let y = 210;
+    const lineHeight = 52;
     
     for (const line of contentLines) {
-      if (y > PAGE_HEIGHT - 100) break;
-      if (line === "") { y += 80; continue; }
+      if (y > PAGE_HEIGHT - 120) break;
+      if (line === "") { y += 30; continue; }
       // Check if line is a bullet or stat
       const isBullet = line.startsWith("•") || line.startsWith("-") || line.startsWith("•");
       const isStat = /^\d/.test(line) && line.includes("team members");
@@ -181,7 +173,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
         ctx.fillText(line, margin + 20, y);
         ctx.font = "36px \"DM Sans\", sans-serif";
         ctx.fillStyle = "#59564c";
-        y += 75;
+        y += 65;
       } else if (isQuote) {
         // Quote styling with large quotation mark
     ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
@@ -197,7 +189,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
         }
         ctx.font = "36px \"DM Sans\", sans-serif";
         ctx.fillStyle = "#59564c";
-        y += 30;
+        y += 20;
       } else if (isBullet) {
         // Accent bar on left
         ctx.fillStyle = "#9b7846";
