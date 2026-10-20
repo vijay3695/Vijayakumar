@@ -133,15 +133,18 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false, o
     ctx.fillStyle = "#59564c";
     let y = 220;
     const lineHeight = 56;
+    let li = 0;
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
       if (line === "") { y += 40; continue; }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
-        ctx.fillText(l, margin, y);
+        const display = (options.bulletFrom != null && li >= options.bulletFrom) ? "\u00b7 " + l : l;
+        ctx.fillText(display, margin, y);
         y += lineHeight;
       }
+      li++;
     }
 
     if (options.hasChart && githubChart) {
@@ -182,15 +185,15 @@ const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
   { title: "About Me", eyebrow: "01 / THE PERSON", lines: about.body },
   { title: "Professional Summary", eyebrow: "02 / PROFESSIONAL PROFILE", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: webdev.title, eyebrow: "03 / WEB DEVELOPMENT", lines: [webdev.subtitle, webdev.meta, "", ...webdev.bullets] },
-  { title: manager.title, eyebrow: "04 / EXPERIENCE", lines: [manager.subtitle, manager.meta, "", ...manager.bullets] },
-  { title: leader.title, eyebrow: "05 / EXPERIENCE", lines: [leader.subtitle, leader.meta, "", ...leader.bullets] },
-  { title: senior.title, eyebrow: "06 / EXPERIENCE", lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
-  { title: associate.title, eyebrow: "07 / EXPERIENCE", lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
-  { title: "Core Competencies", eyebrow: "08 / CAPABILITIES", lines: competencies.chips },
+  { title: webdev.title, eyebrow: "03 / WEB DEVELOPMENT", lines: [webdev.subtitle, webdev.meta, "", ...webdev.bullets], bulletFrom: 2 },
+  { title: manager.title, eyebrow: "04 / EXPERIENCE", lines: [manager.subtitle, manager.meta, "", ...manager.bullets], bulletFrom: 2 },
+  { title: leader.title, eyebrow: "05 / EXPERIENCE", lines: [leader.subtitle, leader.meta, "", ...leader.bullets], bulletFrom: 2 },
+  { title: senior.title, eyebrow: "06 / EXPERIENCE", lines: [senior.subtitle, senior.meta, "", ...senior.bullets], bulletFrom: 2 },
+  { title: associate.title, eyebrow: "07 / EXPERIENCE", lines: [associate.subtitle, associate.meta, "", ...associate.bullets], bulletFrom: 2 },
+  { title: "Core Competencies", eyebrow: "08 / CAPABILITIES", lines: competencies.chips, bulletFrom: 0 },
   { title: "How I Work", eyebrow: "08 / CAPABILITIES \u00b7 CONTINUED", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
-  { title: "Certifications", eyebrow: "09 / CONTINUOUS LEARNING", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
-  { title: "Learning Record", eyebrow: "09 / CONTINUOUS LEARNING \u00b7 CONTINUED", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Certifications", eyebrow: "09 / CONTINUOUS LEARNING", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`), bulletFrom: 0 },
+  { title: "Learning Record", eyebrow: "09 / CONTINUOUS LEARNING \u00b7 CONTINUED", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`), bulletFrom: 0 },
   { title: "Education", eyebrow: "10 / EDUCATION", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
   { title: "GitHub & Open Source", eyebrow: "11 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Open source project: nuvio sync", "Building and maintaining developer tools.", "", "Key areas:", "\u2022 Frontend development with React & TypeScript", "\u2022 Automation and scripting", "\u2022 Open-source contributions", "\u2022 Developer tooling", "", "Profile: https://github.com/vijay3695"], hasChart: true },
   { title: "Contact", eyebrow: "12 / THE NEXT CHAPTER", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
@@ -198,7 +201,8 @@ const pageDefs = [
 
 const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
-  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover, { hasChart: pageDefs[i].hasChart });
+  const opts = { hasChart: pageDefs[i].hasChart, bulletFrom: pageDefs[i].bulletFrom };
+  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover, opts);
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
