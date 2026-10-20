@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createCanvas } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas";
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
@@ -44,7 +44,7 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
-function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
+function createPage(title, contentLines, pageNum, totalPages, isCover = false, options = {}) {
   const canvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
   const ctx = canvas.getContext("2d");
   
@@ -109,6 +109,20 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
       }
     }
     
+    // Draw GitHub chart if present
+    if (options.hasChart && githubChart) {
+      const chartW = contentWidth;
+      const chartH = Math.round(chartW * (githubChart.height / githubChart.width));
+      const chartX = margin;
+      const chartY = Math.max(y + 20, PAGE_HEIGHT - 300 - chartH);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(chartX - 10, chartY - 10, chartW + 20, chartH + 20);
+      ctx.strokeStyle = "#d7d0c2";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(chartX - 10, chartY - 10, chartW + 20, chartH + 20);
+      ctx.drawImage(githubChart, chartX, chartY, chartW, chartH);
+    }
+
     // Footer
     ctx.font = "16px monospace";
     ctx.fillStyle = "#8a8477";
@@ -119,6 +133,17 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   }
   
   return canvas.toBuffer("image/png");
+}
+
+
+let githubChart = null;
+try {
+  const chartRes = await fetch("https://ghchart.rshah.org/vijay3695");
+  const chartSvg = await chartRes.text();
+  githubChart = await loadImage(Buffer.from(chartSvg));
+  console.log("GitHub chart loaded:", githubChart.width, "x", githubChart.height);
+} catch (e) {
+  console.log("Failed to load GitHub chart:", e.message);
 }
 
 const pageDefs = [
@@ -135,12 +160,29 @@ const pageDefs = [
   { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
+  { title: "GitHub & Open Source", eyebrow: "10 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Open source project: nuvio sync", "Building and maintaining developer tools.", "", "Key areas:", "\u2022 Frontend development with React & TypeScript", "\u2022 Automation and scripting", "\u2022 Open-source contributions", "\u2022 Developer tooling", "", "Profile: https://github.com/vijay3695"], hasChart: true },
   { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", `${profile.location} \u00b7 India`, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
+  { title: "", lines: [], isBlank: true },
 ];
 
 const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
-  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover);
+  if (pageDefs[i].isBlank) {
+    const blankCanvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
+    const bctx = blankCanvas.getContext("2d");
+    bctx.fillStyle = "#f0f0f0";
+    bctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    bctx.font = "14px \"DM Sans\", monospace";
+    bctx.fillStyle = "#8a8477";
+    bctx.fillText("VIJAYAKUMAR CHANDIRAN", 100, PAGE_HEIGHT - 40);
+    bctx.textAlign = "right";
+    bctx.fillText(String(i + 1).padStart(2, "0") + " / " + String(totalPages).padStart(2, "0"), PAGE_WIDTH - 100, PAGE_HEIGHT - 40);
+    bctx.textAlign = "left";
+    await fs.writeFile(path.join(PAGES_DIR, "page-" + String(i + 1).padStart(2, "0") + ".png"), blankCanvas.toBuffer("image/png"));
+    console.log("Created page " + (i + 1) + ": (blank)");
+    continue;
+  }
+  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover, { hasChart: pageDefs[i].hasChart });
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
