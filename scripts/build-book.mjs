@@ -148,24 +148,14 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.stroke();
     
     // Content with improved design
-    ctx.font = "48px \"DM Sans\", sans-serif";
+    ctx.font = "36px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
-    // Calculate total content height first for vertical centering
-    let totalContentHeight = 0;
-    for (const line of contentLines) {
-      if (line === "") { totalContentHeight += 60; continue; }
-      const lines = wrapText(ctx, line, contentWidth);
-      totalContentHeight += lines.length * 72;
-      totalContentHeight += 8;
-    }
-    const availableHeight = PAGE_HEIGHT - 280 - 120;
-    const startY = Math.max(280, 280 + (availableHeight - totalContentHeight) / 2);
-    let y = startY;
-    const lineHeight = 72;
+    let y = 210;
+    const lineHeight = 52;
     
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 60; continue; }
+      if (line === "") { y += 30; continue; }
       // Check if line is a bullet or stat
       const isBullet = line.startsWith("•") || line.startsWith("-") || line.startsWith("•");
       const isStat = /^\d/.test(line) && line.includes("team members");
@@ -174,16 +164,16 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
       if (isStat) {
         // Stat card
         ctx.fillStyle = "rgba(155,120,70,0.08)";
-        ctx.fillRect(margin, y - 40, contentWidth, 60);
+        ctx.fillRect(margin, y - 35, contentWidth, 50);
         ctx.strokeStyle = "#9b7846";
         ctx.lineWidth = 2;
-        ctx.strokeRect(margin, y - 40, contentWidth, 60);
+        ctx.strokeRect(margin, y - 35, contentWidth, 50);
         ctx.font = "bold 36px \"Space Grotesk\", sans-serif";
         ctx.fillStyle = "#9b7846";
         ctx.fillText(line, margin + 20, y);
         ctx.font = "36px \"DM Sans\", sans-serif";
         ctx.fillStyle = "#59564c";
-        y += 75;
+        y += 65;
       } else if (isQuote) {
         // Quote styling with large quotation mark
     ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
@@ -203,7 +193,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
       } else if (isBullet) {
         // Accent bar on left
         ctx.fillStyle = "#9b7846";
-        ctx.fillRect(margin, y - 36, 4, 48);
+        ctx.fillRect(margin, y - 28, 4, 36);
         ctx.fillStyle = "#59564c";
         const lines = wrapText(ctx, line.replace(/^•s*/, "").replace(/^-s*/, ""), contentWidth - 20);
         for (const l of lines) {
