@@ -1,7 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createCanvas } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
+import fsSync from "node:fs";
+GlobalFonts.register(fsSync.readFileSync("/tmp/spacegrotesk.ttf"), "Space Grotesk");
+GlobalFonts.register(fsSync.readFileSync("/tmp/dmsans.ttf"), "DM Sans");
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
@@ -61,24 +64,24 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.fillStyle = "#e9e2d3";
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
     ctx.fillStyle = "#9b7846";
-    ctx.font = "bold 24px serif";
+    ctx.font = "bold 24px \"DM Sans\", sans-serif";
     ctx.fillText("CURRICULUM VITAE", margin, 120);
     ctx.fillText("2026 EDITION", PAGE_WIDTH - margin - 200, 120);
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 96px serif";
+    ctx.font = "bold 96px \"Space Grotesk\", sans-serif";
     ctx.fillText("Vijayakumar", margin, 320);
     ctx.fillText("Chandiran.", margin, 420);
-    ctx.font = "24px serif";
+    ctx.font = "24px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#6f685a";
     ctx.fillText(profile.role, margin, 500);
-    ctx.font = "18px monospace";
+    ctx.font = "18px \"DM Sans\", monospace";
     ctx.fillStyle = "#756d5d";
     ctx.fillText("CHENNAI, INDIA", margin, PAGE_HEIGHT - 120);
     ctx.fillText("TURN THE PAGE \u2192", PAGE_WIDTH - margin - 200, PAGE_HEIGHT - 120);
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 64px serif";
+    ctx.font = "bold 64px \"Space Grotesk\", sans-serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
@@ -94,7 +97,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
     
     // Content
-    ctx.font = "32px serif";
+    ctx.font = "32px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
     let y = 220;
     const lineHeight = 48;
@@ -111,7 +114,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     }
     
     // Footer
-    ctx.font = "16px monospace";
+    ctx.font = "14px \"DM Sans\", monospace";
     ctx.fillStyle = "#8a8477";
     ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
     ctx.textAlign = "right";
