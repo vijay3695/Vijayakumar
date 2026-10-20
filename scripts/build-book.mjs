@@ -2,6 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas";
+import fsSync from "node:fs";
+
+GlobalFonts.register(fsSync.readFileSync("/tmp/spacegrotesk.ttf"), "Space Grotesk");
+GlobalFonts.register(fsSync.readFileSync("/tmp/dmsans.ttf"), "DM Sans");
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
@@ -47,60 +51,94 @@ function wrapText(ctx, text, maxWidth) {
 function createPage(title, contentLines, pageNum, totalPages, isCover = false, options = {}) {
   const canvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
   const ctx = canvas.getContext("2d");
-  
+
   // Background
-  ctx.fillStyle = "#f4f0e6";
+  ctx.fillStyle = "#f0f0f0";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-  
-  const margin = 120;
+
+  const margin = 100;
   const contentWidth = PAGE_WIDTH - 2 * margin;
-  
+
   if (isCover) {
-    // Cover page
-    ctx.fillStyle = "#e9e2d3";
+    // Cover page - premium design
+    ctx.fillStyle = "#f0f0f0";
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    ctx.strokeStyle = "rgba(215,208,194,0.2)";
+    ctx.lineWidth = 1;
+    for (let gx = 0; gx < PAGE_WIDTH; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, PAGE_HEIGHT); ctx.stroke(); }
+    for (let gy = 0; gy < PAGE_HEIGHT; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(PAGE_WIDTH, gy); ctx.stroke(); }
     ctx.fillStyle = "#9b7846";
-    ctx.font = "bold 24px serif";
-    ctx.fillText("CURRICULUM VITAE", margin, 120);
-    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin - 200, 120);
+    ctx.fillRect(margin, 80, 60, 4);
+    ctx.font = '600 18px "DM Sans", sans-serif';
+    ctx.fillStyle = "#9b7846";
+    ctx.fillText("CURRICULUM VITAE", margin, 130);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#8a8477";
+    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin, 130);
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "rgba(155,120,70,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 120, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 80, 0, Math.PI * 2); ctx.stroke();
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 96px serif";
-    ctx.fillText("Vijayakumar", margin, 320);
-    ctx.fillText("Chandiran.", margin, 420);
-    ctx.font = "24px serif";
+    ctx.font = 'bold 180px "Space Grotesk", sans-serif';
+    ctx.textAlign = "center";
+    ctx.fillText("Vijayakumar", PAGE_WIDTH / 2, 820);
+    ctx.fillText("Chandiran.", PAGE_WIDTH / 2, 980);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#9b7846";
+    ctx.fillRect(PAGE_WIDTH / 2 - 150, 1010, 300, 4);
+    ctx.font = '400 48px "DM Sans", sans-serif';
     ctx.fillStyle = "#6f685a";
-    ctx.fillText(profile.role, margin, 500);
-    ctx.font = "18px monospace";
-    ctx.fillStyle = "#756d5d";
+    ctx.textAlign = "center";
+    ctx.fillText(profile.role, PAGE_WIDTH / 2, 1090);
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "#d7d0c2";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, 1160);
+    ctx.lineTo(PAGE_WIDTH - margin, 1160);
+    ctx.stroke();
+    ctx.font = '14px "DM Sans", monospace';
+    ctx.fillStyle = "#8a8477";
     ctx.fillText("CHENNAI, INDIA", margin, PAGE_HEIGHT - 120);
-    ctx.fillText("TURN THE PAGE \u2192", PAGE_WIDTH - margin - 200, PAGE_HEIGHT - 120);
+    ctx.textAlign = "right";
+    ctx.fillText("TURN THE PAGE", PAGE_WIDTH - margin, PAGE_HEIGHT - 120);
+    ctx.fillStyle = "#9b7846";
+    ctx.font = 'bold 20px "DM Sans", sans-serif';
+    ctx.fillText("\u2192", PAGE_WIDTH - margin, PAGE_HEIGHT - 90);
+    ctx.textAlign = "left";
+    ctx.font = 'bold 48px "Space Grotesk", sans-serif';
+    ctx.fillStyle = "rgba(155,120,70,0.12)";
+    ctx.fillText("VC", PAGE_WIDTH - 200, PAGE_HEIGHT - 200);
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 64px serif";
+    ctx.font = 'bold 64px "Space Grotesk", sans-serif';
     ctx.fillText(title, margin, 120);
-    
-    // Underline
     ctx.strokeStyle = "#d7d0c2";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(margin, 150);
     ctx.lineTo(PAGE_WIDTH - margin, 150);
     ctx.stroke();
-    
-    // Accent bar
     ctx.fillStyle = "#9b7846";
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
-    
+    ctx.strokeStyle = "rgba(155,120,70,0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, 195);
+    ctx.lineTo(PAGE_WIDTH - margin, 195);
+    ctx.stroke();
+
     // Content
-    ctx.font = "32px serif";
+    ctx.font = '40px "DM Sans", sans-serif';
     ctx.fillStyle = "#59564c";
     let y = 220;
-    const lineHeight = 48;
-    
+    const lineHeight = 56;
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 24; continue; }
+      if (line === "") { y += 40; continue; }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
@@ -108,7 +146,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false, o
         y += lineHeight;
       }
     }
-    
+
     // Draw GitHub chart if present
     if (options.hasChart && githubChart) {
       const chartW = contentWidth;
@@ -124,18 +162,18 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false, o
     }
 
     // Footer
-    ctx.font = "16px monospace";
+    ctx.font = '14px "DM Sans", monospace';
     ctx.fillStyle = "#8a8477";
     ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
     ctx.textAlign = "right";
     ctx.fillText(`${String(pageNum).padStart(2, "0")} / ${String(totalPages).padStart(2, "0")}`, PAGE_WIDTH - margin, PAGE_HEIGHT - 40);
     ctx.textAlign = "left";
   }
-  
+
   return canvas.toBuffer("image/png");
 }
 
-
+// Download GitHub contribution chart
 let githubChart = null;
 try {
   const chartRes = await fetch("https://ghchart.rshah.org/vijay3695");
@@ -148,20 +186,19 @@ try {
 
 const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
-  { title: "About Me", lines: about.body },
-  { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: manager.title, lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
-  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
-  { title: leader.title, lines: [leader.subtitle, "", "30 team members supported", "", ...leader.bullets] },
-  { title: senior.title, lines: [senior.subtitle, "", ...senior.bullets] },
-  { title: associate.title, lines: [associate.subtitle, "", ...associate.bullets] },
-  { title: "Core Competencies", lines: competencies.chips },
-  { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
-  { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
-  { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
-  { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
-  { title: "GitHub & Open Source", eyebrow: "10 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Open source project: nuvio sync", "Building and maintaining developer tools.", "", "Key areas:", "\u2022 Frontend development with React & TypeScript", "\u2022 Automation and scripting", "\u2022 Open-source contributions", "\u2022 Developer tooling", "", "Profile: https://github.com/vijay3695"], hasChart: true },
-  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", `${profile.location} \u00b7 India`, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
+  { title: "About Me", eyebrow: "01 / THE PERSON", lines: about.body },
+  { title: "Professional Summary", eyebrow: "02 / PROFESSIONAL PROFILE", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
+  { title: manager.title, eyebrow: "03 / EXPERIENCE", lines: [manager.subtitle, manager.meta, "", ...manager.bullets] },
+  { title: leader.title, eyebrow: "04 / EXPERIENCE", lines: [leader.subtitle, leader.meta, "", ...leader.bullets] },
+  { title: senior.title, eyebrow: "05 / EXPERIENCE", lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
+  { title: associate.title, eyebrow: "06 / EXPERIENCE", lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
+  { title: "Core Competencies", eyebrow: "07 / CAPABILITIES", lines: competencies.chips },
+  { title: "How I Work", eyebrow: "07 / CAPABILITIES \u00b7 CONTINUED", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
+  { title: "Certifications", eyebrow: "08 / CONTINUOUS LEARNING", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Learning Record", eyebrow: "08 / CONTINUOUS LEARNING \u00b7 CONTINUED", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Education", eyebrow: "09 / EDUCATION", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
+  { title: "Contact", eyebrow: "10 / THE NEXT CHAPTER", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
+  { title: "GitHub & Open Source", eyebrow: "11 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Open source project: nuvio sync", "Building and maintaining developer tools.", "", "Key areas:", "\u2022 Frontend development with React & TypeScript", "\u2022 Automation and scripting", "\u2022 Open-source contributions", "\u2022 Developer tooling", "", "Profile: https://github.com/vijay3695"], hasChart: true },
   { title: "", lines: [], isBlank: true },
 ];
 
@@ -187,7 +224,7 @@ for (let i = 0; i < pageDefs.length; i++) {
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
 
-const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Interactive Resume", "--portrait", "single"], {
+const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Resume", "--portrait", "single"], {
   stdio: "inherit",
   cwd: PROJECT_ROOT,
 });
