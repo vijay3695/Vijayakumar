@@ -125,7 +125,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 80px \"Space Grotesk\", sans-serif";
+    ctx.font = "bold 64px \"Space Grotesk\", sans-serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
