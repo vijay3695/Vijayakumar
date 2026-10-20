@@ -52,7 +52,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   const ctx = canvas.getContext("2d");
   
   // Background
-  ctx.fillStyle = "#f4f0e6";
+  ctx.fillStyle = "#f0f0f0";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   
   const margin = 120;
