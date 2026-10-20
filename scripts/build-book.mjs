@@ -128,8 +128,7 @@ const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
   { title: "About Me", lines: about.body },
   { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: manager.title, lines: [manager.subtitle, manager.meta, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
-  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
+  { title: manager.title, lines: [manager.subtitle, manager.meta, "", "25 team members led", "", ...manager.bullets] },
   { title: leader.title, lines: [leader.subtitle, leader.meta, "", "30 team members supported", "", ...leader.bullets] },
   { title: senior.title, lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
   { title: associate.title, lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
@@ -139,10 +138,26 @@ const pageDefs = [
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
   { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
+  { title: "", lines: [], isBlank: true },
 ];
 
 const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
+  if (pageDefs[i].isBlank) {
+    const blankCanvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
+    const bctx = blankCanvas.getContext("2d");
+    bctx.fillStyle = "#f0f0f0";
+    bctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    bctx.font = "14px \"DM Sans\", monospace";
+    bctx.fillStyle = "#8a8477";
+    bctx.fillText("VIJAYAKUMAR CHANDIRAN", 100, PAGE_HEIGHT - 40);
+    bctx.textAlign = "right";
+    bctx.fillText(String(i + 1).padStart(2, "0") + " / " + String(totalPages).padStart(2, "0"), PAGE_WIDTH - 100, PAGE_HEIGHT - 40);
+    bctx.textAlign = "left";
+    await fs.writeFile(path.join(PAGES_DIR, "page-" + String(i + 1).padStart(2, "0") + ".png"), blankCanvas.toBuffer("image/png"));
+    console.log("Created page " + (i + 1) + ": (blank)");
+    continue;
+  }
   const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover);
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
