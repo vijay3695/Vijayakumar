@@ -18,6 +18,7 @@ const manager = sections.find((s) => s.id === "exp-team-manager");
 const leader = sections.find((s) => s.id === "exp-team-leader");
 const senior = sections.find((s) => s.id === "exp-senior-csa");
 const associate = sections.find((s) => s.id === "exp-csa");
+const webdev = sections.find((s) => s.id === "exp-web-developer");
 const about = sections.find((s) => s.id === "about");
 const summary = sections.find((s) => s.id === "summary");
 const competencies = sections.find((s) => s.id === "competencies");
@@ -125,17 +126,18 @@ const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
   { title: "About Me", lines: about.body },
   { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: manager.title, lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
-  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
-  { title: leader.title, lines: [leader.subtitle, "", "30 team members supported", "", ...leader.bullets] },
-  { title: senior.title, lines: [senior.subtitle, "", ...senior.bullets] },
-  { title: associate.title, lines: [associate.subtitle, "", ...associate.bullets] },
+  { title: webdev.title, eyebrow: "03 / WEB DEVELOPMENT", lines: [webdev.subtitle, webdev.meta, "", ...webdev.bullets] },
+  { title: manager.title, lines: [manager.subtitle, manager.meta, "", ...manager.bullets] },
+  { title: leader.title, lines: [leader.subtitle, leader.meta, "", ...leader.bullets] },
+  { title: senior.title, lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
+  { title: associate.title, lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
   { title: "Core Competencies", lines: competencies.chips },
   { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
   { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
-  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", `${profile.location} \u00b7 India`, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
+  { title: "GitHub & Open Source", eyebrow: "10 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Open source project: nuvio sync", "Building and maintaining developer tools.", "", "Key areas:", "\u2022 Frontend development with React & TypeScript", "\u2022 Automation and scripting", "\u2022 Open-source contributions", "\u2022 Developer tooling", "", "Profile: https://github.com/vijay3695"], hasChart: true },
+  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
 ];
 
 const totalPages = pageDefs.length;
