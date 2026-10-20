@@ -53,7 +53,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   const ctx = canvas.getContext("2d");
   
   // Background
-  ctx.fillStyle = "#faf0e6";
+  ctx.fillStyle = "#f0f0f0";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   
   const margin = 100;
@@ -61,7 +61,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   
   if (isCover) {
     // Cover page - premium design
-    ctx.fillStyle = "#faf0e6";
+    ctx.fillStyle = "#f0f0f0";
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
     // Subtle grid
     ctx.strokeStyle = "rgba(215,208,194,0.2)";
@@ -198,7 +198,7 @@ for (let i = 0; i < pageDefs.length; i++) {
   if (pageDefs[i].isBlank) {
     const blankCanvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
     const bctx = blankCanvas.getContext("2d");
-    bctx.fillStyle = "#faf0e6";
+    bctx.fillStyle = "#f0f0f0";
     bctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
     bctx.font = "14px \"DM Sans\", monospace";
     bctx.fillStyle = "#8a8477";
