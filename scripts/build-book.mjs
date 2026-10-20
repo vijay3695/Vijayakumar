@@ -250,7 +250,7 @@ const pageDefs = [
   { title: "Certifications", eyebrow: "08 / CONTINUOUS LEARNING", lines: certifications.certs.map(c => c.name + " \u2014 " + c.issuer + " (" + c.year + ")") },
   { title: "Learning Record", eyebrow: "08 / CONTINUOUS LEARNING \u00b7 CONTINUED", lines: certifications.certs.slice(5).map(c => c.name + " \u2014 " + c.issuer + " (" + c.year + ")") },
   { title: "Education", eyebrow: "09 / EDUCATION", lines: education.education.map(e => e.qualification + " \u2014 " + e.institution + " (" + e.years + ")") },
-  { title: "Contact", eyebrow: "10 / THE NEXT CHAPTER", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location + " \u00b7 India", "", ...profile.links.map(l => l.label + ": " + l.href)] },
+  { title: "Contact", eyebrow: "10 / THE NEXT CHAPTER", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
   { title: "", lines: [], isBlank: true },
 ];
 
