@@ -137,32 +137,42 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.fillStyle = "#9b7846";
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
     
-    // Content
+    // Content with professional typography (bold action verbs + metrics)
     ctx.font = "32px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
     let y = 220;
     const lineHeight = 48;
-    
+
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
       if (line === "") { y += 24; continue; }
-      const isStat = line.includes("team members");
-      if (isStat) {
-        ctx.font = "bold 32px \"DM Sans\", sans-serif";
+      const isBullet = line.startsWith("\u2022") || line.startsWith("-") || line.startsWith("\u2022");
+      const cleanLine = line.replace(/^\u2022\s*/, "").replace(/^-\s*/, "");
+      if (isBullet) {
         ctx.fillStyle = "#9b7846";
-      }
-      const lines = wrapText(ctx, line, contentWidth);
-      for (const l of lines) {
-        if (y > PAGE_HEIGHT - 120) break;
-        ctx.fillText(l, margin, y);
-        y += lineHeight;
-      }
-      if (isStat) {
-        ctx.font = "32px \"DM Sans\", sans-serif";
+        ctx.fillRect(margin, y - 20, 4, 24);
         ctx.fillStyle = "#59564c";
       }
+      const lines = wrapText(ctx, cleanLine, contentWidth - (isBullet ? 20 : 0));
+      const startX = isBullet ? margin + 20 : margin;
+      for (const l of lines) {
+        if (y > PAGE_HEIGHT - 120) break;
+        const words = l.split(' ');
+        let x = startX;
+        for (let wi = 0; wi < words.length; wi++) {
+          const word = words[wi];
+          const isBold = wi === 0 || /\d/.test(word);
+          ctx.font = isBold ? "bold 32px \"DM Sans\", sans-serif" : "32px \"DM Sans\", sans-serif";
+          ctx.fillStyle = isBold ? "#292820" : "#59564c";
+          const text = word + (wi < words.length - 1 ? ' ' : '');
+          ctx.fillText(text, x, y);
+          x += ctx.measureText(text).width;
+        }
+        y += lineHeight;
+      }
+      y += 8;
     }
-    
+
     // Footer
     ctx.font = "14px \"DM Sans\", monospace";
     ctx.fillStyle = "#8a8477";
