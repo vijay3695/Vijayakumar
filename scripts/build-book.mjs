@@ -129,19 +129,19 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false, o
     ctx.lineTo(PAGE_WIDTH - margin, 195);
     ctx.stroke();
 
-    ctx.font = '40px "DM Sans", sans-serif';
+    ctx.font = '36px "DM Sans", sans-serif';
     ctx.fillStyle = "#59564c";
     let y = 220;
-    const lineHeight = 56;
+    const lineHeight = 52;
     let li = 0;
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
       if (line === "") { y += 40; continue; }
-      const lines = wrapText(ctx, line, contentWidth);
-      for (const l of lines) {
+      const bullet = (options.bulletFrom != null && li >= options.bulletFrom) ? "\u00b7 " : "";
+      const wrapped = wrapText(ctx, bullet + line, contentWidth);
+      for (const l of wrapped) {
         if (y > PAGE_HEIGHT - 120) break;
-        const display = (options.bulletFrom != null && li >= options.bulletFrom) ? "\u00b7 " + l : l;
-        ctx.fillText(display, margin, y);
+        ctx.fillText(l, margin, y);
         y += lineHeight;
       }
       li++;
