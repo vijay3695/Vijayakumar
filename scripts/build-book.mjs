@@ -125,7 +125,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 72px \"Space Grotesk\", sans-serif";
+    ctx.font = "bold 80px \"Space Grotesk\", sans-serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
@@ -139,16 +139,23 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     // Accent bar
     ctx.fillStyle = "#9b7846";
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
+    // Section divider
+    ctx.strokeStyle = "rgba(155,120,70,0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, 195);
+    ctx.lineTo(PAGE_WIDTH - margin, 195);
+    ctx.stroke();
     
     // Content
-    ctx.font = "40px \"DM Sans\", sans-serif";
+    ctx.font = "48px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
     let y = 200;
-    const lineHeight = 60;
+    const lineHeight = 72;
     
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 36; continue; }
+      if (line === "") { y += 56; continue; }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
