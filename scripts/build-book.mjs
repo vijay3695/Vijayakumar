@@ -1,7 +1,10 @@
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createCanvas } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
+GlobalFonts.register(fsSync.readFileSync("/tmp/spacegrotesk.ttf"), "Space Grotesk");
+GlobalFonts.register(fsSync.readFileSync("/tmp/dmsans.ttf"), "DM Sans");
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
@@ -125,17 +128,17 @@ const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
   { title: "About Me", lines: about.body },
   { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: manager.title, lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
+  { title: manager.title, lines: [manager.subtitle, manager.meta, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
   { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
-  { title: leader.title, lines: [leader.subtitle, "", "30 team members supported", "", ...leader.bullets] },
-  { title: senior.title, lines: [senior.subtitle, "", ...senior.bullets] },
-  { title: associate.title, lines: [associate.subtitle, "", ...associate.bullets] },
+  { title: leader.title, lines: [leader.subtitle, leader.meta, "", "30 team members supported", "", ...leader.bullets] },
+  { title: senior.title, lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
+  { title: associate.title, lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
   { title: "Core Competencies", lines: competencies.chips },
   { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
   { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
-  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", `${profile.location} \u00b7 India`, "", ...profile.links.map(l => `${l.label}: ${l.href}`)] },
+  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
 ];
 
 const totalPages = pageDefs.length;
