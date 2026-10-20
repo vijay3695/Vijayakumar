@@ -253,7 +253,7 @@ async function main() {
     const html =
       `<!doctype html><html lang="${opts.lang === "zh" ? "zh-CN" : "en"}"><head><meta charset="utf-8">` +
       `<meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title>` +
-      `<meta name="generator" content="OpenZine"><style>html,body{margin:0;height:100%;background:#2a2a2a;color:var(--ink)}</style></head><body>` +
+      `<meta name="generator" content="OpenZine"><style>html,body{margin:0;height:100%;background:#2a2a2a;background-image:radial-gradient(circle,#3a3a3a 1px,transparent 1px);background-size:24px 24px;color:var(--ink)}</style></head><body>` +
       `<script>window.OPENZINE=${JSON.stringify(config).replaceAll("<", "\\u003c")};</script>` +
       `<script>${runtime.replace(/<\/script/gi, "<\\/script")}</script></body></html>`;
 
