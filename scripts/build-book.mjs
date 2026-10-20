@@ -146,20 +146,11 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
       if (line === "") { y += 24; continue; }
-      const isStat = line.includes("team members");
-      if (isStat) {
-        ctx.font = "bold 32px \"DM Sans\", sans-serif";
-        ctx.fillStyle = "#9b7846";
-      }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
         ctx.fillText(l, margin, y);
         y += lineHeight;
-      }
-      if (isStat) {
-        ctx.font = "32px \"DM Sans\", sans-serif";
-        ctx.fillStyle = "#59564c";
       }
     }
     
