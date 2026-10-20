@@ -180,6 +180,7 @@ const pageDefs = [
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
   { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
+  { title: "GitHub & Open Source", eyebrow: "11 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Active contributor to open-source projects.", "Building tools and sharing knowledge with the developer community.", "", "Key areas:", "• Frontend development with React & TypeScript", "• Automation and scripting", "• Open-source contributions", "• Developer tooling", "", "Profile: https://github.com/vijay3695"] },
   { title: "", lines: [], isBlank: true },
 ];
 
