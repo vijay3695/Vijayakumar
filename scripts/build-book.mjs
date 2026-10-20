@@ -147,21 +147,82 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.lineTo(PAGE_WIDTH - margin, 195);
     ctx.stroke();
     
-    // Content
-    ctx.font = "48px \"DM Sans\", sans-serif";
+    // Content with improved design
+    ctx.font = "36px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
-    let y = 200;
-    const lineHeight = 72;
+    let y = 210;
+    const lineHeight = 52;
     
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 56; continue; }
-      const lines = wrapText(ctx, line, contentWidth);
-      for (const l of lines) {
-        if (y > PAGE_HEIGHT - 120) break;
-        ctx.fillText(l, margin, y);
-        y += lineHeight;
+      if (line === "") { y += 30; continue; }
+      // Check if line is a bullet or stat
+      const isBullet = line.startsWith("•") || line.startsWith("-") || line.startsWith("•");
+      const isStat = /^\d/.test(line) && line.includes("team members");
+      const isQuote = line.startsWith("“") || line.startsWith("\"");
+      
+      if (isStat) {
+        // Stat card
+        ctx.fillStyle = "rgba(155,120,70,0.08)";
+        ctx.fillRect(margin, y - 35, contentWidth, 50);
+        ctx.strokeStyle = "#9b7846";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(margin, y - 35, contentWidth, 50);
+        ctx.font = "bold 36px \"Space Grotesk\", sans-serif";
+        ctx.fillStyle = "#9b7846";
+        ctx.fillText(line, margin + 20, y);
+        ctx.font = "36px \"DM Sans\", sans-serif";
+        ctx.fillStyle = "#59564c";
+        y += 65;
+      } else if (isQuote) {
+        // Quote styling with large quotation mark
+    ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
+        ctx.fillStyle = "rgba(155,120,70,0.15)";
+        ctx.fillText("“", margin - 20, y + 60);
+        ctx.font = "italic 32px \"DM Sans\", sans-serif";
+        ctx.fillStyle = "#292820";
+        const lines = wrapText(ctx, line.replace(/[“”"]/g, ''), contentWidth - 40);
+        for (const l of lines) {
+          if (y > PAGE_HEIGHT - 120) break;
+          ctx.fillText(l, margin + 40, y);
+          y += lineHeight;
+        }
+        ctx.font = "36px \"DM Sans\", sans-serif";
+        ctx.fillStyle = "#59564c";
+        y += 20;
+      } else if (isBullet) {
+        // Accent bar on left
+        ctx.fillStyle = "#9b7846";
+        ctx.fillRect(margin, y - 28, 4, 36);
+        ctx.fillStyle = "#59564c";
+        const lines = wrapText(ctx, line.replace(/^•s*/, "").replace(/^-s*/, ""), contentWidth - 20);
+        for (const l of lines) {
+          if (y > PAGE_HEIGHT - 120) break;
+          ctx.fillText(l, margin + 20, y);
+          y += lineHeight;
+        }
+        y += 8;
+      } else {
+        // Regular text
+        const lines = wrapText(ctx, line, contentWidth);
+        for (const l of lines) {
+          if (y > PAGE_HEIGHT - 120) break;
+          ctx.fillText(l, margin, y);
+          y += lineHeight;
+        }
+        y += 8;
       }
+    }
+    
+    // Add bottom spacer to fill page
+    if (y < PAGE_HEIGHT - 200) {
+      // Draw a subtle decorative line at the bottom
+      ctx.strokeStyle = "rgba(155,120,70,0.1)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin, PAGE_HEIGHT - 100);
+      ctx.lineTo(PAGE_WIDTH - margin, PAGE_HEIGHT - 100);
+      ctx.stroke();
     }
     
     // Footer
