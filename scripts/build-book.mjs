@@ -122,7 +122,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 64px serif";
+    ctx.font = "bold 64px \"Space Grotesk\", sans-serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
@@ -138,7 +138,7 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
     
     // Content
-    ctx.font = "32px serif";
+    ctx.font = "32px \"DM Sans\", sans-serif";
     ctx.fillStyle = "#59564c";
     let y = 220;
     const lineHeight = 48;
@@ -146,16 +146,25 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
       if (line === "") { y += 24; continue; }
+      const isStat = line.includes("team members");
+      if (isStat) {
+        ctx.font = "bold 32px \"DM Sans\", sans-serif";
+        ctx.fillStyle = "#9b7846";
+      }
       const lines = wrapText(ctx, line, contentWidth);
       for (const l of lines) {
         if (y > PAGE_HEIGHT - 120) break;
         ctx.fillText(l, margin, y);
         y += lineHeight;
       }
+      if (isStat) {
+        ctx.font = "32px \"DM Sans\", sans-serif";
+        ctx.fillStyle = "#59564c";
+      }
     }
     
     // Footer
-    ctx.font = "16px monospace";
+    ctx.font = "14px \"DM Sans\", monospace";
     ctx.fillStyle = "#8a8477";
     ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
     ctx.textAlign = "right";
