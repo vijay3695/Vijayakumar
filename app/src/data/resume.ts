@@ -125,7 +125,7 @@ export const sections: Section[] = [
     highlight: "Team Manager",
     title: "Team Manager",
     subtitle: "Sutherland Global Services",
-    meta: "2023 - Dec 2025",
+    meta: "2023 – 2025 - December",
     body: [],
     bullets: [
       "Led a 25-member customer support team, ensuring SLA, AHT and CSAT targets are consistently met.",
@@ -184,7 +184,7 @@ export const sections: Section[] = [
     highlight: "CSA",
     title: "Customer Support Associate",
     subtitle: "Sutherland Global Services",
-    meta: "2018 - 2019",
+    meta: "December 2018 – 2019",
     body: [],
     bullets: [
       "Delivered frontline customer support via email for technical and business issues.",

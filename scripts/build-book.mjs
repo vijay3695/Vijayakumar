@@ -1,16 +1,15 @@
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createCanvas } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
+GlobalFonts.register(fsSync.readFileSync("/tmp/spacegrotesk.ttf"), "Space Grotesk");
+GlobalFonts.register(fsSync.readFileSync("/tmp/dmsans.ttf"), "DM Sans");
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PAGES_DIR = path.join(PROJECT_ROOT, "dist", "openzine-pages");
 const BOOK_OUT = path.join(PROJECT_ROOT, "openzine-book.html");
 const MAKE_BOOK = path.join(PROJECT_ROOT, ".codex", "skills", "openzine", "scripts", "make-book.mjs");
-
-import { GlobalFonts } from "@napi-rs/canvas";
-GlobalFonts.registerFromPath("/tmp/dmsans.woff2", "DM Sans");
-GlobalFonts.registerFromPath("/tmp/spacegrotesk.ttf", "Space Grotesk");
 
 const PAGE_WIDTH = 1440;
 const PAGE_HEIGHT = 1984;
@@ -53,79 +52,35 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   const ctx = canvas.getContext("2d");
   
   // Background
-  ctx.fillStyle = "#f0f0f0";
+  ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
   
-  const margin = 100;
+  const margin = 120;
   const contentWidth = PAGE_WIDTH - 2 * margin;
   
   if (isCover) {
-    // Cover page - premium design
-    ctx.fillStyle = "#f0f0f0";
+    // Cover page
+    ctx.fillStyle = "#e9e2d3";
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    // Subtle grid
-    ctx.strokeStyle = "rgba(215,208,194,0.2)";
-    ctx.lineWidth = 1;
-    for (let gx = 0; gx < PAGE_WIDTH; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, PAGE_HEIGHT); ctx.stroke(); }
-    for (let gy = 0; gy < PAGE_HEIGHT; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(PAGE_WIDTH, gy); ctx.stroke(); }
-    // Accent bar top
     ctx.fillStyle = "#9b7846";
-    ctx.fillRect(margin, 80, 60, 4);
-    // Small label top-left
-    ctx.font = "600 18px \"DM Sans\", sans-serif";
-    ctx.fillStyle = "#9b7846";
-    ctx.fillText("CURRICULUM VITAE", margin, 130);
-    // Top-right label
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#8a8477";
-    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin, 130);
-    ctx.textAlign = "left";
-    // Decorative circle
-    ctx.strokeStyle = "rgba(155,120,70,0.15)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 120, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(PAGE_WIDTH - 200, 280, 80, 0, Math.PI * 2); ctx.stroke();
-    // Main name
+    ctx.font = "bold 24px serif";
+    ctx.fillText("CURRICULUM VITAE", margin, 120);
+    ctx.fillText("2026 EDITION", PAGE_WIDTH - margin - 200, 120);
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 180px \"Space Grotesk\", sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Vijayakumar", PAGE_WIDTH / 2, 820);
-    ctx.fillText("Chandiran.", PAGE_WIDTH / 2, 980);
-    ctx.textAlign = "left";
-    // Accent line under name
-    ctx.fillStyle = "#9b7846";
-    ctx.fillRect(PAGE_WIDTH / 2 - 150, 1010, 300, 4);
-    // Role
-    ctx.font = "400 48px \"DM Sans\", sans-serif";
+    ctx.font = "bold 96px serif";
+    ctx.fillText("Vijayakumar", margin, 320);
+    ctx.fillText("Chandiran.", margin, 420);
+    ctx.font = "24px serif";
     ctx.fillStyle = "#6f685a";
-    ctx.textAlign = "center";
-    ctx.fillText(profile.role, PAGE_WIDTH / 2, 1090);
-    ctx.textAlign = "left";
-    // Divider
-    ctx.strokeStyle = "#d7d0c2";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(margin, 1160);
-    ctx.lineTo(PAGE_WIDTH - margin, 1160);
-    ctx.stroke();
-    // Bottom
-    ctx.font = "14px \"DM Sans\", monospace";
-    ctx.fillStyle = "#8a8477";
+    ctx.fillText(profile.role, margin, 500);
+    ctx.font = "18px monospace";
+    ctx.fillStyle = "#756d5d";
     ctx.fillText("CHENNAI, INDIA", margin, PAGE_HEIGHT - 120);
-    ctx.textAlign = "right";
-    ctx.fillText("TURN THE PAGE", PAGE_WIDTH - margin, PAGE_HEIGHT - 120);
-    ctx.fillStyle = "#9b7846";
-    ctx.font = "bold 20px \"DM Sans\", sans-serif";
-    ctx.fillText("→", PAGE_WIDTH - margin, PAGE_HEIGHT - 90);
-    ctx.textAlign = "left";
-    // VC monogram watermark
-    ctx.font = "bold 48px \"Space Grotesk\", sans-serif";
-    ctx.fillStyle = "rgba(155,120,70,0.12)";
-    ctx.fillText("VC", PAGE_WIDTH - 200, PAGE_HEIGHT - 200);
+    ctx.fillText("TURN THE PAGE \u2192", PAGE_WIDTH - margin - 200, PAGE_HEIGHT - 120);
   } else {
     // Title
     ctx.fillStyle = "#292820";
-    ctx.font = "bold 64px \"Space Grotesk\", sans-serif";
+    ctx.font = "bold 64px serif";
     ctx.fillText(title, margin, 120);
     
     // Underline
@@ -139,94 +94,26 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
     // Accent bar
     ctx.fillStyle = "#9b7846";
     ctx.fillRect(PAGE_WIDTH - margin - 46, 147, 46, 6);
-    // Section divider
-    ctx.strokeStyle = "rgba(155,120,70,0.2)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(margin, 195);
-    ctx.lineTo(PAGE_WIDTH - margin, 195);
-    ctx.stroke();
     
-    // Content with improved design
-    ctx.font = "36px \"DM Sans\", sans-serif";
+    // Content
+    ctx.font = "32px serif";
     ctx.fillStyle = "#59564c";
-    let y = 210;
-    const lineHeight = 52;
+    let y = 220;
+    const lineHeight = 48;
     
     for (const line of contentLines) {
       if (y > PAGE_HEIGHT - 120) break;
-      if (line === "") { y += 30; continue; }
-      // Check if line is a bullet or stat
-      const isBullet = line.startsWith("•") || line.startsWith("-") || line.startsWith("•");
-      const isStat = /^\d/.test(line) && line.includes("team members");
-      const isQuote = line.startsWith("“") || line.startsWith("\"");
-      
-      if (isStat) {
-        // Stat card
-        ctx.fillStyle = "rgba(155,120,70,0.08)";
-        ctx.fillRect(margin, y - 35, contentWidth, 50);
-        ctx.strokeStyle = "#9b7846";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(margin, y - 35, contentWidth, 50);
-        ctx.font = "bold 36px \"Space Grotesk\", sans-serif";
-        ctx.fillStyle = "#9b7846";
-        ctx.fillText(line, margin + 20, y);
-        ctx.font = "36px \"DM Sans\", sans-serif";
-        ctx.fillStyle = "#59564c";
-        y += 65;
-      } else if (isQuote) {
-        // Quote styling with large quotation mark
-    ctx.font = "bold 120px \"Space Grotesk\", sans-serif";
-        ctx.fillStyle = "rgba(155,120,70,0.15)";
-        ctx.fillText("“", margin - 20, y + 60);
-        ctx.font = "italic 32px \"DM Sans\", sans-serif";
-        ctx.fillStyle = "#292820";
-        const lines = wrapText(ctx, line.replace(/[“”"]/g, ''), contentWidth - 40);
-        for (const l of lines) {
-          if (y > PAGE_HEIGHT - 120) break;
-          ctx.fillText(l, margin + 40, y);
-          y += lineHeight;
-        }
-        ctx.font = "36px \"DM Sans\", sans-serif";
-        ctx.fillStyle = "#59564c";
-        y += 20;
-      } else if (isBullet) {
-        // Accent bar on left
-        ctx.fillStyle = "#9b7846";
-        ctx.fillRect(margin, y - 28, 4, 36);
-        ctx.fillStyle = "#59564c";
-        const lines = wrapText(ctx, line.replace(/^•s*/, "").replace(/^-s*/, ""), contentWidth - 20);
-        for (const l of lines) {
-          if (y > PAGE_HEIGHT - 120) break;
-          ctx.fillText(l, margin + 20, y);
-          y += lineHeight;
-        }
-        y += 8;
-      } else {
-        // Regular text
-        const lines = wrapText(ctx, line, contentWidth);
-        for (const l of lines) {
-          if (y > PAGE_HEIGHT - 120) break;
-          ctx.fillText(l, margin, y);
-          y += lineHeight;
-        }
-        y += 8;
+      if (line === "") { y += 24; continue; }
+      const lines = wrapText(ctx, line, contentWidth);
+      for (const l of lines) {
+        if (y > PAGE_HEIGHT - 120) break;
+        ctx.fillText(l, margin, y);
+        y += lineHeight;
       }
     }
     
-    // Add bottom spacer to fill page
-    if (y < PAGE_HEIGHT - 200) {
-      // Draw a subtle decorative line at the bottom
-      ctx.strokeStyle = "rgba(155,120,70,0.1)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(margin, PAGE_HEIGHT - 100);
-      ctx.lineTo(PAGE_WIDTH - margin, PAGE_HEIGHT - 100);
-      ctx.stroke();
-    }
-    
     // Footer
-    ctx.font = "16px \"DM Sans\", monospace";
+    ctx.font = "16px monospace";
     ctx.fillStyle = "#8a8477";
     ctx.fillText("VIJAYAKUMAR CHANDIRAN", margin, PAGE_HEIGHT - 40);
     ctx.textAlign = "right";
@@ -239,44 +126,29 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
 
 const pageDefs = [
   { title: "Cover", lines: [], isCover: true },
-  { title: "About Me", eyebrow: "01 / THE PERSON", lines: about.body },
-  { title: "Professional Summary", eyebrow: "02 / PROFESSIONAL PROFILE", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
-  { title: manager.title, eyebrow: "03 / EXPERIENCE", lines: [manager.subtitle, "", "25 team members led", "", ...manager.bullets] },
-  { title: leader.title, eyebrow: "04 / EXPERIENCE", lines: [leader.subtitle, "", "30 team members supported", "", ...leader.bullets] },
-  { title: senior.title, eyebrow: "05 / EXPERIENCE", lines: [senior.subtitle, "", ...senior.bullets] },
-  { title: associate.title, eyebrow: "06 / EXPERIENCE", lines: [associate.subtitle, "", ...associate.bullets] },
-  { title: "Core Competencies", eyebrow: "07 / CAPABILITIES", lines: competencies.chips },
-  { title: "How I Work", eyebrow: "07 / CAPABILITIES \u00b7 CONTINUED", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
-  { title: "Certifications", eyebrow: "08 / CONTINUOUS LEARNING", lines: certifications.certs.map(c => c.name + " \u2014 " + c.issuer + " (" + c.year + ")") },
-  { title: "Learning Record", eyebrow: "08 / CONTINUOUS LEARNING \u00b7 CONTINUED", lines: certifications.certs.slice(5).map(c => c.name + " \u2014 " + c.issuer + " (" + c.year + ")") },
-  { title: "Education", eyebrow: "09 / EDUCATION", lines: education.education.map(e => e.qualification + " \u2014 " + e.institution + " (" + e.years + ")") },
-  { title: "Contact", eyebrow: "10 / THE NEXT CHAPTER", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
-  { title: "", lines: [], isBlank: true },
+  { title: "About Me", lines: about.body },
+  { title: "Professional Summary", lines: ["Operations & customer success leader \u00b7 7 years", "", ...summary.body] },
+  { title: manager.title, lines: [manager.subtitle, manager.meta, "", "25 team members led", "", ...manager.bullets.slice(0, 4)] },
+  { title: "Delivery & Improvement", lines: ["2023 \u2014 2025", "", ...manager.bullets.slice(4)] },
+  { title: leader.title, lines: [leader.subtitle, leader.meta, "", "30 team members supported", "", ...leader.bullets] },
+  { title: senior.title, lines: [senior.subtitle, senior.meta, "", ...senior.bullets] },
+  { title: associate.title, lines: [associate.subtitle, associate.meta, "", ...associate.bullets] },
+  { title: "Core Competencies", lines: competencies.chips },
+  { title: "How I Work", lines: ["Listen carefully. Find the root cause. Coach consistently. Measure what changes.", "", ...competencies.chips.slice(6)] },
+  { title: "Certifications", lines: certifications.certs.map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
+  { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
+  { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
 ];
 
 const totalPages = pageDefs.length;
 for (let i = 0; i < pageDefs.length; i++) {
-  if (pageDefs[i].isBlank) {
-    const blankCanvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
-    const bctx = blankCanvas.getContext("2d");
-    bctx.fillStyle = "#f0f0f0";
-    bctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    bctx.font = "14px \"DM Sans\", monospace";
-    bctx.fillStyle = "#8a8477";
-    bctx.fillText("VIJAYAKUMAR CHANDIRAN", 100, PAGE_HEIGHT - 40);
-    bctx.textAlign = "right";
-    bctx.fillText(String(i + 1).padStart(2, "0") + " / " + String(totalPages).padStart(2, "0"), PAGE_WIDTH - 100, PAGE_HEIGHT - 40);
-    bctx.textAlign = "left";
-    await fs.writeFile(path.join(PAGES_DIR, "page-" + String(i + 1).padStart(2, "0") + ".png"), blankCanvas.toBuffer("image/png"));
-    console.log("Created page " + (i + 1) + ": (blank)");
-    continue;
-  }
   const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover);
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
 
-const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Resume", "--portrait", "single"], {
+const child = spawn("node", [MAKE_BOOK, "--input", PAGES_DIR, "--out", BOOK_OUT, "--title", "Vijayakumar Chandiran \u2014 Interactive Resume", "--portrait", "single"], {
   stdio: "inherit",
   cwd: PROJECT_ROOT,
 });
