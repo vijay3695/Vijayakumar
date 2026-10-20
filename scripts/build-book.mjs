@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import fsSync from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas";
 GlobalFonts.register(fsSync.readFileSync("/tmp/spacegrotesk.ttf"), "Space Grotesk");
 GlobalFonts.register(fsSync.readFileSync("/tmp/dmsans.ttf"), "DM Sans");
 
@@ -47,7 +47,7 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
-function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
+function createPage(title, contentLines, pageNum, totalPages, isCover = false, options = {}) {
   const canvas = createCanvas(PAGE_WIDTH, PAGE_HEIGHT);
   const ctx = canvas.getContext("2d");
   
@@ -154,6 +154,19 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
       }
     }
     
+    if (options.hasChart && githubChart) {
+      const chartW = contentWidth;
+      const chartH = Math.round(chartW * (githubChart.height / githubChart.width));
+      const chartX = margin;
+      const chartY = Math.max(y + 20, PAGE_HEIGHT - 300 - chartH);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(chartX - 10, chartY - 10, chartW + 20, chartH + 20);
+      ctx.strokeStyle = "#d7d0c2";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(chartX - 10, chartY - 10, chartW + 20, chartH + 20);
+      ctx.drawImage(githubChart, chartX, chartY, chartW, chartH);
+    }
+
     // Footer
     ctx.font = "14px \"DM Sans\", monospace";
     ctx.fillStyle = "#8a8477";
@@ -164,6 +177,17 @@ function createPage(title, contentLines, pageNum, totalPages, isCover = false) {
   }
   
   return canvas.toBuffer("image/png");
+}
+
+
+let githubChart = null;
+try {
+  const chartRes = await fetch("https://ghchart.rshah.org/vijay3695");
+  const chartSvg = await chartRes.text();
+  githubChart = await loadImage(Buffer.from(chartSvg));
+  console.log("GitHub chart loaded:", githubChart.width, "x", githubChart.height);
+} catch (e) {
+  console.log("Failed to load GitHub chart:", e.message);
 }
 
 const pageDefs = [
@@ -180,7 +204,7 @@ const pageDefs = [
   { title: "Learning Record", lines: certifications.certs.slice(5).map(c => `${c.name} \u2014 ${c.issuer} (${c.year})`) },
   { title: "Education", lines: education.education.map(e => `${e.qualification} \u2014 ${e.institution} (${e.years})`) },
   { title: "Contact", lines: ["Let's make good work happen.", "", "For opportunities in team leadership, service delivery, customer success, and operations.", "", profile.location, "", ...profile.links.map(l => l.label + ": " + l.href)] },
-  { title: "GitHub & Open Source", eyebrow: "11 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Active contributor to open-source projects.", "Building tools and sharing knowledge with the developer community.", "", "Key areas:", "• Frontend development with React & TypeScript", "• Automation and scripting", "• Open-source contributions", "• Developer tooling", "", "Profile: https://github.com/vijay3695"] },
+  { title: "GitHub & Open Source", eyebrow: "11 / CODE & CONTRIBUTIONS", lines: ["github.com/vijay3695", "", "Active contributor to open-source projects.", "Building tools and sharing knowledge with the developer community.", "", "Key areas:", "• Frontend development with React & TypeScript", "• Automation and scripting", "• Open-source contributions", "• Developer tooling", "", "Profile: https://github.com/vijay3695"] , hasChart: true },
   { title: "", lines: [], isBlank: true },
 ];
 
@@ -201,7 +225,7 @@ for (let i = 0; i < pageDefs.length; i++) {
     console.log("Created page " + (i + 1) + ": (blank)");
     continue;
   }
-  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover);
+  const buf = createPage(pageDefs[i].title, pageDefs[i].lines, i + 1, totalPages, pageDefs[i].isCover, { hasChart: pageDefs[i].hasChart });
   await fs.writeFile(path.join(PAGES_DIR, `page-${String(i + 1).padStart(2, "0")}.png`), buf);
   console.log(`Created page ${i + 1}: ${pageDefs[i].title}`);
 }
